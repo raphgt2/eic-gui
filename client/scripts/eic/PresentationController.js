@@ -6,11 +6,11 @@
 define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector'],
+  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/MovieEditor'],
   function ($, Logger, FacebookConnector,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
-    ErrorSlideGenerator, SlidePresenter, TopicSelector) {
+    ErrorSlideGenerator, SlidePresenter, TopicSelector, MovieEditor) {
     "use strict";
     var logger = new Logger("PresentationController");
 
@@ -71,9 +71,20 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
           new TopicToTopicSlideGenerator(this.startTopic, this.endTopic),
           new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
         ]);
-
-        // Start the slide show.
-        new SlidePresenter($slides, generator).start();
+        
+        // Start the slide show only after all topic slides have been created. Wait a second for the topics to be generated, though   
+			// I know that the second generator in the array is the one with topic slides...    
+			// We don't REALLY need to check whether the intro/outro slides have finished, since they consistently finish faster than the topics...though we could if we wished
+        if (generator.generators[1].ready){
+			logger.log("Beginning presentation");
+			new MovieEditor($slides, generator);
+		}
+		else{
+			logger.log("Beginning presentation");
+			generator.generators[1].once('topic slides ready', function(){new MovieEditor($slides, generator);});
+		}
+        
+        
       }
     };
 

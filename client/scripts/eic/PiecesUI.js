@@ -11,62 +11,62 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
 
     function PiecesUI(presentationController) {
       this.controller = presentationController;
+        // If the Hash already contains variables, let's play the video.
+        // Split the hash in variables
+        var tempitems = location.hash.substr(1,location.hash.length-1).split("&");
+        var items = [];
+        for(var i = 0; i < tempitems.length ; i ++){
+            var pair = tempitems[i].split("=");
+            items[pair[0]] = pair[1];
+        }
 
-      // If the Hash already contains variables, let's play the video.
-      // Split the hash in variables
-      var tempitems = location.hash.substr(1,location.hash.length-1).split("&");
-      var items = [];
-      for(var i = 0; i < tempitems.length ; i ++){
-        var pair = tempitems[i].split("=");
-        items[pair[0]] = pair[1];
-      }
+        if(typeof items["start"] !== 'undefined' && typeof items["start-uri"] !== 'undefined'){
+            this.controller.startTopic = {
+                label: decodeURIComponent(items["start"]),
+                uri: decodeURIComponent(items["start-uri"])
+            };
+        }
 
-      if(typeof items["start"] !== 'undefined' && typeof items["start-uri"] !== 'undefined'){
-        this.controller.startTopic = {
-          label: decodeURIComponent(items["start"]),
-          uri: decodeURIComponent(items["start-uri"])
-        };
-      }
+        if(typeof items["end"] !== 'undefined' && typeof items["end-uri"] !== 'undefined'){
+            this.controller.endTopic = {
+                label: decodeURIComponent(items["end"]),
+                uri: decodeURIComponent(items["end-uri"])
+            };
+        }
 
-      if(typeof items["end"] !== 'undefined' && typeof items["end-uri"] !== 'undefined'){
-        this.controller.endTopic = {
-          label: decodeURIComponent(items["end"]),
-          uri: decodeURIComponent(items["end-uri"])
-        };
-      }
+        if(typeof items["start"] !== 'undefined' && typeof items["end"] !== 'undefined'){
+            this.drawScreen($('#screen'));
+        }
 
-      if(typeof items["start"] !== 'undefined' && typeof items["end"] !== 'undefined'){
-        this.drawScreen($('#screen'));
-      }
-
+//      $(window).on('resize', function(){
+//        var sX = ($(this).width() / 800);
+//        var sY = ($(this).height() / 600);
+//        if (sX > sY)
+//          $('body').css('transform', 'scale(' + sY + ','  + sY + ')');
+//        else
+//          $('body').css('transform', 'scale(' + sX + ','  + sX + ')');
+//      });
     }
 
     PiecesUI.prototype = {
       init: function () {
-        //Initialize all controls on the interfacs
         this.initControls();
 
-        //Add puzzle pieces to the background
         this.drawPieces($('#title_1'), 5, 'images/piece3.svg');
         this.drawPieces($('#title_2'), 1, 'images/piece2.svg');
         this.drawPieces($('#title_3'), 5, 'images/piece3.svg');
         this.drawPieces($('#play'), 1, 'images/piece1.svg', 100);
 
-        //Show the 800x600 frame where the magic happens
         $('#frame').show();
-        
-        //Shape the menu with puzzle pieces
+
         this.drawBigPieces($('#steps'));
       },
       drawPiece: function ($elem, options) {
-        //Calculate absolute position of piece. 
-        //The connector of each piece is 0.22 times the size of the desired size
         var x = options.x * (options.size - 0.22 * options.size) +
         ((1 - (options.y % 2)) * 0.215 * options.size),
         y = options.y * (options.size - 0.22 * options.size) +
         ((options.x % 2) * 0.215 * options.size);
-        
-        //Set size of element with taking connectors into account
+
         $elem.width(x + options.size).height(options.size);
 
         return $('<div />')
@@ -85,7 +85,6 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
       },
 
       drawPieces: function ($title, nr, img, fontsize) {
-        //Draw pieces for the background
         for (var i = 0; i < nr; i++) {
           this.drawPiece($title, {
             x: i,
@@ -97,8 +96,6 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
 
           var $content = $title
           .children('.content');
-          
-          //Fit piece in the right place
           $content.css({
             'margin-top': fontsize ? (pieceWidth - fontsize) / 2 + 10 : 10,
             'margin-left': fontsize ? 30 : 0.22 * pieceWidth,
@@ -107,8 +104,6 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
         }
       },
       drawBigPieces: function ($title) {
-        //Draw menu with 4 pieces. 
-        
         var new_width = pieceWidth * 4;
         var step = 1;
 
@@ -125,8 +120,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
             })
             .attr('id', 'piece_' + step)
             .hide();
-            
-            
+
             $('#step_' + step).css({
               display: 'none',
               left: piece.css('left'),
@@ -148,18 +142,16 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
         });
       },
       disableElement: function ($elem, disabled) {
-        if (disabled) {
+        if (disabled)
           $elem
           .addClass('disabled')
           .prop("disabled", true);
-        } else {
+        else
           $elem
           .removeClass('disabled')
           .prop("disabled", false);
-        }
       },
       animate: function ($elem, name, duration, callback) {
-        //Use CSS animations for performance. No communication possible, so use timeout.
         if (callback)
           window.setTimeout(callback, duration * 1000);
 
@@ -172,18 +164,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
       initControls: function () {
         var new_width = pieceWidth * 4;
         var self = this;
-        
-        function show_steps() {
-          $('#play').hide();
 
-          self.animate($('#piece_1'), 'rotateout', 0.3,
-            function () {
-              $('#step_1').show();
-            })
-          .show();
-        }
-        
-        //Add closing button to first piece of menu
         $('<span />')
         .addClass('close')
         .html('X')
@@ -206,7 +187,16 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
         $('#play').on('mouseover click', show_steps);
         $('#frame').on('click', show_steps);
         
-        //Add transitions from piece to piece
+        function show_steps() {
+          $('#play').hide();
+
+          self.animate($('#piece_1'), 'rotateout', 0.3,
+            function () {
+              $('#step_1').show();
+            })
+          .show();
+        }
+
         $('#step_1 .next:not(.disabled)').live('click', function () {
           self.disableElement($('#step_1 .button, #step_1 input'), true);
           self.disableElement($('#step_3 .back'), false);
@@ -346,7 +336,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
         // Enable third step if the topic is valid.
         this.disableElement($('#step_3 .next'), !valid);
       },
-      //Draw the screen that plays the movie
+
       drawScreen: function ($screen) {
         var self = this;
         $screen.show();
@@ -360,7 +350,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
             $('#frame').remove();
             // Try to start the movie
             try {
-              self.controller.playMovie();
+					self.controller.playMovie();
             }
             // Controller errors are emergency cases we cannot handle gracefully
             catch (error) {

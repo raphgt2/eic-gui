@@ -26,7 +26,13 @@
       },
       'lib/prefixfree.jquery': {
         deps: ['lib/prefixfree.min']
-      }
+      },
+	  'eic/pluginsniff':{
+		exports: 'pluginsniff'
+	  },
+	  'lib/base64_handler':{
+		exports: 'base64_handler'
+	  }
     },
   });
 

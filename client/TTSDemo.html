@@ -4,26 +4,28 @@
     <title></title>
     <meta charset="UTF-8">
     <script>
-      function startApplication($, eic) {
-        var tts = new eic.TTSGenerator();
-
+    function startApplication($, eic, lib) {
+		
+		var wplayer = new eic.WAVPlayer();
+		
         $('#send').click(function() {
-          var text = $('#text').val();
-
-          tts.once('speechReady',function(event,data){
-            $("#result").append('Length: '+data.snd_time+' ms<br>');
-            $("#result").append("<audio src='"+data.snd_url+"' controls='controls' />");
-          });
-          tts.getSpeech(text,'en_GB');
-        });
-      }
+			var tts = new eic.TTSService();
+			var text = $('#text').val();
+			tts.once('speechReady',function(event,data){
+				wplayer.addTrack(data.snd_url,true);
+				wplayer.playSound();
+			});
+			tts.getSpeech(text,'en_GB',true);
+		 });
+    }
+    
     </script>
     <script data-main="scripts/demo" src="scripts/lib/require.js" async></script>
   </head>
   <body>
     <div><textarea id="text"></textarea><input id="send" type="submit" value="Send" /></div>
     <div id="result">
-
     </div>
-  </body>
+    
+	</body>
 </html>

@@ -55,7 +55,6 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
       function retrieveTranscriptions(edges) {
 
         function retrieveTranscription(index, edge) {
-          //Turn the predicate URI in a sentence explaining the relation
           var  property = edge.uri.substr(edge.uri.lastIndexOf('/') + 1);
           logger.log('Extracting sentence for', edge.uri);
           //Split the string with caps
@@ -64,8 +63,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           if (parts[0] === 'has' || parts[0] === 'is') {
             parts.shift();
           }
-          
-          //Form sentence depending on direction of relation
+
           var sentence = [
             {
               type: 'indirect',
@@ -76,11 +74,9 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
               value: edge.inverse ? '\'s the ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' of ' : '\'s ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' is '
             }
           ];
-          
-          //Add sentence to result
+
           self.result.links[index] = sentence;
-          
-          //If all sentences and abstracts(topics) are present, emit event
+
           if ((self.result.topics.length + self.result.links.length) === path.length) {
             $(self).trigger('generated', formatResult(self.result));
           }
@@ -94,8 +90,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
 
       function retrieveAbstracts(vertices) {
         var uri = vertices.map(function (vertice) { return vertice.uri; });
-        
-        //Get abstracts of topics from webservice
+
         $.ajax({
           url: urls.abstracts,
           dataType: 'json',
@@ -136,7 +131,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
                 },
                 text : desc
               };
-              //If all sentences and abstracts(topics) are present, emit event
+
               if ((self.result.topics.length + self.result.links.length) === path.length) {
                 $(self).trigger('generated', formatResult(self.result));
               }

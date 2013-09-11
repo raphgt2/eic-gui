@@ -1,9 +1,5 @@
 /*!
  * EIC TopicToTopicSlideGenerator
- * 
- * This class requests a path based on two endpoints, 
- * and calls other SlideGenerators to create a sequence of slides. 
- * 
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
@@ -28,6 +24,7 @@ define(['lib/jquery',
       CompositeSlideGenerator.call(this);
       this.startTopic = startTopic;
       this.endTopic = endTopic;
+      this.ready=false;
     }
 
     $.extend(TopicToTopicSlideGenerator.prototype,
@@ -61,10 +58,47 @@ define(['lib/jquery',
                     story.steps.forEach(function (step) {
                       self.addGenerator(new TopicSlideGenerator(step.topic, step.text));
                     });
+                    
                     // give the generators some time to load and stop waiting
-                    setTimeout(function () {
+                    /*setTimeout(function () {
                       self.loader.stopWaiting();
-                    }, 5000);
+                    }, 5000);                    */
+                    
+			        setTimeout(function(){
+						
+						waitforReady(0,function(){		
+							self.loader.stopWaiting();
+							self.ready=true;
+							self.emit('topic slides ready');									
+						})
+					},1000);
+			        
+			        function waitforReady(i,callback){
+						if (i>self.generators.length){
+							i++;
+							callback();
+							return;
+					    }		
+						
+						if (!self.generators[i])	{ //Check the slideGenerator exists
+							i++;
+							waitforReady(i,callback);
+						}
+						else if (!self.generators[i].topic)	{ //Check that this is a TopicSlideGenerator exists
+							i++;
+							waitforReady(i,callback);
+						}
+						else if (self.generators[i].ready){
+							i++;
+							waitforReady(i,callback);
+						}
+						else{
+							self.generators[i].once('newSlides', function(){
+								i++; 
+								waitforReady(i,callback);
+							});
+						}
+					}
                   });
                   summ.summarize(path);
                 }

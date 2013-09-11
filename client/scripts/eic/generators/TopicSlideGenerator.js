@@ -1,8 +1,5 @@
 /*!
  * EIC TopicSlideGenerator
- * 
- * This class creates all slides for a perticular topic. It's responsible of the sound attachment.
- * 
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
@@ -29,7 +26,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.description = description;
       this.first = true;
       this.durationLeft = 0;
-      this.audioURL = '';
+      this.audioURL ='';
+      this.ready=false;
     }
 
     $.extend(TopicSlideGenerator.prototype,
@@ -45,8 +43,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
         /** Initialize all child generators. */
         init: function () {
-          if (this.inited)
-            return;
+          //if (this.inited)
+            //return;
 
           //Create all generators depending on the type of the topic
           switch (this.topic.type) {
@@ -68,16 +66,22 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
               self = this;
           tts.once('speechReady', function (event, data) {
             self.durationLeft = Math.floor(data.snd_time);
+            //Add extra time because IE definitely needs a plugin, which takes time to embed
+            if (navigator.userAgent.indexOf('MSIE') !=-1)
+				self.durationLeft +=5000;
+				
             self.audioURL = data.snd_url;
             logger.log('Received speech for topic', self.topic.label);
+            self.ready=true;
             // When speech is received, 'remind' the presenter that the slides are ready
             self.emit('newSlides');
           });
           logger.log('Getting speech for topic', this.topic.label);
-          tts.getSpeech(this.description, 'en_GB');
+          tts.getSpeech(this.description, 'en_GB', true);
 
           this.inited = true;
         },
+		
 
         next: function () {
           var slide;

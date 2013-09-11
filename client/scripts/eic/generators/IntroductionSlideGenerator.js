@@ -1,8 +1,5 @@
 /*!
  * EIC IntroductionSlideGenerator
- * 
- * This class creates a series of predefined introduction slides about the starting point.
- * 
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
@@ -76,7 +73,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
 
           // Create audio
           var self = this;
-          new TTSService().getSpeech(text, 'en_GB', function (response) {
+          new TTSService().getSpeech(text, 'en_GB', false, function (response) {
             self.audioURL = response.snd_url;
           });
         },

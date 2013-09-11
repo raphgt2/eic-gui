@@ -1,8 +1,5 @@
 /*!
  * EIC OutroductionSlideGenerator
- * 
- * This class creates a summarization slide of the presented path with share controls.
- * 
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
@@ -86,7 +83,7 @@ function ($, BaseSlideGenerator, TTSService) {
                    (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
                    "including " + this.endTopic.label + "!";
 
-        tts.getSpeech(text, 'en_GB', function (response) {
+        tts.getSpeech(text, 'en_GB', false, function (response) {
           self.audioURL = response.snd_url;
         });
       }

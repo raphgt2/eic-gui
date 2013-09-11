@@ -1,24 +1,47 @@
 /*jshint browser: true*/
-
+ 
 (function (requirejs) {
   "use strict";
-
+ 
   requirejs.config({
     baseUrl : 'scripts',
-    shim : {
-      'lib/jquery' : {
-        exports : 'jQuery'
+    shim: {
+      'lib/jquery': {
+        exports: 'jQuery'
       },
-      'lib/jvent' : {
-        exports : 'jvent'
+      'lib/jquery.ui.core': {
+        deps: ['lib/jquery']
       },
-      'lib/jplayer.min' : {
-        exports : 'jplayer'
-      }
-    }
+      'lib/jquery.ui.widget': {
+        deps: ['lib/jquery.ui.core']
+      },
+      'lib/jquery.ui.position': {
+        deps: ['lib/jquery.ui.core']
+      },
+      'lib/jquery.ui.autocomplete': {
+        deps: ['lib/jquery.ui.core', 'lib/jquery.ui.widget', 'lib/jquery.ui.position']
+      },
+      'lib/jvent': {
+        exports: 'jvent'
+      },
+      'lib/jplayer.min': {
+        deps: ['lib/jquery']
+      },
+      'lib/prefixfree.jquery': {
+        deps: ['lib/prefixfree.min']
+      },
+	  'eic/pluginsniff':{
+		exports: 'pluginsniff'
+	  },
+	  'lib/base64_handler':{
+		exports: 'base64_handler'
+	  }
+    },
   });
-
+ 
   var scripts = ['lib/jquery',
+    'eic/WAVPlayer',
+    'eic/pluginsniff',
     'eic/SlidePresenter',
     'eic/FacebookConnector',
     'eic/TTSService',
@@ -31,7 +54,7 @@
     'eic/generators/FBProfilePhotosGenerator',
     'eic/generators/YouTubeSlideGenerator',
     'eic/generators/IntroductionSlideGenerator'];
-
+ 
   requirejs(scripts, function (jQuery) {
     var scriptHolder = {};
     for (var i = 0; i < scripts.length; i++)
