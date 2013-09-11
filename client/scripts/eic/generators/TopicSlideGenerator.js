@@ -121,7 +121,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           return slide;
         },
 		
-		resendAudio: function(text){
+		resendSpeech: function(text){
 			this.ready=false;
 			var tts = new TTSService(),
 				self = this;
@@ -139,6 +139,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			});
 			logger.log('Getting speech for topic', this.topic.label);
 			tts.getSpeech(text, 'en_GB', true);	
+			this.description=text;
 		},
       });
     return TopicSlideGenerator;

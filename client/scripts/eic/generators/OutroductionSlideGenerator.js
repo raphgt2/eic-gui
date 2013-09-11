@@ -3,8 +3,8 @@
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
-define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/TTSService'],
-function ($, BaseSlideGenerator, TTSService) {
+define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/TTSService', 'lib/jvent'],
+function ($, BaseSlideGenerator, TTSService, EventEmitter) {
   "use strict";
 
   /*
@@ -22,6 +22,8 @@ function ($, BaseSlideGenerator, TTSService) {
     this.startTopic = startTopic;
     this.endTopic = endTopic;
     this.duration = duration || 1000;
+    this.description="";
+    this.ready=false;
   }
 
   $.extend(OutroductionSlideGenerator.prototype,
@@ -82,11 +84,24 @@ function ($, BaseSlideGenerator, TTSService) {
                    (this.startTopic.first_name || this.startTopic.label) +
                    (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
                    "including " + this.endTopic.label + "!";
-
+		
+		self.description=text;
         tts.getSpeech(text, 'en_GB', false, function (response) {
           self.audioURL = response.snd_url;
+          self.ready=true;
+          self.emit('newSlides');
         });
-      }
+      },
+      
+      resendSpeech: function(text) {
+		this.description=text;
+		this.ready=false;
+        tts.getSpeech(text, 'en_GB', false, function (response) {
+			self.audioURL = response.snd_url;
+			self.ready=true;
+			self.emit('newSlides');
+		});
+	  }
     });
 
   function addNavigation($container) {

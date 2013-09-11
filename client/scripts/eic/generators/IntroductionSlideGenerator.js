@@ -4,10 +4,10 @@
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
 define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/TitleSlideGenerator',
-        'eic/generators/FBProfilePhotosGenerator', 'eic/TTSService'],
-  function ($, CompositeSlideGenerator, TitleSlideGenerator, FBProfilePhotosGenerator, TTSService) {
+        'eic/generators/FBProfilePhotosGenerator', 'eic/TTSService', 'lib/jvent'],
+  function ($, CompositeSlideGenerator, TitleSlideGenerator, FBProfilePhotosGenerator, TTSService, EventEmitter) {
     "use strict";
-
+	
     var texts = {
       connected: " Is Connected",
       intro: "Once upon a time, $who wondered how $topic was connected to everything in this world. ",
@@ -21,8 +21,10 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
 
       CompositeSlideGenerator.call(this);
       this.slides = [];
+      this.description="";
       this.profile = profile;
       this.startTopic = startTopic;
+      this.ready=false;
     }
 
     $.extend(IntroductionSlideGenerator.prototype,
@@ -70,13 +72,26 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
                        .replace(/\$his/g, ['his', 'her'][gender])
                        .replace(/\$like/g, this.startTopic.label);
           }
-
+		  this.description=text;
+		  
           // Create audio
           var self = this;
           new TTSService().getSpeech(text, 'en_GB', false, function (response) {
             self.audioURL = response.snd_url;
+            self.ready=true;
+            self.emit('newSlides'); 
           });
         },
+        
+        resendSpeech: function(text){
+			this.description=text;
+			this.ready=false;
+			tts.getSpeech(text, 'en_GB', false, function (response) {
+				self.audioURL = response.snd_url;
+				self.ready=true;
+				self.emit('newSlides');
+			});
+		},
       });
 
     return IntroductionSlideGenerator;
