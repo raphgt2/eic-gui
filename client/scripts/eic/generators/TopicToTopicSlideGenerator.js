@@ -71,7 +71,7 @@ define(['lib/jquery',
 							self.ready=true;
 							self.emit('topic slides ready');									
 						})
-					},1000);
+					},5000);
 			        
 			        function waitforReady(i,callback){
 						if (i>self.generators.length){

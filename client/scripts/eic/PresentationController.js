@@ -75,15 +75,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         // Start the slide show only after all topic slides have been created. Wait a second for the topics to be generated, though   
 			// I know that the second generator in the array is the one with topic slides...    
 			// We don't REALLY need to check whether the intro/outro slides have finished, since they consistently finish faster than the topics...though we could if we wished
-        if (generator.generators[1].ready){
-			logger.log("Beginning presentation");
-			new MovieEditor($slides, generator);
-		}
-		else{
-			logger.log("Beginning presentation");
-			generator.generators[1].once('topic slides ready', function(){new MovieEditor($slides, generator);});
-		}
-        
+        new MovieEditor($slides, generator);       
         
       }
     };

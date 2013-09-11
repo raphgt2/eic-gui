@@ -43,8 +43,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
         /** Initialize all child generators. */
         init: function () {
-          //if (this.inited)
-            //return;
+          if (this.inited)
+            return;
 
           //Create all generators depending on the type of the topic
           switch (this.topic.type) {
@@ -120,6 +120,26 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
           return slide;
         },
+		
+		resendAudio: function(text){
+			this.ready=false;
+			var tts = new TTSService(),
+				self = this;
+			tts.once('speechReady', function (event, data) {
+				self.durationLeft = Math.floor(data.snd_time);
+				//Add extra time because IE definitely needs a plugin, which takes time to embed
+				if (navigator.userAgent.indexOf('MSIE') !=-1)
+					self.durationLeft +=5000;
+				
+				self.audioURL = data.snd_url;
+				logger.log('Received speech for topic', self.topic.label);
+				self.ready=true;
+				// When speech is received, 'remind' the presenter that the slides are ready
+				self.emit('newSlides');
+			});
+			logger.log('Getting speech for topic', this.topic.label);
+			tts.getSpeech(text, 'en_GB', true);	
+		},
       });
     return TopicSlideGenerator;
   });
