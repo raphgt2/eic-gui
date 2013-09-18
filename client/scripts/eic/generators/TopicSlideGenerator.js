@@ -62,8 +62,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             break;
           }
 
-          var tts = new TTSService(),
-              self = this;
+          var self = this,
+			 tts = new TTSService();
           tts.once('speechReady', function (event, data) {
             self.durationLeft = Math.floor(data.snd_time);
             //Add extra time because IE definitely needs a plugin, which takes time to embed
@@ -123,8 +123,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		
 		resendSpeech: function(text){
 			this.ready=false;
-			var tts = new TTSService(),
-				self = this;
+			var self = this,
+				tts = new TTSService();
 			tts.once('speechReady', function (event, data) {
 				self.durationLeft = Math.floor(data.snd_time);
 				//Add extra time because IE definitely needs a plugin, which takes time to embed

@@ -7,6 +7,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/TTSService', 'li
 function ($, BaseSlideGenerator, TTSService, EventEmitter) {
   "use strict";
 
+	var tts = new TTSService();
   /*
    * CLEANUP
    * Add Path
@@ -77,8 +78,8 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
       },
 
       createSpeech: function () {
-        var tts = new TTSService(),
-            self = this;
+        var self = this,
+			 tts = new TTSService();
 
         var text = "So as you can see, " +
                    (this.startTopic.first_name || this.startTopic.label) +
@@ -94,6 +95,8 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
       },
       
       resendSpeech: function(text) {
+		var self = this,
+			 tts = new TTSService();
 		this.description=text;
 		this.ready=false;
         tts.getSpeech(text, 'en_GB', false, function (response) {

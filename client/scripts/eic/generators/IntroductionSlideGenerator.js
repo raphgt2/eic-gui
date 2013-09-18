@@ -13,6 +13,8 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
       intro: "Once upon a time, $who wondered how $topic was connected to everything in this world. ",
       facebook: "You see, according to $his Facebook profile, $who likes $like. ",
     };
+    
+    var tts=new TTSService();
 
     /** Generator that creates introductory slides */
     function IntroductionSlideGenerator(startTopic, profile) {
@@ -75,8 +77,9 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
 		  this.description=text;
 		  
           // Create audio
-          var self = this;
-          new TTSService().getSpeech(text, 'en_GB', false, function (response) {
+          var self = this,
+			 tts = new TTSService();
+          tts.getSpeech(text, 'en_GB', false, function (response) {
             self.audioURL = response.snd_url;
             self.ready=true;
             self.emit('newSlides'); 
@@ -84,6 +87,8 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
         },
         
         resendSpeech: function(text){
+			var self = this,
+				tts = new TTSService();
 			this.description=text;
 			this.ready=false;
 			tts.getSpeech(text, 'en_GB', false, function (response) {

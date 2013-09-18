@@ -32,59 +32,59 @@ function($,Logger,SlidePresenter){
 			}
 		});
 		
-		var container_obj=html_obj.appendChild(document.createElement("div"));
+		var container_obj=document.createElement("div");
+		html_obj.appendChild(container_obj);
+		
 		var slide_div;
-		logger.log(generator.generators[1].generators.length);
+		
+/*		slide_div=document.createElement("div");
+        container_obj.appendChild(slide_div);
+        
+        $(slide_div).append("<div><textarea id='text'></textarea><input id='send' type='submit' value='Send' /></div>");
+        $('#send').click(function() {
+			alert("a");
+		});
+*/
 		
 		//Intro slide
-		slide_div=document.createElement("div");
-		$(slide_div).append("<div><textarea id='texta'>"+generator.generators[0].description+"</textarea><input id='senda' type='submit' value='Send' /></div>");
-		/*$(slide_div).append("<div><textarea id='text'></textarea><input id='send' type='submit' value='Send' /></div>");
-		$('#send').click(function() {
-			alert("a");
-		});*/
+		createAudioObj("a",slide_div,container_obj,generator.generators[0]);
 		
-		$("#senda").click(function(){
+		/*$("#senda").click(function(){
 			alert("a");
 			generators.generators[0].resendSpeech($('#texta').val());
 			$("#tracka").remove();
 			addAudio(slide_div,generator.generators[0],'a');
-		});
-		addAudio(slide_div,generator.generators[0],'a');
-		container_obj.appendChild(slide_div);
+		});*/
+		
+
 		
 		//topic slides
-		for (var i=1; i<generator.generators[1].generators.length; i++) //first generator in the TopicToTopicSlideGenerator is the Loading Slide
+		for (i=1; i<generator.generators[1].generators.length; i++) //first generator in the TopicToTopicSlideGenerator is the Loading Slide
 		{
-			slide_div=document.createElement("div");
-			$(slide_div).append("<div><textarea id='text"+i+"'>"+generator.generators[1].generators[i].description+"</textarea><input id='send"+i+"' type='submit' value='Send'/></div>");
-			$("#send"+i).click(function(){
-				alert("!");
-				generator.generators[1].generators[i].resendSpeech($('#text'+i).val());
-				$("#track"+i).remove();
-				addAudio(slide_div,generator.generators[1].generators[i],i);
-			});
-
-			addAudio(slide_div,generator.generators[1].generators[i],i);			
-			container_obj.appendChild(slide_div);
+			createAudioObj(i,slide_div,container_obj,generator.generators[1].generators[i]);
 		}
 		
 		//Outro slide
-		slide_div=document.createElement("div");
-		$(slide_div).append("<div><textarea id='textb'>"+generator.generators[2].description+"</textarea><input id='sendb' type='submit' value='Send'/></div>");
-		$("#sendb").click(function(){
-			generators.generators[2].resendSpeech($('#textb').val());
-			addAudio(slide_div,generator.generators[2],'b');
-		});
-		addAudio(slide_div,generator.generators[2],'b');
-		container_obj.appendChild(slide_div);
+		createAudioObj("b",slide_div,container_obj,generator.generators[2]);
 		
 	}
 	
+	function createAudioObj(i,slide_div,container_obj,slide)
+	{
+		slide_div=document.createElement("div");
+		container_obj.appendChild(slide_div);
+		$(slide_div).append("<div><textarea id='text"+i+"'>"+i+slide.description+"</textarea><input id='send"+i+"' type='submit' value='Send' /></div>");
+		$('#send'+i).click(function() {
+			alert($('#text'+i).val());
+			slide.resendSpeech($('#text'+i).val());
+			$("#track"+i).remove();
+			addAudio(slide_div,slide,i);
+		});
+		addAudio(slide_div,slide,i);
+	}
+	
 	function addAudio(html_obj, slide,id){
-		logger.log(id+": "+slide.description);
 		if (slide.ready){
-			logger.log("1");
 			if (plugintype=="Audio"){
 	             $(html_obj).append(
 	                "<audio id='track" + id + "' src='"+slide.audioURL+"' controls='true'/>");
@@ -103,7 +103,6 @@ function($,Logger,SlidePresenter){
 	        }
 		}
 		else{
-			logger.log("2");
 			slide.once('newSlides', function(){
 				logger.log(id+": finished waiting");
 				if (plugintype=="Audio"){

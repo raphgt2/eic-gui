@@ -6,10 +6,17 @@
     <script>
     function startApplication($, eic, lib) {
 		
-		var wplayer = new eic.WAVPlayer();
-		
+		var wplayer = new eic.WAVPlayer();	
+		var html_container = document.createElement("div");	
+		document.body.appendChild(html_container);
+        var slide_div=document.createElement("div");
+        html_container.appendChild(slide_div);
+        
+        $(slide_div).append("<div><textarea id='text'></textarea><input id='send' type='submit' value='Send' /></div>");
+        
         $('#send').click(function() {
 			var tts = new eic.TTSService();
+			alert($('#text').val());
 			var text = $('#text').val();
 			tts.once('speechReady',function(event,data){
 				wplayer.addTrack(data.snd_url,true);
@@ -23,7 +30,7 @@
     <script data-main="scripts/demo" src="scripts/lib/require.js" async></script>
   </head>
   <body>
-    <div><textarea id="text"></textarea><input id="send" type="submit" value="Send" /></div>
+    
     <div id="result">
     </div>
     
