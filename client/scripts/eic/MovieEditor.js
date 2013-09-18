@@ -20,62 +20,52 @@ function($,Logger,SlidePresenter){
 		document.body.appendChild(html_obj);
 		
 		$(html_obj).append("<button id=playButton>Play!</button>");
-		$("#playButton").click(function(){
-			if (generator.generators[1].ready){
-				logger.log("Beginning presentation");	
-				new SlidePresenter($slides, generator).start();
-				document.body.removeChild(html_obj);
-			}
-			else{
-				logger.log("Beginning presentation");
-				generator.generators[1].once('topic slides ready', function(){new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);});
-			}
+		$("#playButton").click(function(){			//Check that all slides have loaded (with the user changes) before attempting to play
+			generator.generators[1].waitforReady(0,function(){
+				if (generator.generators[0].ready){
+					if (generator.generators[2].ready){
+						logger.log("Beginning presentation");
+						new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
+					}
+					else {
+						generator.generators[2].once(function(){
+							logger.log("Beginning presentation");
+							new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
+						});
+					}
+				}
+				else {
+					generator.generators[0].once(function(){
+						logger.log("Beginning presentation");
+						new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
+					});
+				}
+			});
 		});
 		
 		var container_obj=document.createElement("div");
 		html_obj.appendChild(container_obj);
 		
-		var slide_div;
-		
-/*		slide_div=document.createElement("div");
-        container_obj.appendChild(slide_div);
-        
-        $(slide_div).append("<div><textarea id='text'></textarea><input id='send' type='submit' value='Send' /></div>");
-        $('#send').click(function() {
-			alert("a");
-		});
-*/
-		
 		//Intro slide
-		createAudioObj("a",slide_div,container_obj,generator.generators[0]);
-		
-		/*$("#senda").click(function(){
-			alert("a");
-			generators.generators[0].resendSpeech($('#texta').val());
-			$("#tracka").remove();
-			addAudio(slide_div,generator.generators[0],'a');
-		});*/
-		
-
+		createAudioObj("a",container_obj,generator.generators[0]);
 		
 		//topic slides
 		for (i=1; i<generator.generators[1].generators.length; i++) //first generator in the TopicToTopicSlideGenerator is the Loading Slide
 		{
-			createAudioObj(i,slide_div,container_obj,generator.generators[1].generators[i]);
+			createAudioObj(i,container_obj,generator.generators[1].generators[i]);
 		}
 		
 		//Outro slide
-		createAudioObj("b",slide_div,container_obj,generator.generators[2]);
+		createAudioObj("b",container_obj,generator.generators[2]);
 		
 	}
 	
-	function createAudioObj(i,slide_div,container_obj,slide)
+	function createAudioObj(i,container_obj,slide)
 	{
-		slide_div=document.createElement("div");
+		var slide_div=document.createElement("div");
 		container_obj.appendChild(slide_div);
-		$(slide_div).append("<div><textarea id='text"+i+"'>"+i+slide.description+"</textarea><input id='send"+i+"' type='submit' value='Send' /></div>");
+		$(slide_div).append("<div><textarea id='text"+i+"'>"+slide.description+"</textarea><input id='send"+i+"' type='submit' value='Send' /></div>");
 		$('#send'+i).click(function() {
-			alert($('#text'+i).val());
 			slide.resendSpeech($('#text'+i).val());
 			$("#track"+i).remove();
 			addAudio(slide_div,slide,i);

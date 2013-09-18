@@ -59,46 +59,13 @@ define(['lib/jquery',
                       self.addGenerator(new TopicSlideGenerator(step.topic, step.text));
                     });
                     
-                    // give the generators some time to load and stop waiting
-                    /*setTimeout(function () {
-                      self.loader.stopWaiting();
-                    }, 5000);                    */
-                    
-			        setTimeout(function(){
-						
-						waitforReady(0,function(){		
+			        setTimeout(function(){						
+						self.waitforReady(0,function(){		
 							self.loader.stopWaiting();
 							self.ready=true;
 							self.emit('topic slides ready');									
 						})
-					},5000);
-			        
-			        function waitforReady(i,callback){
-						if (i>self.generators.length){
-							i++;
-							callback();
-							return;
-					    }		
-						
-						if (!self.generators[i])	{ //Check the slideGenerator exists
-							i++;
-							waitforReady(i,callback);
-						}
-						else if (!self.generators[i].topic)	{ //Check that this is a TopicSlideGenerator exists
-							i++;
-							waitforReady(i,callback);
-						}
-						else if (self.generators[i].ready){
-							i++;
-							waitforReady(i,callback);
-						}
-						else{
-							self.generators[i].once('newSlides', function(){
-								i++; 
-								waitforReady(i,callback);
-							});
-						}
-					}
+					},3000);   
                   });
                   summ.summarize(path);
                 }
@@ -108,6 +75,33 @@ define(['lib/jquery',
           }
         },
     
+        waitforReady: function(i,callback){
+			var self=this;
+			if (i>this.generators.length){
+				i++;
+				callback();
+				return;
+			}			
+			if (!this.generators[i])	{ //Check the slideGenerator exists
+				i++;
+				this.waitforReady(i,callback);
+			}
+			else if (!this.generators[i].topic)	{ //Check that this is a TopicSlideGenerator exists
+				i++;
+				this.waitforReady(i,callback);
+			}
+			else if (this.generators[i].ready){
+				i++;
+				this.waitforReady(i,callback);
+			}
+			else{
+				this.generators[i].once('newSlides', function(){
+					i++; 
+					self.waitforReady(i,callback);
+				});
+			}
+		},
+        
         setStartTopic: function (startTopic) {
           if (this.startTopic)
             throw "startTopic already set";
