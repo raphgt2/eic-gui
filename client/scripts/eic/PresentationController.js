@@ -72,10 +72,14 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
           new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
         ]);
         
-        // Start the slide show only after all topic slides have been created. Wait a second for the topics to be generated, though   
+        //To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 			// I know that the second generator in the array is the one with topic slides...    
-        setTimeout(function(){new MovieEditor($slides, generator)},5000);       
-        
+        if (generator.generators[1].ready)
+			new MovieEditor($slides, generator);
+		else{
+			generator.generators[1].once('topic slides ready', function(){new MovieEditor($slides, generator)});
+		}
+			
       }
     };
 

@@ -15,6 +15,8 @@ function($,Logger,SlidePresenter){
 	
 	function MovieEditor($slides, generator){
 		this.generator=generator;
+		this.originalText=new Array();		//Used to save original auto-generated text
+		this.previousText=new Array();		//Used as part of an undo feature
 				
 		var html_obj=document.createElement("div");
 		document.body.appendChild(html_obj);
@@ -47,54 +49,123 @@ function($,Logger,SlidePresenter){
 		html_obj.appendChild(container_obj);
 		
 		//Intro slide
-		createAudioObj("a",container_obj,generator.generators[0]);
+		this.createAudioObj(0,container_obj,generator.generators[0]);
 		
 		//topic slides
 		for (i=1; i<generator.generators[1].generators.length; i++) //first generator in the TopicToTopicSlideGenerator is the Loading Slide
 		{
-			createAudioObj(i,container_obj,generator.generators[1].generators[i]);
+			this.createAudioObj(i+1,container_obj,generator.generators[1].generators[i]);
 		}
 		
 		//Outro slide
-		createAudioObj("b",container_obj,generator.generators[2]);
+		this.createAudioObj(generator.generators[1].generators.length+1,container_obj,generator.generators[2]);
 		
 	}
 	
-	function createAudioObj(i,container_obj,slide)
-	{
-		var slide_div=document.createElement("div");
-		container_obj.appendChild(slide_div);
-		$(slide_div).append("<div><textarea id='text"+i+"'>"+slide.description+"</textarea><input id='send"+i+"' type='submit' value='Send' /></div>");
-		$('#send'+i).click(function() {
-			slide.resendSpeech($('#text'+i).val());
-			$("#track"+i).remove();
-			addAudio(slide_div,slide,i);
-		});
-		addAudio(slide_div,slide,i);
-	}
+	MovieEditor.prototype={
 	
-	function addAudio(html_obj, slide,id){
-		if (slide.ready){
-			if (plugintype=="Audio"){
-	             $(html_obj).append(
-	                "<audio id='track" + id + "' src='"+slide.audioURL+"' controls='true'/>");
-	        }
-	        else if (plugintype=="QuickTime"){
-	             $(html_obj).append(
-	                "<embed id='track" + id + "' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
-	        }
-	        else if (plugintype=="Windows Media"){
-	             $(html_obj).append(
-	                "<embed id='track" + id + "' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
-	        }
-	        else if (plugintype=="VLC"){
-	             $(html_obj).append(
-	                "<embed id='track" + id + "' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
-	        }
-		}
-		else{
-			slide.once('newSlides', function(){
-				logger.log(id+": finished waiting");
+		createAudioObj: function(i,container_obj,slide)
+		{
+			var self=this;
+			var slide_div=document.createElement("div");
+			container_obj.appendChild(slide_div);
+			$(slide_div).append("<div><textarea id='text"+i+"'>"+slide.description+"</textarea><input id='send"+i+"' type='submit' value='Save' /><input id='undo"+i+"' type='submit' value='Undo' /><input id='default"+i+"' type='submit' value='Default' /></div>");
+			this.originalText[i]=slide.description;
+			this.previousText[i]=slide.description;
+			$('#undo'+i).hide();
+			$('#default'+i).hide();
+			$('#send'+i).hide();
+			
+			$('#text'+i).blur(function() {
+				if (self.previousText[i]==$('#text'+i).val()){
+					$('#send'+i).hide();
+					return;
+				}
+				slide.resendSpeech($('#text'+i).val());
+				$("#track"+i).remove();
+				self.addAudio(slide_div,slide,i);
+				
+				$('#undo'+i).val("Undo");
+				$('#undo'+i).show();
+				$('#send'+i).hide();
+				if (self.originalText[i]==$('#text'+i).val())
+					$('#default'+i).hide();
+				else
+					$('#default'+i).show();
+			});
+			
+			$('#text'+i).focus(function(){
+				self.previousText[i]=$('#text'+i).val()
+			});
+			
+			$('#text'+i).bind('input propertychange', function() {
+				$('#send'+i).show();
+				$('#undo'+i).hide();
+			});
+			
+			$('#send'+i).click(function() {
+				if (self.previousText[i]==$('#text'+i).val()){
+					$('#send'+i).hide();
+					return;
+				}
+				slide.resendSpeech($('#text'+i).val());
+				$("#track"+i).remove();
+				self.addAudio(slide_div,slide,i);
+				
+				$('#undo'+i).val("Undo");
+				$('#undo'+i).show();
+				$('#send'+i).hide();
+				if (self.originalText[i]==$('#text'+i).val())
+					$('#default'+i).hide();
+				else
+					$('#default'+i).show();					
+			});
+			
+			$('#undo'+i).click(function() {
+				if (self.previousText[i]==$('#text'+i).val()){
+					$('#undo'+i).hide();
+					return;					
+				}
+				slide.resendSpeech(self.previousText[i]);
+				var temp=self.previousText[i];
+				self.previousText[i]=$('#text'+i).val();
+				$('#text'+i).val(temp);
+				$("#track"+i).remove();
+				self.addAudio(slide_div,slide,i);
+				
+				if ($('#undo'+i).val()=="Undo")
+					$('#undo'+i).val("Redo");
+				else
+					$('#undo'+i).val("Undo");
+					
+				if (self.originalText[i]==$('#text'+i).val())
+					$('#default'+i).hide();
+				else
+					$('#default'+i).show();
+			});
+			
+			$('#default'+i).click(function() {				
+				if (self.originalText[i]==$('#text'+i).val()){
+					$('#default'+i).hide();
+					return;
+				}
+				self.previousText[i]=$('#text'+i).val();
+				slide.resendSpeech(self.originalText[i]);
+				$('#text'+i).val(self.originalText[i]);
+				
+				$("#track"+i).remove();
+				self.addAudio(slide_div,slide,i);
+				
+				$('#undo'+i).val("Undo");
+				$('#undo'+i).show();
+				$('#default'+i).hide();
+			});
+			
+			this.addAudio(slide_div,slide,i);
+		},
+		
+		addAudio: function(html_obj, slide,id){
+			if (slide.ready){
 				if (plugintype=="Audio"){
 		             $(html_obj).append(
 		                "<audio id='track" + id + "' src='"+slide.audioURL+"' controls='true'/>");
@@ -110,16 +181,32 @@ function($,Logger,SlidePresenter){
 		        else if (plugintype=="VLC"){
 		             $(html_obj).append(
 		                "<embed id='track" + id + "' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
-		        }	
-			});
+		        }
+			}
+			else{
+				slide.once('newSlides', function(){
+					logger.log(id+": finished waiting");
+					if (plugintype=="Audio"){
+			             $(html_obj).append(
+			                "<audio id='track" + id + "' src='"+slide.audioURL+"' controls='true'/>");
+			        }
+			        else if (plugintype=="QuickTime"){
+			             $(html_obj).append(
+			                "<embed id='track" + id + "' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
+			        }
+			        else if (plugintype=="Windows Media"){
+			             $(html_obj).append(
+			                "<embed id='track" + id + "' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
+			        }
+			        else if (plugintype=="VLC"){
+			             $(html_obj).append(
+			                "<embed id='track" + id + "' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
+			        }	
+				});
+			}
 		}
-	}
-	
-    
-    MovieEditor.prototype = {
-		
 	};
-	
+
 	return MovieEditor;
 
 });
