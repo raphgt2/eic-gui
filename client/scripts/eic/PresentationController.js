@@ -4,13 +4,13 @@
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
 define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
-  'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
-  'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/MovieEditor'],
+  'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/TopicToTopicSlideGenerator',
+  'eic/generators/TopicToTopicSlideGenerator2', 'eic/generators/CompositeSlideGenerator',
+  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/MovieEditor',  'config/URLs',],
   function ($, Logger, FacebookConnector,
-    IntroductionSlideGenerator, OutroductionSlideGenerator,
-    TopicToTopicSlideGenerator, CompositeSlideGenerator,
-    ErrorSlideGenerator, SlidePresenter, TopicSelector, MovieEditor) {
+    IntroductionSlideGenerator, OutroductionSlideGenerator, TopicToTopicSlideGenerator,
+    TopicToTopicSlideGenerator2, CompositeSlideGenerator,
+    ErrorSlideGenerator, SlidePresenter, TopicSelector, MovieEditor, urls) {
     "use strict";
     var logger = new Logger("PresentationController");
 
@@ -66,20 +66,34 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         // Add introduction, body, and outroduction generators
         logger.log("Creating slides from", this.startTopic.label, "to", this.endTopic.label);
         var generator = new CompositeSlideGenerator();
-        generator.addGenerators([
-          this.intro, // created by setting the startTopic property
-          new TopicToTopicSlideGenerator(this.startTopic, this.endTopic),
-          new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
-        ]);
         
-        //To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-			// I know that the second generator in the array is the one with topic slides...    
-        if (generator.generators[1].ready)
-			new MovieEditor($slides, generator);
-		else{
-			generator.generators[1].once('topic slides ready', function(){new MovieEditor($slides, generator)});
-		}
-			
+        $.ajax({
+                type: "GET",
+                url: urls.paths,
+                dataType: "jsonp",
+                error: function () {
+                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
+                  self.loader.stopWaiting();
+                },
+                success: function (path) {
+					this.startTopic=path.source;
+					this.endTopic=path.destination;
+					
+					generator.addGenerators([
+						new IntroductionSlideGenerator(this.startTopic, this.profile),
+						new TopicToTopicSlideGenerator2(path),
+						new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
+					]);
+        
+					//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
+					// I know that the second generator in the array is the one with topic slides...    
+					if (generator.generators[1].ready)
+						new MovieEditor($slides, generator);
+					else{
+						generator.generators[1].once('topic slides ready', function(){new MovieEditor($slides, generator)});
+					}
+                }
+           });		
       }
     };
 

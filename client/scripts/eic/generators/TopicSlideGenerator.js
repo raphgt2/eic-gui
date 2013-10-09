@@ -18,11 +18,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
     * CLEANUP
     **/
 
-    function TopicSlideGenerator(topic, description) {
+    function TopicSlideGenerator(topic, defaultDescription, description) {
       CompositeSlideGenerator.call(this);
 
       this.generators = [];
       this.topic = topic;
+      this.defaultDescription = defaultDescription;
       this.description = description;
       this.first = true;
       this.durationLeft = 0;

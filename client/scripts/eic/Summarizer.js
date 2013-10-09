@@ -44,9 +44,11 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
             break;
           }
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
-          result.topics[i].text = glue + result.topics[i].text;
+          result.topics[i].defaultText = glue + result.topics[i].defaultText;
+          if (!result.topics[i].text)
+			result.topics[i].text=result.topics[i].defaultText;
         }
-
+logger.log('results',result);
         return {
           steps: result.topics
         };
@@ -129,7 +131,8 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
                   type: item.type || '',
                   label: getLabel(item)
                 },
-                text : desc
+                defaultText : desc,
+                text: vertice.audio_text
               };
 
               if ((self.result.topics.length + self.result.links.length) === path.length) {

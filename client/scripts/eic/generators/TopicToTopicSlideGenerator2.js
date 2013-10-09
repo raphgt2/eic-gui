@@ -9,10 +9,9 @@ define(['lib/jquery',
   'eic/generators/TopicSlideGenerator',
   'eic/generators/ErrorSlideGenerator',
   'eic/Summarizer',
-  'config/URLs',
   'eic/Logger'
   ],
-  function ($, CompositeSlideGenerator, LoadingSlideGenerator, TopicSlideGenerator, ErrorSlideGenerator, Summarizer, urls, Logger) {
+  function ($, CompositeSlideGenerator, LoadingSlideGenerator, TopicSlideGenerator, ErrorSlideGenerator, Summarizer, Logger) {
     "use strict";
     
     var logger = new Logger("TopicToTopicSlideGenerator2");
@@ -22,9 +21,10 @@ define(['lib/jquery',
 
     var defaultDuration = 1000;
 
-    function TopicToTopicSlideGenerator() {
+    function TopicToTopicSlideGenerator(path) {
       CompositeSlideGenerator.call(this);
       this.ready=false;
+      this.path=path;
     }
 
     $.extend(TopicToTopicSlideGenerator.prototype,
@@ -39,19 +39,12 @@ define(['lib/jquery',
 
             if (!this.initedEnd) {
               var self = this;
-              $.ajax({
-                type: "GET",
-                url: urls.paths,
-                dataType: "jsonp",
-                error: function () {
-                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
-                  self.loader.stopWaiting();
-                },
-                success: function (path) {					
-					$.each(path.path, function(i, data){
-                      self.addGenerator(new TopicSlideGenerator(data.topic, data.audio_text));
-					});
-
+              
+              var summ = new Summarizer();
+                  $(summ).one('generated', function (event, story) {
+                    story.steps.forEach(function (step) {
+                      self.addGenerator(new TopicSlideGenerator(step.topic, step.defaultText, step.text));
+                    });
                     
 			        setTimeout(function(){						
 						self.waitforReady(0,function(){		
@@ -60,10 +53,9 @@ define(['lib/jquery',
 							self.emit('topic slides ready');									
 						})
 					},3000);   
-				  });
-                  summ.summarize(path);
-                }
-              });
+                  });
+              summ.summarize(this.path);            
+              
               this.initedEnd = true;
             }
         },
