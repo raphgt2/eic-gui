@@ -43,7 +43,7 @@ define(['lib/jquery',
               var summ = new Summarizer();
                   $(summ).one('generated', function (event, story) {
                     story.steps.forEach(function (step) {
-                      self.addGenerator(new TopicSlideGenerator(step.topic, step.defaultText, step.text));
+                      self.addGenerator(new TopicSlideGenerator(step.topic, step.hash_object));
                     });
                     
 			        setTimeout(function(){						

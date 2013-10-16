@@ -23,9 +23,8 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
 
       CompositeSlideGenerator.call(this);
       this.slides = [];
-      this.description="";
       this.profile = profile;
-      this.startTopic = startTopic;
+      this.hash_object = startTopic;
       this.ready=false;
     }
 
@@ -55,7 +54,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
             this.addGenerator(new FBProfilePhotosGenerator(this.profile, 5));
           }
           else {
-            this.addGenerator(new TitleSlideGenerator(this.startTopic.label + texts.connected, 8000));
+            this.addGenerator(new TitleSlideGenerator(this.hash_object.label + texts.connected, 8000));
           }
         },
 
@@ -64,7 +63,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
           var text = texts.intro;
           if (!this.profile) {
             text = text.replace(/\$who/g, "people")
-                       .replace(/\$topic/g, this.startTopic.label);
+                       .replace(/\$topic/g, this.hash_object.label);
           }
           else {
             var gender = this.profile.gender === 'male' ? 0 : 1;
@@ -74,7 +73,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
                        .replace(/\$his/g, ['his', 'her'][gender])
                        .replace(/\$like/g, this.startTopic.label);
           }
-		  this.description=text;
+		  this.hash_object.audio_text=text;
 		  
           // Create audio
           var self = this,
@@ -89,10 +88,11 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
         resendSpeech: function(text){
 			var self = this,
 				tts = new TTSService();
-			this.description=text;
+			this.hash_object.audio_text=text;
 			this.ready=false;
 			tts.getSpeech(text, 'en_GB', false, function (response) {
 				self.audioURL = response.snd_url;
+				self.hash_object.audio_time = Math.floor(response.snd_time);
 				self.ready=true;
 				self.emit('newSlides');
 			});

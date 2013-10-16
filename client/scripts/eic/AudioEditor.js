@@ -1,6 +1,6 @@
 define(['lib/jquery','eic/Logger','eic/SlidePresenter','eic/pluginsniff'],
 function($,Logger,SlidePresenter){
-	var logger = new Logger("MovieEditor");
+	var logger = new Logger("AudioEditor");
 	var plugintype;
 	
 	if (Audio){
@@ -13,33 +13,46 @@ function($,Logger,SlidePresenter){
         plugintype=Plugin.getPluginsForMimeType("audio/wav");
     }
 	
-	function MovieEditor($slides, generator){
+	function AudioEditor($slides, generator, path){
+		this.hash_object = path;
 		this.generator=generator;
-		this.originalText=new Array();		//Used to save original auto-generated text
 		this.previousText=new Array();		//Used as part of an undo feature
-				
+		
 		var html_obj=document.createElement("div");
 		document.body.appendChild(html_obj);
 		
+		var self = this;		
 		$(html_obj).append("<button id=playButton>Play!</button>");
 		$("#playButton").click(function(){			//Check that all slides have loaded (with the user changes) before attempting to play
 			generator.generators[1].waitforReady(0,function(){
 				if (generator.generators[0].ready){
 					if (generator.generators[2].ready){
 						logger.log("Beginning presentation");
+						logger.log('revised hash_object:', self.hash_object);
 						new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
 					}
 					else {
 						generator.generators[2].once(function(){
 							logger.log("Beginning presentation");
+							logger.log('revised hash_object:', self.hash_object);
 							new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
 						});
 					}
 				}
 				else {
 					generator.generators[0].once(function(){
-						logger.log("Beginning presentation");
-						new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
+						if (generator.generators[2].ready){
+							logger.log("Beginning presentation");
+							logger.log('revised hash_object:', self.hash_object);
+							new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
+						}
+						else {
+							generator.generators[2].once(function(){
+								logger.log("Beginning presentation");
+								logger.log('revised hash_object:', self.hash_object);
+								new SlidePresenter($slides, generator).start(); document.body.removeChild(html_obj);
+							});
+						}
 					});
 				}
 			});
@@ -60,18 +73,19 @@ function($,Logger,SlidePresenter){
 		//Outro slide
 		this.createAudioObj(generator.generators[1].generators.length+1,container_obj,generator.generators[2]);
 		
+		
+		logger.log('original hash_object', path);
 	}
 	
-	MovieEditor.prototype={
+	AudioEditor.prototype={
 	
 		createAudioObj: function(i,container_obj,slide)
 		{
 			var self=this;
 			var slide_div=document.createElement("div");
 			container_obj.appendChild(slide_div);
-			$(slide_div).append("<div><textarea id='text"+i+"'>"+slide.description+"</textarea><input id='send"+i+"' type='submit' value='Save' /><input id='undo"+i+"' type='submit' value='Undo' /><input id='default"+i+"' type='submit' value='Default' /></div>");
-			this.originalText[i]=slide.description;
-			this.previousText[i]=slide.description;
+			$(slide_div).append("<div><textarea id='text"+i+"'>"+slide.hash_object.audio_text+"</textarea><input id='send"+i+"' type='submit' value='Save' /><input id='undo"+i+"' type='submit' value='Undo' /><input id='default"+i+"' type='submit' value='Default' /></div>");
+			this.previousText[i]=slide.hash_object.audio_text;
 			$('#undo'+i).hide();
 			$('#default'+i).hide();
 			$('#send'+i).hide();
@@ -88,7 +102,7 @@ function($,Logger,SlidePresenter){
 				$('#undo'+i).val("Undo");
 				$('#undo'+i).show();
 				$('#send'+i).hide();
-				if (self.originalText[i]==$('#text'+i).val())
+				if (slide.hash_object.defaultDescription==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();
@@ -96,11 +110,19 @@ function($,Logger,SlidePresenter){
 			
 			$('#text'+i).focus(function(){
 				self.previousText[i]=$('#text'+i).val()
+				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+					$('#default'+i).hide();
+				else
+					$('#default'+i).show();
 			});
 			
 			$('#text'+i).bind('input propertychange', function() {
 				$('#send'+i).show();
 				$('#undo'+i).hide();
+				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+					$('#default'+i).hide();
+				else
+					$('#default'+i).show();
 			});
 			
 			$('#send'+i).click(function() {
@@ -115,7 +137,7 @@ function($,Logger,SlidePresenter){
 				$('#undo'+i).val("Undo");
 				$('#undo'+i).show();
 				$('#send'+i).hide();
-				if (self.originalText[i]==$('#text'+i).val())
+				if (slide.hash_object.defaultDescription==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();					
@@ -138,20 +160,20 @@ function($,Logger,SlidePresenter){
 				else
 					$('#undo'+i).val("Undo");
 					
-				if (self.originalText[i]==$('#text'+i).val())
+				if (slide.hash_object.defaultDescription==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();
 			});
 			
 			$('#default'+i).click(function() {				
-				if (self.originalText[i]==$('#text'+i).val()){
+				if (slide.hash_object.defaultDescription==$('#text'+i).val()){
 					$('#default'+i).hide();
 					return;
 				}
 				self.previousText[i]=$('#text'+i).val();
-				slide.resendSpeech(self.originalText[i]);
-				$('#text'+i).val(self.originalText[i]);
+				slide.resendSpeech(slide.hash_object.defaultDescription);
+				$('#text'+i).val(slide.hash_object.defaultDescription);
 				
 				$("#track"+i).remove();
 				self.addAudio(slide_div,slide,i);
@@ -207,6 +229,6 @@ function($,Logger,SlidePresenter){
 		}
 	};
 
-	return MovieEditor;
+	return AudioEditor;
 
 });

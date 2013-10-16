@@ -21,7 +21,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     BaseSlideGenerator.call(this);
 
     this.startTopic = startTopic;
-    this.endTopic = endTopic;
+    this.hash_object = endTopic;		//used to be known as 'endTopic'
     this.duration = duration || 1000;
     this.description="";
     this.ready=false;
@@ -84,9 +84,9 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
         var text = "So as you can see, " +
                    (this.startTopic.first_name || this.startTopic.label) +
                    (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
-                   "including " + this.endTopic.label + "!";
+                   "including " + this.hash_object.label + "!";
 		
-		self.description=text;
+		self.hash_object.audio_text=text;
         tts.getSpeech(text, 'en_GB', false, function (response) {
           self.audioURL = response.snd_url;
           self.ready=true;

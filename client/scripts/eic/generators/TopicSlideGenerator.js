@@ -18,13 +18,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
     * CLEANUP
     **/
 
-    function TopicSlideGenerator(topic, defaultDescription, description) {
+    function TopicSlideGenerator(topic, hash_object) {
       CompositeSlideGenerator.call(this);
-
+	  this.hash_object = hash_object;
       this.generators = [];
       this.topic = topic;
-      this.defaultDescription = defaultDescription;
-      this.description = description;
       this.first = true;
       this.durationLeft = 0;
       this.audioURL ='';
@@ -71,6 +69,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             if (navigator.userAgent.indexOf('MSIE') !=-1)
 				self.durationLeft +=5000;
 				
+			self.hash_object.audio_time = self.durationLeft;
+				
             self.audioURL = data.snd_url;
             logger.log('Received speech for topic', self.topic.label);
             self.ready=true;
@@ -78,7 +78,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             self.emit('newSlides');
           });
           logger.log('Getting speech for topic', this.topic.label);
-          tts.getSpeech(this.description, 'en_GB', true);
+          tts.getSpeech(this.hash_object.audio_text, 'en_GB', true);
 
           this.inited = true;
         },
@@ -131,6 +131,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				//Add extra time because IE definitely needs a plugin, which takes time to embed
 				if (navigator.userAgent.indexOf('MSIE') !=-1)
 					self.durationLeft +=5000;
+					
+				self.hash_object.audio_time = self.durationLeft;
 				
 				self.audioURL = data.snd_url;
 				logger.log('Received speech for topic', self.topic.label);
@@ -140,7 +142,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			});
 			logger.log('Getting speech for topic', this.topic.label);
 			tts.getSpeech(text, 'en_GB', true);	
-			this.description=text;
+			this.hash_object.audio_text=text;
 		},
       });
     return TopicSlideGenerator;

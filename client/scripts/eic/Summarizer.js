@@ -31,7 +31,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
       /**
        * Generate the result formatted as the 'test' .json
        */
-      function formatResult(result) {
+      function formatResult(result, vertices) {			
         for (var i = 1; i < result.topics.length; i++) {
           var glue = '';
           var sentence = result.links[i - 1][Math.round(Math.random())];
@@ -44,11 +44,18 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
             break;
           }
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
-          result.topics[i].defaultText = glue + result.topics[i].defaultText;
-          if (!result.topics[i].text)
-			result.topics[i].text=result.topics[i].defaultText;
+          result.topics[i].hash_object.defaultText = glue + result.topics[i].hash_object.defaultText;
+          if (!result.topics[i].hash_object.audio_text)
+			result.topics[i].hash_object.audio_text=result.topics[i].hash_object.defaultText;
+		  //updating the hash object
+		  //vertices[i].audio_text = result.topics[i].text;
         }
-logger.log('results',result);
+        
+        //to handle the first node
+		if (!result.topics[0].text)
+		  result.topics[0].hash_object.audio_text=result.topics[0].hash_object.defaultText;
+		//vertices[0].audio_text = result.topics[0].text;
+		
         return {
           steps: result.topics
         };
@@ -90,9 +97,9 @@ logger.log('results',result);
         $(edges).each(retrieveTranscription);
       }
 
-      function retrieveAbstracts(vertices) {
+      function retrieveAbstracts(vertices) {	  
+		  
         var uri = vertices.map(function (vertice) { return vertice.uri; });
-
         $.ajax({
           url: urls.abstracts,
           dataType: 'json',
@@ -125,20 +132,24 @@ logger.log('results',result);
 
               var item = abstracts[uri] || {},
                   desc = getDescription(item);
-
+                  
+              vertice.defaultText = desc;
+              
               self.result.topics[index] = {
                 topic : {
                   type: item.type || '',
                   label: getLabel(item)
                 },
-                defaultText : desc,
-                text: vertice.audio_text
+                hash_object: vertice
+                //defaultText : desc,
+                //text: vertice.audio_text,
+                //slide_description: vertice.slide_description
               };
 
               if ((self.result.topics.length + self.result.links.length) === path.length) {
-                $(self).trigger('generated', formatResult(self.result));
+                $(self).trigger('generated', formatResult(self.result, vertices));
               }
-
+			  logger.log('created', self.result.topics[index]);
               logger.log('Resource', vertice);
               logger.log('Extracted text', desc);
             }

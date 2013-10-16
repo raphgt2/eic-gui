@@ -6,11 +6,11 @@
 define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/TopicToTopicSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator2', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/MovieEditor',  'config/URLs',],
+  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/AudioEditor',  'config/URLs',],
   function ($, Logger, FacebookConnector,
     IntroductionSlideGenerator, OutroductionSlideGenerator, TopicToTopicSlideGenerator,
     TopicToTopicSlideGenerator2, CompositeSlideGenerator,
-    ErrorSlideGenerator, SlidePresenter, TopicSelector, MovieEditor, urls) {
+    ErrorSlideGenerator, SlidePresenter, TopicSelector, AudioEditor, urls) {
     "use strict";
     var logger = new Logger("PresentationController");
 
@@ -87,10 +87,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         
 					//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 					// I know that the second generator in the array is the one with topic slides...    
-					if (generator.generators[1].ready)
-						new MovieEditor($slides, generator);
+					if (generator.generators[1].ready){
+						new AudioEditor($slides, generator, path);
+					}
 					else{
-						generator.generators[1].once('topic slides ready', function(){new MovieEditor($slides, generator)});
+						generator.generators[1].once('topic slides ready', function(){new AudioEditor($slides, generator, path)});
 					}
                 }
            });		
