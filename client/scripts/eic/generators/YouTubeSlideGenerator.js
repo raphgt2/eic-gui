@@ -1,35 +1,39 @@
 /*!
- * EIC YouTubeSlideGenerator
- * Copyright 2012, Multimedia Lab - Ghent University - iMinds
- * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
- */
-define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
-function ($, BaseSlideGenerator) {
+* EIC YouTubeSlideGenerator
+*
+* This class generates slides that contain YouTube videos
+*
+* Copyright 2012, Multimedia Lab - Ghent University - iMinds
+* Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
+*/
+define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/Logger'],
+function ($, BaseSlideGenerator, Logger) {
   "use strict";
   
   /*
-   * CLEANUP
-   **/
-  
+* CLEANUP
+**/
+  var logger = new Logger("YouTubeSlideGenerator");
   var playerCount = 0;
 
   /** Generator of YouTube videos using the YouTube API
-   * The option parameter is a hash consisting of
-   * - the maximum number of videos to return
-   * - the maximum duration (in milliseconds) of a video
-   * - the skipping duration (in milliseconds) at the beginning of the video
-   */
+* The option parameter is a hash consisting of
+* - the maximum number of videos to return
+* - the maximum duration (in milliseconds) of a video
+* - the skipping duration (in milliseconds) at the beginning of the video
+*/
   function YouTubeSlideGenerator(topic, options) {
     BaseSlideGenerator.call(this);
 
     this.topic = topic;
-    options = options || {};
+    options = options || {};
     this.maxVideoCount = options.maxVideoCount || 1;
     this.maxVideoDuration = options.maxVideoDuration || 5000;
     this.skipVideoDuration = options.skipVideoDuration || 10000;
     this.orderMethod = options.orderMethod || 'relevance';
     this.totalDuration = 0;
     this.slides = [];
+    this.slide_info = [];
   }
 
   $.extend(YouTubeSlideGenerator.prototype,
@@ -89,6 +93,16 @@ function ($, BaseSlideGenerator) {
         start = 0;
       duration = end - start;
       this.totalDuration += duration;
+      
+      this.slide_info.push({
+		type: "YouTubeSlideGenerator",
+		data: {
+			videoID: videoID,
+			start: start,
+			end: end,
+			duration: duration,  
+		},
+	  });
       
       // create a container that will hide the player
       var playerId = 'ytplayer' + (++playerCount),
@@ -150,43 +164,19 @@ function ($, BaseSlideGenerator) {
     }
     var inspected = 0;
     var resultCounter = startResults;
-    $.ajax('https://gdata.youtube.com/feeds/api/videos?v=2&max-results=' + maxResult + '&orderby=' + self.orderMethod + '&alt=jsonc&q=' + self.topic.label)
+    $.ajax('https://gdata.youtube.com/feeds/api/videos?v=2&max-results=' + maxResult + '&orderby=' + self.orderMethod + '&alt=jsonc&q=' + self.topic.label + "&format=5")
      .success(function (response) {
-        var nrOfItems = response.data.items.length;
-        response.data.items.forEach(function (item) {
-          if (inspected >= skip && item.restrictions === undefined) {
-            $.ajax('http://www.youtube.com/get_video_info?video_id=' + item.id + '&el=embedded')
-            .success(function (res) {
-              if (res.substr(0, 11) != 'status=fail' && resultCounter != self.maxVideoCount) {
-                self.addVideoSlide(item.id, item.duration * 1000);
-                resultCounter++;
-              }
-            })
-            .always(function (res) {
-              inspected++;
-              if (resultCounter != self.maxVideoCount) {
-                checkStatus(self, inspected, nrOfItems, maxResult, resultCounter);
-              }
-            });
-          } else {
-            inspected++;
-            if (resultCounter != self.maxVideoCount) {
-              checkStatus(self, inspected, nrOfItems, maxResult, resultCounter);
-            }
-          }
-        });
+        var items, itemCount;
+        if (response.data.items)
+			items = response.data.items;
+		else
+			items = 0;
+			
+        itemCount = Math.min(items.length, self.maxVideoCount);
+        for (var i = 0; i < itemCount; i++)
+          self.addVideoSlide(items[i].id, items[i].duration * 1000);
       });
   }
-  
-  function checkStatus(self, inspected, nrOfItems, maxResult, foundResults) {
-    if (inspected == nrOfItems && nrOfItems == maxResult && maxResult != 50) {
-      searchVideos(self, foundResults, maxResult * 2, inspected);
-    }
-  }
-  
+
   return YouTubeSlideGenerator;
 });
-
-
-
-

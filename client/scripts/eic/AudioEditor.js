@@ -184,6 +184,9 @@ function($,Logger,SlidePresenter){
 			});
 			
 			this.addAudio(slide_div,slide,i);
+			
+			var description_div = document.createElement("div");
+			container_obj.appendChild(description_div);
 		},
 		
 		addAudio: function(html_obj, slide,id){

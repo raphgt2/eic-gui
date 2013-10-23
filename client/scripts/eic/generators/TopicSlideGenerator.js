@@ -144,6 +144,15 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			tts.getSpeech(text, 'en_GB');	
 			this.hash_object.audio_text=text;
 		},
+		
+		updateHash: function(){
+			var combined = [];
+			for (var i = 0; i < this.generators.length; i++){
+				combined=combined.concat(this.generators[i].slide_info);
+			}
+			
+			this.hash_object.slide_description = combined;
+		},
       });
     return TopicSlideGenerator;
   });
