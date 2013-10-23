@@ -78,7 +78,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             self.emit('newSlides');
           });
           logger.log('Getting speech for topic', this.topic.label);
-          tts.getSpeech(this.hash_object.audio_text, 'en_GB', true);
+          tts.getSpeech(this.hash_object.audio_text, 'en_GB');
 
           this.inited = true;
         },
@@ -141,7 +141,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				self.emit('newSlides');
 			});
 			logger.log('Getting speech for topic', this.topic.label);
-			tts.getSpeech(text, 'en_GB', true);	
+			tts.getSpeech(text, 'en_GB');	
 			this.hash_object.audio_text=text;
 		},
       });

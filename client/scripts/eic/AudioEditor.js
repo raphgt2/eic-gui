@@ -102,7 +102,7 @@ function($,Logger,SlidePresenter){
 				$('#undo'+i).val("Undo");
 				$('#undo'+i).show();
 				$('#send'+i).hide();
-				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+				if (slide.hash_object.defaultText==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();
@@ -110,7 +110,7 @@ function($,Logger,SlidePresenter){
 			
 			$('#text'+i).focus(function(){
 				self.previousText[i]=$('#text'+i).val()
-				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+				if (slide.hash_object.defaultText==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();
@@ -119,7 +119,7 @@ function($,Logger,SlidePresenter){
 			$('#text'+i).bind('input propertychange', function() {
 				$('#send'+i).show();
 				$('#undo'+i).hide();
-				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+				if (slide.hash_object.defaultText==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();
@@ -137,7 +137,7 @@ function($,Logger,SlidePresenter){
 				$('#undo'+i).val("Undo");
 				$('#undo'+i).show();
 				$('#send'+i).hide();
-				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+				if (slide.hash_object.defaultText==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();					
@@ -160,20 +160,20 @@ function($,Logger,SlidePresenter){
 				else
 					$('#undo'+i).val("Undo");
 					
-				if (slide.hash_object.defaultDescription==$('#text'+i).val())
+				if (slide.hash_object.defaultText==$('#text'+i).val())
 					$('#default'+i).hide();
 				else
 					$('#default'+i).show();
 			});
 			
 			$('#default'+i).click(function() {				
-				if (slide.hash_object.defaultDescription==$('#text'+i).val()){
+				if (slide.hash_object.defaultText==$('#text'+i).val()){
 					$('#default'+i).hide();
 					return;
 				}
 				self.previousText[i]=$('#text'+i).val();
-				slide.resendSpeech(slide.hash_object.defaultDescription);
-				$('#text'+i).val(slide.hash_object.defaultDescription);
+				slide.resendSpeech(slide.hash_object.defaultText);
+				$('#text'+i).val(slide.hash_object.defaultText);
 				
 				$("#track"+i).remove();
 				self.addAudio(slide_div,slide,i);

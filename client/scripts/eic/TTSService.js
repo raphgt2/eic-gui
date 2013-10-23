@@ -27,13 +27,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
     }
 
     TTSService.prototype = {
-      getSpeech: function (text, lang, need_time, callback) {
+      getSpeech: function (text, lang, callback) {
         var self = this;
         var speech_url;
-			if (need_time)
-				speech_url = urls.festivalcheck;
-			else
-				speech_url = urls.festivalspeech;
+		speech_url = urls.festivalcheck;
+
         logger.log('Requesting audio URL ' + text);
         sendSpeech(0);
         
@@ -61,7 +59,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 	            }
 	            else {
 	              if (attempt==4){
-					logger.log('Error receiving speech', data.err_code);
+					logger.log('Error receiving speech', data);
 					alert("Speech synthesis error");
 					self.emit('speechError', data);
 	              }
@@ -73,9 +71,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 	          },
 	          error: function (error) {
 	            if (attempt==4){
-					logger.log('Error receiving speech', data.err_code);
+					logger.log('Error receiving speech', error);
 					alert("Speech synthesis error");
-					self.emit('speechError', data);
+					self.emit('speechError', error);
 	              }
 	              else{
 					  logger.log('Error with speech, new attempt: ' + attempt);

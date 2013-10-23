@@ -87,7 +87,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
                    "including " + this.hash_object.label + "!";
 		
 		self.hash_object.audio_text=text;
-        tts.getSpeech(text, 'en_GB', false, function (response) {
+        tts.getSpeech(text, 'en_GB', function (response) {
           self.audioURL = response.snd_url;
           self.ready=true;
           self.emit('newSlides');
@@ -99,7 +99,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
 			 tts = new TTSService();
 		this.description=text;
 		this.ready=false;
-        tts.getSpeech(text, 'en_GB', false, function (response) {
+        tts.getSpeech(text, 'en_GB', function (response) {
 			self.audioURL = response.snd_url;
 			self.ready=true;
 			self.emit('newSlides');

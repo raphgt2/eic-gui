@@ -78,7 +78,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
           // Create audio
           var self = this,
 			 tts = new TTSService();
-          tts.getSpeech(text, 'en_GB', false, function (response) {
+          tts.getSpeech(text, 'en_GB', function (response) {
             self.audioURL = response.snd_url;
             self.ready=true;
             self.emit('newSlides'); 
@@ -90,7 +90,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
 				tts = new TTSService();
 			this.hash_object.audio_text=text;
 			this.ready=false;
-			tts.getSpeech(text, 'en_GB', false, function (response) {
+			tts.getSpeech(text, 'en_GB', function (response) {
 				self.audioURL = response.snd_url;
 				self.hash_object.audio_time = Math.floor(response.snd_time);
 				self.ready=true;
