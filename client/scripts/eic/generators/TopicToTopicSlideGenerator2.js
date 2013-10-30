@@ -6,12 +6,12 @@
 define(['lib/jquery',
   'eic/generators/CompositeSlideGenerator',
   'eic/generators/LoadingSlideGenerator',
-  'eic/generators/TopicSlideGenerator',
+  'eic/generators/CustomSlideGenerator',
   'eic/generators/ErrorSlideGenerator',
   'eic/Summarizer',
   'eic/Logger'
   ],
-  function ($, CompositeSlideGenerator, LoadingSlideGenerator, TopicSlideGenerator, ErrorSlideGenerator, Summarizer, Logger) {
+  function ($, CompositeSlideGenerator, LoadingSlideGenerator, CustomSlideGenerator, ErrorSlideGenerator, Summarizer, Logger) {
     "use strict";
     
     var logger = new Logger("TopicToTopicSlideGenerator2");
@@ -43,7 +43,7 @@ define(['lib/jquery',
               var summ = new Summarizer();
                   $(summ).one('generated', function (event, story) {
                     story.steps.forEach(function (step) {
-                      self.addGenerator(new TopicSlideGenerator(step.topic, step.hash_object));
+                      self.addGenerator(new CustomSlideGenerator(step.topic, step.hash_object));
                     });
                     
 			        setTimeout(function(){						
