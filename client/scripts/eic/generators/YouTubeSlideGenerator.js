@@ -83,6 +83,7 @@ function ($, BaseSlideGenerator, Logger) {
 
     /** Adds a new video slide. */
     addVideoSlide: function (videoID, duration, Start, Stop) {
+
       var self = this, start, end;
       
       if (!Start && !Stop){
@@ -100,7 +101,7 @@ function ($, BaseSlideGenerator, Logger) {
       duration = end - start;
       this.totalDuration += duration;
       
-      
+
       // create a container that will hide the player
       var playerId = 'ytplayer' + (++playerCount),
           $container = $('<div>').append($('<div>').prop('id', playerId))
@@ -166,6 +167,7 @@ function ($, BaseSlideGenerator, Logger) {
   });
   
   function searchVideos(self, startResults, maxResult, skip) {
+	  	  
     if (maxResult > 50) { //YouTube API restriction
       maxResult = 50;
     }

@@ -57,19 +57,28 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						$(image).load(function () {
 							// add the image if it loads and we still need slides
 							slide.addImageSlide(image.src, description.data.duration);
-							logger.log('description', description);
 						});
-						image.src = description.data.uri;
-						self.generators.push(slide);				
+						image.src = description.data.uri;		
+						self.addGenerator(slide,true);
 						
 						break;
-					  /*case "YouTubeSlide":
+					  case "YouTubeSlide":
 						slide = new YouTubeSlideGenerator(self.topic);
-						slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.stop);
-						self.addGenerator(slide, true);
-						self.slides = self.slide.concat(slide.slides);
+						self.addGenerator(slide,true);
+						
+						//Check if we've gotten the youtube API yet, otherwise grab it and wait for the functions to be visible before trying to make the slide
+						if (!window.YT){
+							$.getScript("http://www.youtube.com/player_api", function () {
+								setTimeout(function(){
+									slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.end);
+								},3000);
+							});
+						}
+						else
+							slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.stop);
+						
 						break;
-					  case "GoogleMapSlide":
+					  /*case "GoogleMapSlide":
 						break;					*/
 				  }
 				  
@@ -241,7 +250,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				}
 			}
 			this.hash_object.slide_description = combinedInfo;
-			
 
 		},
       });
