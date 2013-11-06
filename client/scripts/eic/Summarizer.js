@@ -52,7 +52,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
         }
         
         //to handle the first node
-		if (!result.topics[0].text)
+		if (!result.topics[0].hash_object.audio_text)
 		  result.topics[0].hash_object.audio_text=result.topics[0].hash_object.defaultText;
 		//vertices[0].audio_text = result.topics[0].text;
 		
