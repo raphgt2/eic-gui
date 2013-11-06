@@ -1,34 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset='utf-8'>
-    <title>Everything Is Connected — Slide Presenter demo</title>
+    <title></title>
+    <meta charset="UTF-8">
     <script>
-      function startApplication($, eic) {
-
-        $('#start').click(function() {
-          var topic = {label:$('#topic').val()};
-          var description = $('#description').val();
-          var generators = new eic.TopicSlideGenerator(topic, description);
-          var presenter = new eic.SlidePresenter('#main .slides', generators,'#main .audio');
-
-          presenter.start();
-        });
-      }
+    function startApplication($, eic, lib) {
+		
+		var html_obj=document.createElement("div");
+		document.body.appendChild(html_obj);
+		
+		var self = this;		
+		$(html_obj).append("<button id=playButton>Play!</button>");
+        
+        
+        $("#playButton").click(function(){
+			var controller = new eic.PresentationController();
+			controller.playMovie();
+		 });
+    }
+    
     </script>
     <script data-main="scripts/demo" src="scripts/lib/require.js" async></script>
-    <link rel="stylesheet" href="stylesheets/demo.css" />
   </head>
-  <body>
-    <div id="main">
-      <div id="input">
-        <input id="topic" size="100" value="David Guetta" />
-        <textarea id="description" cols="50">Pierre David Guetta, known professionally as David Guetta, is a French house music producer and DJ. Originally a DJ at nightclubs during the 1980s and 1990s, he co-founded Gum Productions and released his first album, Just a Little More Love, in 2002.</textarea>
-        <input id="start" type="submit" value="Start" />
-      </div>
-      <div class="slides">
-      </div>
-      <div class="audio"></div>
-    </div>
-  </body>
+  <body>    
+	</body>
 </html>
