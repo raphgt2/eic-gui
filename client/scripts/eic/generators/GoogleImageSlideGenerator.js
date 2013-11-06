@@ -29,7 +29,6 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
       this.topic = topic;
       this.maxResults = maxResults || 4;
       this.slides = [];
-      this.slide_info = [];
       this.cnt = 0;
     }
 
@@ -80,18 +79,19 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
         },
 
         /** Adds a new image slide. */
-        addImageSlide: function (imageUrl) {
+        addImageSlide: function (imageUrl, duration) {
           var $image = $('<img>').attr('src', imageUrl),
           $figure = $('<figure>').append($image),
-          slide = this.createBaseSlide('image', $figure, defaultDuration);
+          slide = this.createBaseSlide('image', $figure, duration || defaultDuration);
           
-          this.slide_info.push({
-			  type: "GoogleImageSlideGenerator",
+		  
+		  slide.slide_info = {
+			  type: "GoogleImageSlide",
 			  data: {
 				  url: imageUrl,
-				  duration: defaultDuration
-			  },
-		  });
+				  duration: duration || defaultDuration
+			  }
+		  };
 
           slide.on('started', function () {
             setTimeout($.proxy($image, 'addClass', 'zoom'));

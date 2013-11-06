@@ -45,22 +45,52 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         init: function () {
           if (this.inited)
             return;
+		
+		var self  = this;
+		  if (this.hash_object.slide_description) {
+			  this.hash_object.slide_description.forEach(function(description){
+				  var slide;
+				  switch(description.type){
+					  case "GoogleImageSlide":
+						slide = new GoogleImageSlideGenerator(self.topic);
+						var image = new Image();
+						$(image).load(function () {
+							// add the image if it loads and we still need slides
+							slide.addImageSlide(image.src, description.data.duration);
+							logger.log('description', description);
+						});
+						image.src = description.data.uri;
+						self.generators.push(slide);				
+						
+						break;
+					  /*case "YouTubeSlide":
+						slide = new YouTubeSlideGenerator(self.topic);
+						slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.stop);
+						self.addGenerator(slide, true);
+						self.slides = self.slide.concat(slide.slides);
+						break;
+					  case "GoogleMapSlide":
+						break;					*/
+				  }
+				  
+			  });
+		  }
+		  else{
+			//Create all generators depending on the type of the topic
+			switch (this.topic.type) {
+			case "http://dbpedia.org/ontology/PopulatedPlace":
+				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
+				this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+				this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
+				break;
+			default:
+				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
+				this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+				break;
+			}
+		  }
 
-          //Create all generators depending on the type of the topic
-          switch (this.topic.type) {
-          case "http://dbpedia.org/ontology/PopulatedPlace":
-            this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-            this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
-            this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
-            break;
-          default:
-            this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-            this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
-            break;
-          }
-
-          var self = this,
-			 tts = new TTSService();
+          var tts = new TTSService();
           tts.once('speechReady', function (event, data) {
             self.durationLeft = Math.floor(data.snd_time);
             //Add extra time because IE definitely needs a plugin, which takes time to embed
@@ -131,11 +161,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
           }
           else {
-            /*// randomly pick a generator and select its next slide
-            var generator;
-            do {
-              generator = this.generators[Math.floor(Math.random() * this.generators.length)];
-            } while (!generator.hasNext());*/
             slide = this.slides.shift();
 
             // shorten the slide if it would take too long
@@ -178,22 +203,46 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		updateHash: function(){
 			var combinedInfo = [];
 			var slide_count=0;
-                       
+			var duration=this.durationLeft;
+					
 			for (var i = 0; i < this.generators.length; i++){
 				slide_count+=this.generators[i].slides.length;
-				combinedInfo=combinedInfo.concat(this.generators[i].slide_info);
 			}
 			
-			
-			var generator;			
+			if (!this.hash_object.slide_description){
+				// randomly pick a generator and select its next slide
+				var generator;			
+				for (var i=0; i<slide_count; i++){
+					do {
+						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
+					} while (!generator.hasNext())
+					this.slides.push(generator.next());
+				}
+			}
+			else{
+				for (var i=0; i< this.generators.length; i++){
+					while (this.generators[i].hasNext())
+						this.slides.push(this.generators[i].next());
+				}				
+			}
+
 			for (var i=0; i<slide_count; i++){
-				do {
-					generator = this.generators[Math.floor(Math.random() * this.generators.length)];
-				} while (!generator.hasNext())
-				this.slides.push(generator.next());
+				try{
+					combinedInfo.push(this.slides[i].slide_info);
+					if (i==slide_count-1)
+						this.slides[i].slide_info.data.duration = duration;
+					else
+						duration-=this.slides[i].slide_info.data.duration;
+						
+
+				}
+				catch(e){
+					logger.log(i, ' ', slide_count);
+				}
 			}
-			
 			this.hash_object.slide_description = combinedInfo;
+			
+
 		},
       });
     return CustomSlideGenerator;

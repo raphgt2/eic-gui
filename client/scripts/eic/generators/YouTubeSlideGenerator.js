@@ -33,7 +33,6 @@ function ($, BaseSlideGenerator, Logger) {
     this.orderMethod = options.orderMethod || 'relevance';
     this.totalDuration = 0;
     this.slides = [];
-    this.slide_info = [];
   }
 
   $.extend(YouTubeSlideGenerator.prototype,
@@ -83,26 +82,24 @@ function ($, BaseSlideGenerator, Logger) {
     },
 
     /** Adds a new video slide. */
-    addVideoSlide: function (videoID, duration) {
-      var self = this,
+    addVideoSlide: function (videoID, duration, Start, Stop) {
+      var self = this, start, end;
+      
+      if (!Start && !Stop){
           start = this.skipVideoDuration,
           end = this.skipVideoDuration + this.maxVideoDuration;
-      if (duration <= this.maxVideoDuration + this.skipVideoDuration)
-        end = duration;
-      if (duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
-        start = 0;
+		if (duration <= this.maxVideoDuration + this.skipVideoDuration)
+			end = duration;
+		if (duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
+			start = 0;
+	  }
+	  else{
+		  start = Start;
+		  end = Stop;
+	  }
       duration = end - start;
       this.totalDuration += duration;
       
-      this.slide_info.push({
-		type: "YouTubeSlideGenerator",
-		data: {
-			videoID: videoID,
-			start: start,
-			end: end,
-			duration: duration,  
-		},
-	  });
       
       // create a container that will hide the player
       var playerId = 'ytplayer' + (++playerCount),
@@ -152,6 +149,16 @@ function ($, BaseSlideGenerator, Logger) {
           $container.remove();
         });
       });
+      
+      slide.slide_info = {
+		type: "YouTubeSlide",
+		data: {
+			videoID: videoID,
+			start: start,
+			end: end,
+			duration: duration,  
+		},
+	  };
       
       this.slides.push(slide);
       this.emit('newSlides');
