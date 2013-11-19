@@ -60,7 +60,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
               setTimeout(function () {
                 $outro.append($('<br>'));
                 $outro.append("including ");
-                $outro.append($('<span>').text(self.hash_object.label));
+                $outro.append($('<span>').text(self.hash_object.name));
                 $outro.append("!");
                 setTimeout(function () {
                   addNavigation($outro.parent());
@@ -82,9 +82,9 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
 			 tts = new TTSService();
 
         var text = "So as you can see, " +
-                   (this.startTopic.first_name || this.startTopic.label) +
+                   (this.startTopic.first_name || this.startTopic.name) +
                    (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
-                   "including " + this.hash_object.label + "!";
+                   "including " + this.hash_object.name + "!";
 		
 		self.hash_object.audio_text=text;
         tts.getSpeech(text, 'en_GB', function (response) {
@@ -146,7 +146,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
 //    window.FB.XFBML.parse();
 
     /** Add Tweet button */
-    var tweetmessage = (self.startTopic.first_name ? 'I am ' : self.startTopic.label + ' is ') + 'connected to ' + self.hash_object.label + ' through #LinkedData! Find out how you are #connected at http://everythingisconnected.be. #iswc2012';
+    var tweetmessage = (self.startTopic.first_name ? 'I am ' : self.startTopic.name + ' is ') + 'connected to ' + self.hash_object.name + ' through #LinkedData! Find out how you are #connected at http://everythingisconnected.be. #iswc2012';
 
     var $tweet = $('<a>')
     .attr('href', 'https://twitter.com/share?text=' + tweetmessage)

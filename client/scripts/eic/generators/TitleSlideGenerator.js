@@ -36,8 +36,9 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/PiecesUI'],
 
         /** Advances to the title slide. */
         next: function () {
-          if (!this.hasNext())
+          if (!this.hasNext()){
             return;
+		}
 
           var $title = $('<div />').addClass('title');
 
@@ -96,7 +97,65 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/PiecesUI'],
           this.done = true;
 
           return slide;
-        }
+        },
+        
+        demo: function(){
+			var $title = $('<div />').addClass('title');
+
+          var $content = $('<div />')
+          .addClass('content')
+          .appendTo($title);
+
+          $('<div />').addClass('pieces').appendTo($title);
+
+          var slide = this.createBaseSlide('titleSlide', $title, this.duration);
+
+          var pieceWidth = 350;
+          var labels = [
+            this.topic.previous || '',
+            this.topic.label
+          ];
+          for (var i = 0; i < labels.length; i++) {
+            var piece = PiecesUI.prototype.drawPiece($title, {
+              x: i,
+              y: 0,
+              size: pieceWidth,
+              scaleX: 1,
+              scaleY: (1 - 2 * (i % 2)),
+              img: i === 1 ? 'images/piece5.svg' : 'images/piece6.svg'
+            })
+            .attr('id', 'title_piece_' + i);
+
+            piece.css('display', labels[i] ? 'block' : 'none');
+
+            $('<div />')
+            .appendTo($content)
+            .text(labels[i])
+            .css({
+              position: 'absolute',
+              left: i * pieceWidth,
+              'margin-top': pieceWidth - (pieceWidth * 0.22) - 20,
+              'margin-left': (pieceWidth * 0.22) * (1 - i),
+              width: pieceWidth - (pieceWidth * 0.22),
+              'font-size':   pieceWidth / 8,
+              'line-height': 1,
+              'text-align': 'left'
+            })
+            .attr('id', 'title_label_' + i);
+          }
+
+          slide.once('started', function () {
+            $('#title_piece_1, #title_label_1')
+            .css({
+
+              'animation-name': 'slide2',
+              'animation-duration': '0.5s',
+              'transition-timing-function': 'linear'
+            });
+          });
+
+          return slide;
+		}
       });
 
     return TitleSlideGenerator;

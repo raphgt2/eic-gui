@@ -71,6 +71,7 @@ var audioContainer = new WAVPlayer();
  
         // start next slide
         self.$container.prepend(nextSlide.$element);
+        logger.log(nextSlide);
         nextSlide.start();
  
         // stop the previous slide

@@ -45,6 +45,8 @@
     'eic/SlidePresenter',
     'eic/FacebookConnector',
     'eic/TTSService',
+    'eic/PresentationController',
+    'eic/PresentationController2',
     'eic/generators/BaseSlideGenerator',
     'eic/generators/IntroductionSlideGenerator',
     'eic/generators/CompositeSlideGenerator',

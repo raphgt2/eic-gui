@@ -162,6 +162,31 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
         });
       },
       initControls: function () {
+		   //Dipa's slide-editing stuff
+      	  $('#edit-imgs').click(function(){
+      	  	$('#imgs').css('display', 'inline');
+  			$('#vids').css('display', 'none');
+      	  });
+      	  $('#edit-vids').click(function(){
+      	  	$('#imgs').css('display', 'none');
+  			$('#vids').css('display', 'inline');
+      	  });
+          /*$('#play-button').click(function () {
+          	//self.controller.playMovie(self.editor.getTopictoTopic(), self.editor.getSlides());
+          	self.editor.playMovie();
+          });
+          $('#play-slide').click(function () {
+          	if($('#play-slide').html() == 'Play Slide'){
+          		$('#play-slide').html('Pause Slide');
+          		self.editor.playSlide();
+          	}
+          	else{
+          		$('#play-slide').html('Play Slide');
+          		self.editor.pauseSlide();
+          	}
+          });*/
+         //////////////////  
+		  
         var new_width = pieceWidth * 4;
         var self = this;
 
@@ -350,7 +375,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
             $('#frame').remove();
             // Try to start the movie
             try {
-					self.controller.playMovie();
+					self.controller.makeMovie();
             }
             // Controller errors are emergency cases we cannot handle gracefully
             catch (error) {

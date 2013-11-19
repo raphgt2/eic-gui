@@ -26,8 +26,9 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.ready=false;
       
       //stuff
-      this.curSlide = null;
+      this.curSlide = -1;
       this.slides = [];
+      this.firstSlide = new TitleSlideGenerator(this.topic);
     }
 
     $.extend(CustomSlideGenerator.prototype,
@@ -120,46 +121,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           this.inited = true;
         },
         
-        /*prepare: function () {
-          this.curSlide = new TitleSlideGenerator(this.topic).next();
-          this.curSlide.audioURL = this.audioURL;
-
-          // prepare other generators
-          this.generators.forEach(function (g) { g.prepare(); });
-
-          //add all the slides for each generator
-          for(var val in this.generatorsHash){
-          	var s = [];
-          	for(var i = 0; i < 3 && this.generatorsHash[val].hasNext() && 
-          		this.generatorsHash[val].next !== undefined; i++){
-          		s.push(this.generatorsHash[val].next());
-          	}
-          	this.slides[val] = s;
-          }
-          	
-          logger.log('Added slides on ', this.topic.label);
-        },
-        
-        next: function () {
-        	return this.curSlide;
-        },
-        
-        getSlides: function() {
-        	return this.slides;
-        },
-        
-        setCurSlide: function (slide) {
-        	this.curSlide = slide;	
-        },
-        */
-        
         next: function () {
           var slide;
 
           if (this.first) {
             // make sure first slide is always a titleslide
-            slide = new TitleSlideGenerator(this.topic).next();
-            slide.audioURL = this.audioURL;
+            slide = this.firstSlide.next();
+			slide.audioURL = this.audioURL;
 
             // prepare other generators
             this.generators.forEach(function (g) { g.prepare(); });
@@ -252,6 +220,49 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			this.hash_object.slide_description = combinedInfo;
 
 		},
+		
+		prepare: function () {
+          //this.curSlide = this.firstSlide;
+          //this.curSlide.audioURL = this.audioURL;
+
+          // prepare other generators
+          this.generators.forEach(function (g) { g.prepare(); });
+
+          //add all the slides for each generator
+          for(var val in this.generatorsHash){
+          	var s = [];
+          	for(var i = 0; i < 3 && this.generatorsHash[val].hasNext() && 
+          		this.generatorsHash[val].next !== undefined; i++){
+          		s.push(this.generatorsHash[val].next());
+          	}
+          	this.slides[val] = s;
+          }
+          	
+          logger.log('Added slides on ', this.topic.label);
+        },
+        
+        currentSlide: function (){
+			if (this.curSlide>=0)
+				return this.slides[this.curSlide];
+			else
+				return this.firstSlide.demo();
+		},
+        
+        nextSlide: function () {
+        	this.curSlide++;
+        },
+        
+        getSlides: function() {
+        	return this.slides;
+        },
+        
+        setCurSlide: function (slide) {
+        	this.curSlide = slide;	
+        },
+        
+        getTest: function () {
+        	return this.testSlides;
+        }
       });
     return CustomSlideGenerator;
   });

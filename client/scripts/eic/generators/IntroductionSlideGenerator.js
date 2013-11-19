@@ -54,7 +54,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
             this.addGenerator(new FBProfilePhotosGenerator(this.profile, 5));
           }
           else {
-            this.addGenerator(new TitleSlideGenerator(this.hash_object.label + texts.connected, 8000));
+            this.addGenerator(new TitleSlideGenerator(this.hash_object.name + texts.connected, 8000));
           }
         },
 
@@ -63,7 +63,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
           var text = texts.intro;
           if (!this.profile) {
             text = text.replace(/\$who/g, "people")
-                       .replace(/\$topic/g, this.hash_object.label);
+                       .replace(/\$topic/g, this.hash_object.name);
           }
           else {
             var gender = this.profile.gender === 'male' ? 0 : 1;
@@ -71,7 +71,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
             text = text.replace(/\$who/g, this.profile.first_name)
                        .replace(/\$topic/g, ['he', 'she'][gender])
                        .replace(/\$his/g, ['his', 'her'][gender])
-                       .replace(/\$like/g, this.startTopic.label);
+                       .replace(/\$like/g, this.startTopic.name);
           }
 		  this.hash_object.audio_text=text;
 		  
