@@ -36,10 +36,10 @@
     },
   });
 
-  require(['eic/PresentationController2', 'eic/PiecesUI'], function (PresentationController2, PiecesUI) {
+  require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI'], function (PresentationController, PresentationController2, PiecesUI) {
     var path = {'hash':'h-3690378823082678040','source':{'name':'Ray Bradbury','uri':'http://dbpedia.org/resource/Ray_Bradbury'},'destination':{'name':'Blue Mink','uri':'http://dbpedia.org/resource/Blue_Mink'},'path':[{'type':'node','uri':'http://dbpedia.org/resource/Ray_Bradbury'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/influencedBy'},{'type':'node','uri':'http://dbpedia.org/resource/George_Orwell'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/influencedBy'},{'type':'node','uri':'http://dbpedia.org/resource/James_Joyce'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/birthPlace'},{'type':'node','uri':'http://dbpedia.org/resource/Dublin'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/isPartOf'},{'type':'node','uri':'http://dbpedia.org/resource/Leinster'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/leaderName'},{'type':'node','uri':'http://dbpedia.org/resource/Fine_Gael'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/colour'},{'type':'node','uri':'http://dbpedia.org/resource/Blue'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/connotation'},{'type':'node','uri':'http://dbpedia.org/resource/Sky'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/associatedBand'},{'type':'node','uri':'http://dbpedia.org/resource/Blue_Mink'}]};
     console.log(path);
-    var controller = new PresentationController2(path),
+    var controller = new PresentationController(path),
         view = new PiecesUI(controller);
         //controller.makeMovie();
     controller.init();

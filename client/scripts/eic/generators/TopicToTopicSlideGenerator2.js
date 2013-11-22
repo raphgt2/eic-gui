@@ -21,13 +21,13 @@ define(['lib/jquery',
 
     var defaultDuration = 1000;
 
-    function TopicToTopicSlideGenerator(path) {
+    function TopicToTopicSlideGenerator2(path) {
       CompositeSlideGenerator.call(this);
       this.ready=false;
       this.path=path;
     }
 
-    $.extend(TopicToTopicSlideGenerator.prototype,
+    $.extend(TopicToTopicSlideGenerator2.prototype,
       CompositeSlideGenerator.prototype,
       {
         init: function () {
@@ -107,5 +107,5 @@ define(['lib/jquery',
       });
   
   
-    return TopicToTopicSlideGenerator;
+    return TopicToTopicSlideGenerator2;
   });

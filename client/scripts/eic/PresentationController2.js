@@ -18,6 +18,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       this.facebookConnector = new FacebookConnector();
       this.topicSelector = new TopicSelector(this.facebookConnector);
       this.path = path;
+      this.slides = {};
     }
 
     /* Member functions */
@@ -50,7 +51,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       },
 
       // Starts the movie about the connection between the user and the topic.
-      makeMovie: function () {
+      playMovie: function () {
         //if (!this.startTopic) throw "No start topic selected.";
         //if (!this.endTopic) throw "No end topic selected.";
         //if (!this.intro) throw "The introduction was not initialized";
@@ -83,7 +84,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 						
 						generator.addGenerators([
 							new IntroductionSlideGenerator(this.startTopic, this.profile),
-							new TopicToTopicSlideGenerator2(path),
+							new TopicToTopicSlideGenerator2(path, this.slides),
 							new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
 						]);
 			
@@ -104,7 +105,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 						
 			   generator.addGenerators([
 					new IntroductionSlideGenerator(this.startTopic, this.profile),
-					new TopicToTopicSlideGenerator2(this.path),
+					new TopicToTopicSlideGenerator(this.path),
 					new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
 				]);
 	
@@ -124,7 +125,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 
     // The startTopic property also initializes the introduction,
     // so the movie can be buffered earlier and thus start faster.
-    Object.defineProperty(PresentationController.prototype, "startTopic", {
+/*    Object.defineProperty(PresentationController.prototype, "startTopic", {
       get: function () { return this._startTopic; },
       set: function (startTopic) {
         logger.log("Start topic set to", startTopic.label);
@@ -141,6 +142,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         this.intro.init();
       }
     });
-
+*/
     return PresentationController;
   });

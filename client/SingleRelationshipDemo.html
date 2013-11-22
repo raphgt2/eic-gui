@@ -4,75 +4,34 @@
     <title></title>
     <meta charset="UTF-8">
     <script data-main="scripts/single" src="scripts/lib/require.js" async></script>
-      <link rel="stylesheet" href="stylesheets/main.css" />
+      <link rel="stylesheet" href="stylesheets/main" />
   </head>
 <body>
-    <div id="frame">
-      <div id="title_1" class="title">
-        <div class="content">Everything</div>
-        <div class="pieces">
-        </div>
-      </div>
-
-      <div id="title_2" class="title"><div class="pieces">
-        </div>
-        <div class="content">Is</div>
-      </div>
-
-      <div id="title_3" class="title">
-        <div class="pieces">
-        </div>
-        <div class="content">Connected</div>
-      </div>
-      
-      <div id="subtitle">
-        Watch the movie that connects <em>you</em> to anything or anyone in the world.        
-      </div>
-
-      <div id="steps">
-        <div class="pieces">
-        </div>
-        <div class="content">
-          <div id="step_1" class="step">
-            <div class="number">1</div>
-            <div class="text">Choose your starting point<br><input id="starttopic" /><div id="fb-root">
-              </div>
-              <p id="facebook">
-                <a id="facebook-connect" href="#">or connect with <img src="images/f_logo.png" width="20" height="20"></a>
-              </p>
-            </div>
-            <div class="nav">
-              <span class="button next disabled">Next</span>
-            </div>
-          </div>
-          <div id="step_3" class="step">
-            <div class="number">2</div>
-            <div class="text">Choose your destination<br><input id="endtopic" /></div>
-            <div class="nav">
-              <span class="button back disabled">Back</span>
-              <span class="button next disabled">Next</span>
-            </div>
-          </div>
-          <div id="step_4" class="step">
-            <div class="number">3</div>
-            <div class="text"><span class='play_button'>Play!</span></div>
-            <div class="nav">
-              <span class="button back disabled">Back</span>
-            </div>
-          </div>
-        </div>
-      </div>
-<div id="play" class="title">
-        <div class="pieces">
-        </div>
-        <div class="content">Go!</div>
-      </div>
-      
-    </div>
-    <div id="screen">
-
-    </div>
-  
+<div id="videoEditor" class="fullWidth fullHeight" style="display: none;"> 
+	<div class="row"><div id="slides-row"></div></div>
+	<div class="row">
+	<div class="col-4">
+		<div id="edit"> 
+			<ul id="edit-list" class="nav nav-tabs">
+				<li><a href="#" id="edit-imgs">Images</a></li>
+				<li><a href="#" id="edit-vids">Videos</a></li>
+			</ul>
+			<div class="nodeElementBar">
+				<div id="imgs" style="display: inline;"></div>
+				<div id="vids" style="display: none;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-7">
+		<div id="screen" class="row"></div>
+		<div id="audioDescriptionWrap" class="row">
+			<textarea class="col-10" id="textDescription"></textarea>
+			<div class="col-2"><button id="editTestDescription" class="btn btn-primary">Edit</button>
+			<button id="cancelTestDescription" class="btn btn-warning">Cancel</button></div>
+		</div>
+	</div>
+	</div></div>
+</div>	
 	<button type="button" class="btn btn-primary" id="play-button">Play Movie</button>
 
 </body>

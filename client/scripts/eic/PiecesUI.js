@@ -1,8 +1,8 @@
 /*!
- * EIC PiecesUI
- * Copyright 2012, Multimedia Lab - Ghent University - iMinds
- * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
- */
+* EIC PiecesUI
+* Copyright 2012, Multimedia Lab - Ghent University - iMinds
+* Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
+*/
 define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
   function ($, autocompleteTopic) {
     "use strict";
@@ -38,14 +38,14 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
             this.drawScreen($('#screen'));
         }
 
-//      $(window).on('resize', function(){
-//        var sX = ($(this).width() / 800);
-//        var sY = ($(this).height() / 600);
-//        if (sX > sY)
-//          $('body').css('transform', 'scale(' + sY + ','  + sY + ')');
-//        else
-//          $('body').css('transform', 'scale(' + sX + ','  + sX + ')');
-//      });
+// $(window).on('resize', function(){
+// var sX = ($(this).width() / 800);
+// var sY = ($(this).height() / 600);
+// if (sX > sY)
+// $('body').css('transform', 'scale(' + sY + ',' + sY + ')');
+// else
+// $('body').css('transform', 'scale(' + sX + ',' + sX + ')');
+// });
     }
 
     PiecesUI.prototype = {
@@ -77,7 +77,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
           position: 'absolute',
           left: x,
           top: y,
-          'transform': 'scale(' + (options.scaleX || 1) + ','  + (options.scaleY || 1) + ')',
+          'transform': 'scale(' + (options.scaleX || 1) + ',' + (options.scaleY || 1) + ')',
           'background': 'url(' + options.img + ') no-repeat',
           'background-size': '100% 100%'
         })
@@ -99,7 +99,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
           $content.css({
             'margin-top': fontsize ? (pieceWidth - fontsize) / 2 + 10 : 10,
             'margin-left': fontsize ? 30 : 0.22 * pieceWidth,
-            'font-size':   fontsize || pieceWidth
+            'font-size': fontsize || pieceWidth
           });
         }
       },
@@ -162,31 +162,31 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
         });
       },
       initControls: function () {
-		   //Dipa's slide-editing stuff
-      	  $('#edit-imgs').click(function(){
-      	  	$('#imgs').css('display', 'inline');
-  			$('#vids').css('display', 'none');
-      	  });
-      	  $('#edit-vids').click(function(){
-      	  	$('#imgs').css('display', 'none');
-  			$('#vids').css('display', 'inline');
-      	  });
+                 //Dipa's slide-editing stuff
+               $('#edit-imgs').click(function(){
+                       $('#imgs').css('display', 'inline');
+                          $('#vids').css('display', 'none');
+               });
+               $('#edit-vids').click(function(){
+                       $('#imgs').css('display', 'none');
+                          $('#vids').css('display', 'inline');
+               });
           /*$('#play-button').click(function () {
-          	//self.controller.playMovie(self.editor.getTopictoTopic(), self.editor.getSlides());
-          	self.editor.playMovie();
-          });
-          $('#play-slide').click(function () {
-          	if($('#play-slide').html() == 'Play Slide'){
-          		$('#play-slide').html('Pause Slide');
-          		self.editor.playSlide();
-          	}
-          	else{
-          		$('#play-slide').html('Play Slide');
-          		self.editor.pauseSlide();
-          	}
-          });*/
-         //////////////////  
-		  
+        //self.controller.playMovie(self.editor.getTopictoTopic(), self.editor.getSlides());
+        self.editor.playMovie();
+});
+$('#play-slide').click(function () {
+        if($('#play-slide').html() == 'Play Slide'){
+                $('#play-slide').html('Pause Slide');
+                self.editor.playSlide();
+        }
+        else{
+                $('#play-slide').html('Play Slide');
+                self.editor.pauseSlide();
+        }
+});*/
+         //////////////////
+                
         var new_width = pieceWidth * 4;
         var self = this;
 
@@ -375,7 +375,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
             $('#frame').remove();
             // Try to start the movie
             try {
-					self.controller.makeMovie();
+                  self.controller.playMovie();
             }
             // Controller errors are emergency cases we cannot handle gracefully
             catch (error) {
@@ -387,7 +387,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
           width: '0px',
           height: '0px',
           left: -3 * 0.88 * pieceWidth - 5,
-          top:  400 - (pieceWidth * 8 * 2),
+          top: 400 - (pieceWidth * 8 * 2),
           transform: 'rotate(0deg) scale(3, 3)'
         });
       }

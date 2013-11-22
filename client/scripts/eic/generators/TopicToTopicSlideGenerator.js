@@ -6,73 +6,62 @@
 define(['lib/jquery',
   'eic/generators/CompositeSlideGenerator',
   'eic/generators/LoadingSlideGenerator',
-  'eic/generators/TopicSlideGenerator',
+  'eic/generators/FinalizedTopicSlideGenerator',
   'eic/generators/ErrorSlideGenerator',
   'eic/Summarizer',
-  'config/URLs',
+  'eic/Logger'
   ],
-  function ($, CompositeSlideGenerator, LoadingSlideGenerator, TopicSlideGenerator, ErrorSlideGenerator, Summarizer, urls) {
+  function ($, CompositeSlideGenerator, LoadingSlideGenerator, FinalizedTopicSlideGenerator, ErrorSlideGenerator, Summarizer, Logger) {
     "use strict";
     
+    var logger = new Logger("TopicToTopicSlideGenerator2");
     /*
     * CLEANUP
     **/
 
     var defaultDuration = 1000;
 
-    function TopicToTopicSlideGenerator(startTopic, endTopic) {
+    function TopicToTopicSlideGenerator(path) {
       CompositeSlideGenerator.call(this);
-      this.startTopic = startTopic;
-      this.endTopic = endTopic;
       this.ready=false;
+      this.path=path;
     }
 
     $.extend(TopicToTopicSlideGenerator.prototype,
       CompositeSlideGenerator.prototype,
       {
         init: function () {
-          if (this.startTopic) {
             if (!this.initedStart) {
               CompositeSlideGenerator.prototype.init.call(this);
               this.addGenerator(this.loader = new LoadingSlideGenerator());
               this.initedStart = true;
             }
 
-            if (this.endTopic && !this.initedEnd) {
+            if (!this.initedEnd) {
               var self = this;
-              $.ajax({
-                type: "GET",
-                url: urls.paths,
-                dataType: "JSON",
-                data: {
-                  from: this.startTopic.uri,
-                  to: this.endTopic.uri
-                },
-                error: function () {
-                  self.addGenerator(new ErrorSlideGenerator('No path between ' + self.startTopic.label + ' and ' + self.endTopic.label + ' could be found.'));
-                  self.loader.stopWaiting();
-                },
-                success: function (path) {
-                  var summ = new Summarizer();
+              
+              var summ = new Summarizer();
                   $(summ).one('generated', function (event, story) {
                     story.steps.forEach(function (step) {
-                      self.addGenerator(new TopicSlideGenerator(step.topic, step.text));
+                      self.addGenerator(new FinalizedTopicSlideGenerator(step.topic, step.hash_object));
                     });
                     
 			        setTimeout(function(){						
-						self.waitforReady(0,function(){		
+						self.waitforReady(0,function(){
+							for (var i=0; i<self.generators.length; i++){
+								if (self.generators[i].topic)
+									self.generators[i].updateHash();
+							}
 							self.loader.stopWaiting();
 							self.ready=true;
 							self.emit('topic slides ready');									
 						})
 					},3000);   
                   });
-                  summ.summarize(path);
-                }
-              });
+              summ.summarize(this.path);            
+              
               this.initedEnd = true;
             }
-          }
         },
     
         waitforReady: function(i,callback){

@@ -40,14 +40,23 @@
 		//var html_obj=document.createElement("div");
 		//document.body.appendChild(html_obj);
 		
-		var controller = new PresentationController(),
-				view = new PiecesUI(controller);
+		var controller = new PresentationController();
+			//view = new PiecesUI(controller);
 			
-        
-        $("#play-button").click(function(){
-			controller.init();
-			view.init();
-			view.drawScreen($('#screen'));
+        //controller.init();
+		//	view.init();
+			
+        $("#play-button").click(function(){		
+			//view.drawScreen($('#screen'));
+			$('screen').show();
+			try {
+					controller.playMovie();
+            }
+            // Controller errors are emergency cases we cannot handle gracefully
+            catch (error) {
+              window.alert("Unexpected error: " + error);
+              window.location.reload();
+            }
 			
 		 });
   });

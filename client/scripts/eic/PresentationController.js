@@ -14,9 +14,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     "use strict";
     var logger = new Logger("PresentationController");
 
-    function PresentationController() {
+    function PresentationController(path) {
       this.facebookConnector = new FacebookConnector();
       this.topicSelector = new TopicSelector(this.facebookConnector);
+      this.path;
     }
 
     /* Member functions */
@@ -61,42 +62,65 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 
         // Hide the main panel and show the slides panel
         $('#screen').append($wrapper);
-        //$wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
+        $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
 
         // Add introduction, body, and outroduction generators
         //logger.log("Creating slides from", this.startTopic.label, "to", this.endTopic.label);
         var generator = new CompositeSlideGenerator();
         
-        $.ajax({
-                type: "GET",
-                url: urls.singlepath,
-                dataType: "jsonp",
-                error: function () {
-                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
-                  self.loader.stopWaiting();
-                },
-                success: function (path) {
-					this.startTopic=path.source;
-					this.endTopic=path.destination;
-					
-					generator.addGenerators([
-						new IntroductionSlideGenerator(this.startTopic, this.profile),
-						new TopicToTopicSlideGenerator2(path),
-						new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
-					]);
-        
-					//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-					// I know that the second generator in the array is the one with topic slides...    
-					if (generator.generators[1].ready){
-						new SlidePresenter($slides, generator).start();
+        if (!this.path){
+			$.ajax({
+					type: "GET",
+					url: urls.singlepath,
+					dataType: "jsonp",
+					error: function () {
+					  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
+					  self.loader.stopWaiting();
+					},
+					success: function (path) {
+						this.startTopic=path.source;
+						this.endTopic=path.destination;
+						
+						generator.addGenerators([
+							new IntroductionSlideGenerator(this.startTopic, this.profile),
+							new TopicToTopicSlideGenerator(path),
+							new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
+						]);
+			
+						//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
+						// I know that the second generator in the array is the one with topic slides...    
+						if (generator.generators[1].ready){
+							logger.log(path);
+							new SlidePresenter($slides, generator).start();
+						}
+						else{
+							generator.generators[1].once('topic slides ready', function(){logger.log(path); new SlidePresenter($slides, generator).start()});
+						}
 					}
-					else{
-						generator.generators[1].once('topic slides ready', function(){new SlidePresenter($slides, generator).start()});
-					}
-                }
-           });		
+			   });	
+		}	
+		else{
+			this.startTopic=this.path.source;
+			this.endTopic=this.path.destination;
+			
+			generator.addGenerators([
+				new IntroductionSlideGenerator(this.startTopic, this.profile),
+				new TopicToTopicSlideGenerator(this.path),
+				new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
+			]);
+
+			//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
+			// I know that the second generator in the array is the one with topic slides...    
+			if (generator.generators[1].ready){
+				logger.log(path);
+				new SlidePresenter($slides, generator).start();
+			}
+			else{
+				generator.generators[1].once('topic slides ready', function(){logger.log(path); new SlidePresenter($slides, generator).start()});
+			}
       }
-    };
+    }};
+
 
     /* Properties */
 
