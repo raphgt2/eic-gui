@@ -27,7 +27,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       
       //stuff
       this.curSlide = null;
-      this.slides;
+      this.slides = {};
     }
 
     $.extend(CustomSlideGenerator.prototype,
@@ -58,6 +58,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           }
 
           var tts = new TTSService();
+          var self = this;
           tts.once('speechReady', function (event, data) {
             self.durationLeft = Math.floor(data.snd_time);
             //Add extra time because IE definitely needs a plugin, which takes time to embed

@@ -6,18 +6,18 @@
 define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/TopicToTopicSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator2', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/SlideEditor',  'config/URLs',],
+  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'config/URLs',],
   function ($, Logger, FacebookConnector,
     IntroductionSlideGenerator, OutroductionSlideGenerator, TopicToTopicSlideGenerator,
     TopicToTopicSlideGenerator2, CompositeSlideGenerator,
-    ErrorSlideGenerator, SlidePresenter, TopicSelector, SlideEditor, urls) {
+    ErrorSlideGenerator, SlidePresenter, TopicSelector, urls) {
     "use strict";
     var logger = new Logger("PresentationController");
 
     function PresentationController(path) {
       this.facebookConnector = new FacebookConnector();
       this.topicSelector = new TopicSelector(this.facebookConnector);
-      this.path;
+      this.path = path;
     }
 
     /* Member functions */
@@ -116,7 +116,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 				new SlidePresenter($slides, generator).start();
 			}
 			else{
-				generator.generators[1].once('topic slides ready', function(){logger.log(path); new SlidePresenter($slides, generator).start()});
+				generator.generators[1].once('topic slides ready', function(){logger.log(this.path); new SlidePresenter($slides, generator).start()});
 			}
       }
     }};

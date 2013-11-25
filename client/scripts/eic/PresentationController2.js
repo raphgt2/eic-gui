@@ -57,13 +57,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         //if (!this.intro) throw "The introduction was not initialized";
 
         // Create the slides panel
-        var $slides = $('<div>').addClass('slides'),
-            $wrapper = $('<div>').addClass('slides-wrapper')
-                                 .append($slides);
+        //var $slides = $('<div>').addClass('slides'),
+        //    $wrapper = $('<div>').addClass('slides-wrapper')
+        //                         .append($slides);
 
         // Hide the main panel and show the slides panel
-        $('#screen').append($wrapper);
-        $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
+        //$('#screen').append($wrapper);
+        //$wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
 
         // Add introduction, body, and outroduction generators
         //logger.log("Creating slides from", this.startTopic.label, "to", this.endTopic.label);
@@ -72,7 +72,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         if (!this.path){        
 			$.ajax({
 					type: "GET",
-					url: urls.paths,
+					url: urls.singlepath,
 					dataType: "jsonp",
 					error: function () {
 					  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
@@ -91,10 +91,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 						//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 						// I know that the second generator in the array is the one with topic slides...    
 						if (generator.generators[1].ready){
-							new SlideEditor($slides, generator, path);
+							new SlideEditor(generator, path);
 						}
 						else{
-							generator.generators[1].once('topic slides ready', function(){new SlideEditor($slides, generator, path)});
+							generator.generators[1].once('topic slides ready', function(){new SlideEditor(generator, path)});
 						}
 					}
 			   });	
@@ -105,17 +105,17 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 						
 			   generator.addGenerators([
 					new IntroductionSlideGenerator(this.startTopic, this.profile),
-					new TopicToTopicSlideGenerator(this.path),
+					new TopicToTopicSlideGenerator2(this.path),
 					new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
 				]);
 	
 				//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 				// I know that the second generator in the array is the one with topic slides...    
 				if (generator.generators[1].ready){
-					new SlideEditor($slides, generator, this.path);
+					new SlideEditor(generator, this.path);
 				}
 				else{
-					generator.generators[1].once('topic slides ready', function(){new SlideEditor($slides, generator, this.path)});
+					generator.generators[1].once('topic slides ready', function(){new SlideEditor(generator, this.path)});
 				}
 		   }	
       }

@@ -13,7 +13,7 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
       this.controller = presentationController;
         // If the Hash already contains variables, let's play the video.
         // Split the hash in variables
-        var tempitems = location.hash.substr(1,location.hash.length-1).split("&");
+        /*var tempitems = location.hash.substr(1,location.hash.length-1).split("&");
         var items = [];
         for(var i = 0; i < tempitems.length ; i ++){
             var pair = tempitems[i].split("=");
@@ -36,7 +36,9 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
 
         if(typeof items["start"] !== 'undefined' && typeof items["end"] !== 'undefined'){
             this.drawScreen($('#screen'));
-        }
+        }*/
+        
+        this.drawScreen($('#screen'));
 
 // $(window).on('resize', function(){
 // var sX = ($(this).width() / 800);
@@ -50,16 +52,16 @@ define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
 
     PiecesUI.prototype = {
       init: function () {
-        this.initControls();
+        //this.initControls();
 
-        this.drawPieces($('#title_1'), 5, 'images/piece3.svg');
-        this.drawPieces($('#title_2'), 1, 'images/piece2.svg');
-        this.drawPieces($('#title_3'), 5, 'images/piece3.svg');
-        this.drawPieces($('#play'), 1, 'images/piece1.svg', 100);
+        //this.drawPieces($('#title_1'), 5, 'images/piece3.svg');
+        //this.drawPieces($('#title_2'), 1, 'images/piece2.svg');
+        //this.drawPieces($('#title_3'), 5, 'images/piece3.svg');
+        //this.drawPieces($('#play'), 1, 'images/piece1.svg', 100);
 
-        $('#frame').show();
+        //$('#frame').show();
 
-        this.drawBigPieces($('#steps'));
+        //this.drawBigPieces($('#steps'));
       },
       drawPiece: function ($elem, options) {
         var x = options.x * (options.size - 0.22 * options.size) +
@@ -366,13 +368,13 @@ $('#play-slide').click(function () {
         var self = this;
         $screen.show();
 
-        this.animate($('#piece_2'), 'drop', 0.3)
-        .show();
+        //this.animate($('#piece_2'), 'drop', 0.3)
+        //.show();
 
-        this.animate($('#steps'), 'moveToScreen', 0.7,
-          function () {
+        //this.animate($('#steps'), 'moveToScreen', 0.7,
+        //  function () {
             // Remove the input controls
-            $('#frame').remove();
+        //    $('#frame').remove();
             // Try to start the movie
             try {
                   self.controller.playMovie();
@@ -382,14 +384,14 @@ $('#play-slide').click(function () {
               window.alert("Unexpected error: " + error);
               window.location.reload();
             }
-          })
-        .css({
-          width: '0px',
-          height: '0px',
-          left: -3 * 0.88 * pieceWidth - 5,
-          top: 400 - (pieceWidth * 8 * 2),
-          transform: 'rotate(0deg) scale(3, 3)'
-        });
+        //  })
+        //.css({
+        //  width: '0px',
+        //  height: '0px',
+        //  left: -3 * 0.88 * pieceWidth - 5,
+        //  top: 400 - (pieceWidth * 8 * 2),
+        //  transform: 'rotate(0deg) scale(3, 3)'
+        //});
       }
     };
 

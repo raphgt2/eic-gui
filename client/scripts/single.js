@@ -37,6 +37,9 @@
   });
 
   require(['eic/PresentationController', 'eic/PiecesUI'], function (PresentationController, PiecesUI) {
+		$('#frame').show();
+		
+		
 		//var html_obj=document.createElement("div");
 		//document.body.appendChild(html_obj);
 		
@@ -47,16 +50,7 @@
 		//	view.init();
 			
         $("#play-button").click(function(){		
-			//view.drawScreen($('#screen'));
-			$('screen').show();
-			try {
-					controller.playMovie();
-            }
-            // Controller errors are emergency cases we cannot handle gracefully
-            catch (error) {
-              window.alert("Unexpected error: " + error);
-              window.location.reload();
-            }
+			view = new PiecesUI(controller);
 			
 		 });
   });

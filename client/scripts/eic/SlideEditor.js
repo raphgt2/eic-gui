@@ -1,131 +1,40 @@
 define(['lib/jquery', 'eic/Logger',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter'],
+  'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController'],
   function ($, Logger,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
-    ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter) {
+    ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController) {
     "use strict";
     var logger = new Logger("SlideEditor");
   		
-    function SlideEditor($slides, generator, path) {
+    function SlideEditor(generator, path) {
       this.curTopic = null;
       this.tempSlides = {};
-      this.$slides = $slides;
       this.topicToTopic = generator.generators[1];
       this.hash_object = path;
       
       var self = this;
+      
       $('#play-button').click(function () {
-          	//self.controller.playMovie(self.editor.getTopictoTopic(), self.editor.getSlides());
-          	new SlidePresenter($slides, generator).start();
+          	logger.log(self.hash_object);
+          	new PresentationController(self.hash_object).playMovie();
       });
+      
       $('#play-slide').click(function () {
-         	if($('#play-slide').html() == 'Play Slide'){
-          		$('#play-slide').html('Pause Slide');
-          		self.playSlide();
-          	}
-          	else{
-          		$('#play-slide').html('Play Slide');
-          		self.pauseSlide();
-          	}
+                 if($('#play-slide').html() == 'Play Slide'){
+                          $('#play-slide').html('Pause Slide');
+                          self.playSlide();
+                  }
+                  else{
+                          $('#play-slide').html('Play Slide');
+                          self.pauseSlide();
+                  }
       });
-      $('#next-slide').click(function(){
-		  self.nextSlide();
-	  });
-	  
-	  
-	  //Audio stuff
-	  /*$('#textDescription').blur(function() {
-				if (self.previousText[i]==$('#textDescription').val()){
-					$('editTestDescription').hide();
-					return;
-				}
-				slide.resendSpeech($('#textDescription').val());
-				
-				$('cancelTestDescription').val("Undo");
-				$('cancelTestDescription').show();
-				$('editTestDescription').hide();
-				if (slide.hash_object.defaultText==$('#textDescription').val())
-					$('defaultTestDescription').hide();
-				else
-					$('defaultTestDescription').show();
-			});
-			
-			$('#textDescription').focus(function(){
-				self.previousText[i]=$('#textDescription').val()
-				if (slide.hash_object.defaultText==$('#textDescription').val())
-					$('defaultTestDescription').hide();
-				else
-					$('defaultTestDescription').show();
-			});
-			
-			$('#textDescription').bind('input propertychange', function() {
-				$('editTestDescription').show();
-				$('cancelTestDescription').hide();
-				if (slide.hash_object.defaultText==$('#textDescription').val())
-					$('defaultTestDescription').hide();
-				else
-					$('defaultTestDescription').show();
-			});
-			
-			$('editTestDescription').click(function() {
-				if (self.previousText[i]==$('#textDescription').val()){
-					$('editTestDescription').hide();
-					return;
-				}
-				slide.resendSpeech($('#textDescription').val());
-				$("#track"+i).remove();
-				self.addAudio(slide_div,slide,i);
-				
-				$('cancelTestDescription').val("Undo");
-				$('cancelTestDescription').show();
-				$('editTestDescription').hide();
-				if (slide.hash_object.defaultText==$('#textDescription').val())
-					$('defaultTestDescription').hide();
-				else
-					$('defaultTestDescription').show();					
-			});
-			
-			$('cancelTestDescription').click(function() {
-				if (self.previousText[i]==$('#textDescription').val()){
-					$('cancelTestDescription').hide();
-					return;					
-				}
-				slide.resendSpeech(self.previousText[i]);
-				var temp=self.previousText[i];
-				self.previousText[i]=$('#textDescription').val();
-				$('#textDescription').val(temp);
-				$("#track"+i).remove();
-				self.addAudio(slide_div,slide,i);
-				
-				if ($('cancelTestDescription').val()=="Undo")
-					$('cancelTestDescription').val("Redo");
-				else
-					$('cancelTestDescription').val("Undo");
-					
-				if (slide.hash_object.defaultText==$('#textDescription').val())
-					$('defaultTestDescription').hide();
-				else
-					$('defaultTestDescription').show();
-			});
-			
-			$('defaultTestDescription').click(function() {				
-				if (slide.hash_object.defaultText==$('#textDescription').val()){
-					$('defaultTestDescription').hide();
-					return;
-				}
-				self.previousText[i]=$('#textDescription').val();
-				slide.resendSpeech(slide.hash_object.defaultText);
-				$('#textDescription').val(slide.hash_object.defaultText);
-				
-				self.addAudio(slide_div,slide,i);
-				
-				$('cancelTestDescription').val("Undo");
-				$('cancelTestDescription').show();
-				$('defaultTestDescription').hide();
-			});*/
+      
+      logger.log("Created slideEditor");
+      //logger.log(generator.generators[1]);
       
       this.startEdit();
     }
@@ -135,16 +44,37 @@ define(['lib/jquery', 'eic/Logger',
     SlideEditor.prototype = {
       // Starts the movie about the connection between the user and the topic.
       startEdit: function () {
+
 		//show the editing box
 		var myNode = document.getElementById("init");
 		myNode.innerHTML = '';
 		// var myNode2 = document.getElementById("del");
 		// myNode2.innerHTML = '';
 		$('#videoEditor').css('display', 'inline');
-          
+
+        
+        // Create the slides panel
+        var $slides = $('<div>').addClass('slides2'),
+            $wrapper = $('<div>').addClass('slides2-wrapper')
+                                 .append($slides);
+                                 
+        this.$slides = $slides;
+
+        // Hide the main panel and show the slides panel
+        $('#screen2').append($wrapper);
+        $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
+        
+        // Hide the main panel and show the slides panel
+        //$('#screen').append($wrapper);
+        //$wrapper.hide().fadeIn($.proxy(this.$slides.hide(), 'fadeIn', 1000));
+          /*
+          this.topicToTopic = new TopicToTopicSlideGenerator(this.startTopic, this.endTopic);
+          this.topicToTopic.init();
+          */
           var self = this;
           
           //give time for the initialization to finish
+          setTimeout(function () {
           	//adding the grid
         	var topics = [];
         	
@@ -162,24 +92,19 @@ define(['lib/jquery', 'eic/Logger',
         		$('#slides-row').append($button);
         		if(!firstInit && topics[i] !== undefined){
         			self.curTopic = topics[i];
-        			var slide = topics[i].firstSlide.demo();
+        			var slide = topics[i].next();
         			firstInit = true;
         			self.$slides.append(slide.$element);
         		}
         	}
+          }, 5000);
       },
       
       switchTopic: function(id, topics){
 	  	for(var i = 1; i < topics.length; i++){
 	  		if(topics[i] !== undefined && topics[i].topic.label == id){
 	  			this.curTopic = topics[i];
-	  			
-	  			if (this.curTopic.curSlide>= this.curTopic.slides.length-1)
-					$('#next-slide').hide();
-				else
-					$('#next-slide').show();
-					
-	  			var slide = topics[i].currentSlide();
+	  			var slide = topics[i].next();
 	  			this.$slides.children('.transition-out').remove();
         		// start the transition of other children
         		var children = this.$slides.children();
@@ -188,9 +113,8 @@ define(['lib/jquery', 'eic/Logger',
         		
         		var self = this;
         		
-        		//logger.log("topics[" + i + "]", topics[i]);
         		//add appropriate slides to edit box
-        		var slides = topics[i].slides;
+        		var slides = topics[i].getSlides();
         		for(var val in slides){
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
@@ -236,7 +160,11 @@ define(['lib/jquery', 'eic/Logger',
         // start the transition of other children
         var children = this.$slides.children();
         children.remove();
-        this.$slides.append(this.curTopic.nextSlide().$element);
+        this.$slides.append(this.curTopic.next().$element);
+      },
+      
+      getTopictoTopic: function(){
+      	return this.topicToTopic;
       },
       
       getSlides: function(){
@@ -244,29 +172,18 @@ define(['lib/jquery', 'eic/Logger',
       },
       
       playSlide: function(){
-      	var currentSlide = this.curTopic.currentSlide();
+      	var currentSlide = this.curTopic.next();
       	currentSlide.start();
       	var self = this;
       	setTimeout(function() {
-      		currentSlide.stop();
+      		self.curTopic.next().stop();
 		}, currentSlide.duration);
       },
       
       pauseSlide: function(){
-      	this.curTopic.currentSlide().stop();
-      },
+      	this.curTopic.next().stop();
+      }
       
-      nextSlide: function(){
-		  var children = this.$slides.children();
-          	    children.remove();
-		  this.curTopic.nextSlide();
-		  var slide = this.curTopic.currentSlide();
-		  this.$slides.append(slide.$element);
-		  
-		  logger.log(this.curTopic.curSlide + " " + this.curTopic.slides.length);
-		  if (this.curTopic.curSlide>= this.curTopic.slides.length-1)
-			$('#next-slide').hide();
-	  }
     };
 
     return SlideEditor;

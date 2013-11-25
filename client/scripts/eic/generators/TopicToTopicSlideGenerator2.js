@@ -49,8 +49,8 @@ define(['lib/jquery',
 			        setTimeout(function(){						
 						self.waitforReady(0,function(){
 							for (var i=0; i<self.generators.length; i++){
-								if (self.generators[i].topic)
-									self.generators[i].updateHash();
+								//if (self.generators[i].topic)
+									//self.generators[i].updateHash();
 							}
 							self.loader.stopWaiting();
 							self.ready=true;
