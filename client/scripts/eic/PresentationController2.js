@@ -19,6 +19,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       this.topicSelector = new TopicSelector(this.facebookConnector);
       this.path = path;
       this.slides = {};
+      
+      logger.log("Created PresentationController2");
     }
 
     /* Member functions */
@@ -69,6 +71,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         //logger.log("Creating slides from", this.startTopic.label, "to", this.endTopic.label);
         var generator = new CompositeSlideGenerator();
         
+        logger.log("Received " + this.path + " and will try to populate it (no slide descriptions)");
+        
         if (!this.path){        
 			$.ajax({
 					type: "GET",
@@ -91,10 +95,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 						//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 						// I know that the second generator in the array is the one with topic slides...    
 						if (generator.generators[1].ready){
+							logger.log("New hash: " + path);
 							new SlideEditor(generator, path);
 						}
 						else{
-							generator.generators[1].once('topic slides ready', function(){new SlideEditor(generator, path)});
+							generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + path); new SlideEditor(generator, path)});
 						}
 					}
 			   });	
@@ -112,10 +117,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 				//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 				// I know that the second generator in the array is the one with topic slides...    
 				if (generator.generators[1].ready){
+					logger.log("New hash: " + this.path);
 					new SlideEditor(generator, this.path);
 				}
 				else{
-					generator.generators[1].once('topic slides ready', function(){new SlideEditor(generator, this.path)});
+					generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + this.path); new SlideEditor(generator, this.path)});
 				}
 		   }	
       }
