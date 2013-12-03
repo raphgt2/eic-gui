@@ -30,7 +30,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
       getSpeech: function (text, lang, callback) {
         var self = this;
         var speech_url;
-		speech_url = urls.festivalcheck;
+		speech_url = urls.festivalspeech;
 
         logger.log('Requesting audio URL ' + text);
         sendSpeech(0);
@@ -42,14 +42,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 	          data: { req_text: text, url_type: urlType},
 	          dataType: 'jsonp',
 	          success: function (data) {
-				if (urlType==3)				//data:uri method
+				/*if (urlType==3)				//data:uri method
 					data.snd_url+=data.text;
 				else if (urlType == 1){		//createObjectURL method...only available for new browsers
 					var blob = new Blob([base64DecToArr(data.text)], {type: "audio/wav"});
 	      			data.snd_url = window.URL.createObjectURL(blob);
 				}
 				else 			//Slow url method...just for IE 9 and under
-					data.snd_url+=window.escape(data.text);
+					data.snd_url+=window.escape(data.text);*/
 					
 	            if (data.res === 'OK') {
 	              if (callback)
