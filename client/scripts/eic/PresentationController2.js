@@ -6,11 +6,11 @@
 define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/TopicToTopicSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator2', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/SlideEditor',  'config/URLs',],
+  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'eic/SlideEditor',  'config/URLs','lib/jvent'],
   function ($, Logger, FacebookConnector,
     IntroductionSlideGenerator, OutroductionSlideGenerator, TopicToTopicSlideGenerator,
     TopicToTopicSlideGenerator2, CompositeSlideGenerator,
-    ErrorSlideGenerator, SlidePresenter, TopicSelector, SlideEditor, urls) {
+    ErrorSlideGenerator, SlidePresenter, TopicSelector, SlideEditor, urls, EventEmitter) {
     "use strict";
     var logger = new Logger("PresentationController");
 
@@ -28,23 +28,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     PresentationController.prototype = {
       init: function () {
         logger.log("Initializing");
-        var self = this;
-        /*this.facebookConnector.init();
-
-        // Select the topic when the user connects to Facebook
-        // and prepare the introduction slide.
-        this.facebookConnector.on('connected', function (event, profile) {
-          logger.log("Connected to Facebook as", profile.name);
-          self.profile = profile;
-          self.topicSelector.selectTopic().then(
-            function (startTopic) { self.startTopic = startTopic; },
-            function (error) { self.startTopic = new Error(error); });
-        });
-        this.facebookConnector.on('disconnected', function () {
-          logger.log("Disconnected from Facebook");
-          delete self.profile;
-          delete self.startTopic;
-        });*/
       },
 
       // Lets the user connect with a Facebook account.
@@ -72,59 +55,25 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
         var self = this;
         this.generator = new CompositeSlideGenerator();
         
-        logger.log("Received " + this.path + " and will try to populate it (no slide descriptions)");
-        
-        if (!this.path){        
-			$.ajax({
-					type: "GET",
-					url: urls.singlepath,
-					dataType: "jsonp",
-					error: function () {
-					  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
-					  self.loader.stopWaiting();
-					},
-					success: function (path) {
-						this.startTopic=path.source;
-						this.endTopic=path.destination;
-						
-						generator.addGenerators([
-							new IntroductionSlideGenerator(this.startTopic, this.profile),
-							new TopicToTopicSlideGenerator2(path, this.slides),
-							new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
-						]);
-			
-						//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-						// I know that the second generator in the array is the one with topic slides...    
-						if (generator.generators[1].ready){
-							logger.log("New hash: " + path);
-							new SlideEditor(generator, path);
-						}
-						else{
-							generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + path); new SlideEditor(generator, path)});
-						}
-					}
-			   });	
-		   }
-		   else{
-			   this.startTopic=this.path.source;
-			   this.endTopic=this.path.destination;
-						
-			   this.generator.addGenerators([
-					new IntroductionSlideGenerator(this.startTopic, this.profile),
-					new TopicToTopicSlideGenerator2(this.path),
-					new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
-				]);
-	
-				//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-				// I know that the second generator in the array is the one with topic slides...    
-				if (this.generator.generators[1].ready){
-					logger.log("New hash: " + this.path);
-					new SlideEditor(self.generator, self.path);
-				}
-				else{
-					this.generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + this.path); new SlideEditor(self.generator, self.path)});
-				}
-		   }	
+	   this.startTopic=this.path.source;
+	   this.endTopic=this.path.destination;
+				
+	   this.generator.addGenerators([
+			new IntroductionSlideGenerator(this.startTopic, this.profile),
+			new TopicToTopicSlideGenerator2(this.path),
+			new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
+		]);
+
+		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
+		// I know that the second generator in the array is the one with topic slides...    
+		if (this.generator.generators[1].ready){
+			logger.log("New hash: " + this.path);
+			new SlideEditor(self.generator, self.path);
+		}
+		else{
+			this.generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + this.path); new SlideEditor(self.generator, self.path)});
+		}
+
       }
     };
 
