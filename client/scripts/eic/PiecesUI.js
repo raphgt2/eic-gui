@@ -3,8 +3,8 @@
 * Copyright 2012, Multimedia Lab - Ghent University - iMinds
 * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
 */
-define(['lib/jquery', 'eic/AutocompleteTopic', 'lib/prefixfree.jquery'],
-  function ($, autocompleteTopic) {
+define(['lib/jquery','lib/prefixfree.jquery'],
+  function ($) {
     "use strict";
 
     var pieceWidth = 120;

@@ -46,10 +46,9 @@
     //view.init();
     view.initControls();
     
-    //controller.once('slide_generation_finished', function(){
-	//	alert("finished");
+    controller.once('slide_generation_finished', function(){
 		new SlideEditor(controller.generator, controller.path);
-	//});
+	});
   });
 })(requirejs);
 
