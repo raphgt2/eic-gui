@@ -19,7 +19,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       this.topicSelector = new TopicSelector(this.facebookConnector);
       this.path = path;
       this.slides = {};
-      
+      this.generator;
       logger.log("Created PresentationController2");
     }
 
@@ -69,7 +69,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 
         // Add introduction, body, and outroduction generators
         //logger.log("Creating slides from", this.startTopic.label, "to", this.endTopic.label);
-        var generator = new CompositeSlideGenerator();
+        var self = this;
+        this.generator = new CompositeSlideGenerator();
         
         logger.log("Received " + this.path + " and will try to populate it (no slide descriptions)");
         
@@ -108,7 +109,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 			   this.startTopic=this.path.source;
 			   this.endTopic=this.path.destination;
 						
-			   generator.addGenerators([
+			   this.generator.addGenerators([
 					new IntroductionSlideGenerator(this.startTopic, this.profile),
 					new TopicToTopicSlideGenerator2(this.path),
 					new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
@@ -116,12 +117,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 	
 				//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 				// I know that the second generator in the array is the one with topic slides...    
-				if (generator.generators[1].ready){
+				if (this.generator.generators[1].ready){
 					logger.log("New hash: " + this.path);
-					new SlideEditor(generator, this.path);
+					new SlideEditor(self.generator, self.path);
 				}
 				else{
-					generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + this.path); new SlideEditor(generator, this.path)});
+					this.generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + this.path); new SlideEditor(self.generator, self.path)});
 				}
 		   }	
       }

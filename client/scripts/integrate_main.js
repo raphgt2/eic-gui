@@ -37,10 +37,10 @@
   });
 
 	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI'], function(PresentationController, PresentationController2, PiecesUI){
-		var jsonObject,view;
+		var jsonObject,view,controller;
 	    $.getJSON("../data_json/hash_object_test_1.json", function(data){
 			jsonObject = data;
-			var controller = new PresentationController(jsonObject);
+			controller = new PresentationController2(jsonObject);
 			view = new PiecesUI(controller);
 			controller.init();
             view.init();
@@ -56,6 +56,7 @@
 		});
 		
 		$("#generateVideoEditor").click(function(){
+			console.log("controller", controller);
 			console.log("Hash Object Output", jsonObject);
 		});
 			
