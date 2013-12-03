@@ -64,7 +64,7 @@
 	      //  view = new PiecesUI(controller);
 	        //controller.makeMovie();
 	    //controller.init();
-	    //view.init();
+	    //view.init();;;;
 	});
  
 })(requirejs);
