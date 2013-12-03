@@ -68,7 +68,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		else{
 			this.generator.generators[1].once('topic slides ready', function(){
 				logger.log("New hash: " + self.path); 
-				new SlideEditor(self.generator, self.path);
+				//new SlideEditor(self.generator, self.path);
 				self.emit('slide_generation_finished');
 			});
 		}
