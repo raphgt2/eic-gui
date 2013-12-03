@@ -15,12 +15,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     var logger = new Logger("PresentationController");
 
     function PresentationController(path) {
-      this.facebookConnector = new FacebookConnector();
-      this.topicSelector = new TopicSelector(this.facebookConnector);
       this.path = path;
       this.slides = {};
       this.generator;
-      logger.log("Created PresentationController2");
+      EventEmitter.call(this);
+      logger.log("Created PresentationController2, ready to generate slides");    
     }
 
     /* Member functions */
@@ -28,11 +27,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     PresentationController.prototype = {
       init: function () {
         logger.log("Initializing");
-      },
-
-      // Lets the user connect with a Facebook account.
-      connectToFacebook: function () {
-        this.facebookConnector.connect();
       },
 
       // Starts the movie about the connection between the user and the topic.
@@ -67,11 +61,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 		// I know that the second generator in the array is the one with topic slides...    
 		if (this.generator.generators[1].ready){
-			logger.log("New hash: " + this.path);
-			new SlideEditor(self.generator, self.path);
+			logger.log("New hash: " + self.path);
+			//new SlideEditor(self.generator, self.path);
+			self.emit('slide_generation_finished')
 		}
 		else{
-			this.generator.generators[1].once('topic slides ready', function(){logger.log("New hash: " + this.path); new SlideEditor(self.generator, self.path)});
+			this.generator.generators[1].once('topic slides ready', function(){
+				logger.log("New hash: " + self.path); 
+				new SlideEditor(self.generator, self.path);
+				self.emit('slide_generation_finished');
+			});
 		}
 
       }

@@ -6,17 +6,15 @@
 define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/TopicToTopicSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator2', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'config/URLs','lib/jvent'],
+  'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'config/URLs'],
   function ($, Logger, FacebookConnector,
     IntroductionSlideGenerator, OutroductionSlideGenerator, TopicToTopicSlideGenerator,
     TopicToTopicSlideGenerator2, CompositeSlideGenerator,
-    ErrorSlideGenerator, SlidePresenter, TopicSelector, urls, EventEmitter) {
+    ErrorSlideGenerator, SlidePresenter, TopicSelector, urls) {
     "use strict";
     var logger = new Logger("PresentationController");
 
     function PresentationController(path) {
-      this.facebookConnector = new FacebookConnector();
-      this.topicSelector = new TopicSelector(this.facebookConnector);
       this.path = path;
     }
 
@@ -25,11 +23,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     PresentationController.prototype = {
       init: function () {
         logger.log("Initializing");
-      },
-
-      // Lets the user connect with a Facebook account.
-      connectToFacebook: function () {
-        this.facebookConnector.connect();
       },
 
       // Starts the movie about the connection between the user and the topic.

@@ -44,6 +44,11 @@
         //controller.makeMovie();
     //controller.init();
     //view.init();
+    view.initControls();
+    
+    controller.once('slide_generation_finished', function(){
+		new SlideEditor(controller.generator, controller.path);
+	});
   });
 })(requirejs);
 
