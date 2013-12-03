@@ -21,8 +21,8 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
         this.html_obj;
         this.IntervalCheck;
           
-        if (plugintype!="Audio" && plugintype!="QuickTime" && plugintype!="Windows Media" && plugintype!="VLC"){
-            alert("Your browser does not support our audio. Please download an appropriate plugin (QuickTime, Windows Media Player, or VLC)");
+        if (plugintype!="Audio" && plugintype!="QuickTime"){
+            alert("Your browser does not support our audio. Please change to a new version of Opera, Safari, Chrome, or Firefox, or download an appropriate plugin (QuickTime)");
         }
   
         html_obj=document.createElement("div");
@@ -45,10 +45,10 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
              $(html_obj).append(
                 "<embed id='track" + ++this.TrackCount + "' src='" + snd_url + "' width='1' height='1' Enabled='false' AutoStart='false' ShowControls='false'>");
         }
-        else if (plugintype=="VLC"){
-             $(html_obj).append(
-                "<embed id='track" + this.TrackCount++ + "' target='" + snd_url + "' width='1' height='1' autoplay='false' controls='false'>");
-        }
+        //else if (plugintype=="VLC"){
+        //     $(html_obj).append(
+        //        "<embed id='track" + ++this.TrackCount + "' target='" + snd_url + "' width='100' height='100' autoplay='false' controls='false'>");
+        //}
         logger.log("created audio object track" + this.TrackCount);
         if (autoplay)
             this.playSound(0,false);
@@ -140,7 +140,8 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                 return false;
             }
         }
-        else if (plugintype=="VLC"){
+        /*else if (plugintype=="VLC"){
+			logger.log(document.getElementById("track"+ this.CurrentTrack));
             try{
                 if (document.getElementById("track"+ this.CurrentTrack).get_position() == document.getElementById("track"+ this.CurrentTrack).get_length()){
                     return false;
@@ -157,7 +158,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                     window.clearInterval(this.IntervalCheck);
                 }
             }
-        }
+        }*/
         return true;
     }
     };
