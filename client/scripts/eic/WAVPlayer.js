@@ -2,7 +2,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     var plugintype;
     var logger = new Logger("WAVPlayer");
       
-    /*if (Audio){
+    if (Audio){
         if (document.createElement('audio').canPlayType("audio/wav"))
             plugintype="Audio";
         else
@@ -10,7 +10,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     }
     else{
         plugintype=Plugin.getPluginsForMimeType("audio/wav");
-    }*/
+    }
     plugintype = Plugin.getPluginsForMimeType("audio/mpeg");
   
     function WAVPlayer(){
@@ -21,11 +21,12 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
         this.html_obj;
         this.IntervalCheck;
           
-        if (plugintype!="Audio" && plugintype!="QuickTime"){
+        if (plugintype!="Audio" && plugintype!="QuickTime" && plugintype!="VLC"){
             alert("Your browser does not support our audio. Please change to a new version of Opera, Safari, Chrome, or Firefox, or download an appropriate plugin (QuickTime)");
         }
   
         html_obj=document.createElement("div");
+        
         document.body.appendChild(html_obj);
     };
   
@@ -45,11 +46,13 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
              $(html_obj).append(
                 "<embed id='track" + ++this.TrackCount + "' src='" + snd_url + "' width='1' height='1' Enabled='false' AutoStart='false' ShowControls='false'>");
         }
-        //else if (plugintype=="VLC"){
-        //     $(html_obj).append(
-        //        "<embed id='track" + ++this.TrackCount + "' target='" + snd_url + "' width='100' height='100' autoplay='false' controls='false'>");
-        //}
+        else if (plugintype=="VLC"){
+             $(html_obj).append(
+                "<embed id=id='track" + ++this.TrackCount + "' type='application/x-vlc-plugin' pluginspage='http://www.videolan.org'width='500' height='500' target='"+snd_url+"' controls='false' autoplay='false' loop='false'/>" + 
+					"<object classid='clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921' codebase='http://download.videolan.org/pub/videolan/vlc/last/win32/axvlc.cab'></object>"
+        )}
         logger.log("created audio object track" + this.TrackCount);
+
         if (autoplay)
             this.playSound(0,false);
     },
@@ -77,11 +80,13 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                 document.getElementById("track"+ this.CurrentTrack).Play();
             else if (plugintype=="VLC"){
                 try{
-                    document.getElementById("track"+ this.CurrentTrack).play;
+                    document.getElementById("track"+ this.CurrentTrack).play();
                 }
                 catch(e){
-                    document.getElementById("track"+ this.CurrentTrack).playlist.play();
+                    //document.getElementById("track"+ this.CurrentTrack).playlist.play();
+                    logger.log(document.getElementById("track"+ this.CurrentTrack));
                 }
+                //$('#vlcPlayer').play();
             }
             success=true;
         }
@@ -140,9 +145,11 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                 return false;
             }
         }
-        /*else if (plugintype=="VLC"){
-			logger.log(document.getElementById("track"+ this.CurrentTrack));
-            try{
+        else if (plugintype=="VLC"){
+			        logger.log(document.getElementById("track"+ this.CurrentTrack));
+                    logger.log(document.getElementById("track"+ this.CurrentTrack).playlist);
+			//logger.log(document.getElementById("track"+ this.CurrentTrack));
+            /*try{
                 if (document.getElementById("track"+ this.CurrentTrack).get_position() == document.getElementById("track"+ this.CurrentTrack).get_length()){
                     return false;
                 }
@@ -157,8 +164,8 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                     alert("VLC failed");
                     window.clearInterval(this.IntervalCheck);
                 }
-            }
-        }*/
+            }*/
+        }
         return true;
     }
     };
