@@ -11,7 +11,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     else{
         plugintype=Plugin.getPluginsForMimeType("audio/wav");
     }
-    plugintype = Plugin.getPluginsForMimeType("audio/mpeg");
+    //plugintype = Plugin.getPluginsForMimeType("audio/mpeg");
   
     function WAVPlayer(){
         EventEmitter.call(this);
@@ -36,19 +36,19 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
         
 	if (plugintype=="Audio"){
              $(html_obj).append(
-                "<audio id='track" + ++this.TrackCount + "' src='"+snd_url+"' controls='false' hidden='true'/>");
+                "<audio id='track" + ++this.TrackCount + "' src=\""+snd_url+"\" controls='false' hidden='true'/>");
         }
         else if (plugintype=="QuickTime"){
              $(html_obj).append(
-                "<embed id='track" + ++this.TrackCount + "' src='" + snd_url + "' width='1' height='1' controller='false' enablejavascript='true' autoplay='false' loop='false'>");
+                "<embed id='track" + ++this.TrackCount + "' src=\"" + snd_url + "\" width='1' height='1' controller='false' enablejavascript='true' autoplay='false' loop='false'>");
         }
         else if (plugintype=="Windows Media"){
              $(html_obj).append(
-                "<embed id='track" + ++this.TrackCount + "' src='" + snd_url + "' width='1' height='1' Enabled='false' AutoStart='false' ShowControls='false'>");
+                "<embed id='track" + ++this.TrackCount + "' src=\"" + snd_url + "\" width='1' height='1' Enabled='false' AutoStart='false' ShowControls='false'>");
         }
         else if (plugintype=="VLC"){
              $(html_obj).append(
-                "<embed id=id='track" + ++this.TrackCount + "' type='application/x-vlc-plugin' pluginspage='http://www.videolan.org'width='500' height='500' target='"+snd_url+"' controls='false' autoplay='false' loop='false'/>" + 
+                "<embed id='track" + ++this.TrackCount + "' type='application/x-vlc-plugin' pluginspage='http://www.videolan.org'width='500' height='500' target='"+snd_url+"' controls='false' autoplay='false' loop='false'/>" + 
 					"<object classid='clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921' codebase='http://download.videolan.org/pub/videolan/vlc/last/win32/axvlc.cab'></object>"
         )}
         logger.log("created audio object track" + this.TrackCount);

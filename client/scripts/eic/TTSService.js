@@ -10,7 +10,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
     
     //IE is the only current browser without data: uri support, so check if it supports Blobs...otherwise we must wait for synthesis during the embedding phase...
     var urlType;
-    if (navigator.userAgent.indexOf('MSIE') !=-1){
+    /*if (navigator.userAgent.indexOf('MSIE') !=-1){
 		if (window.URL.createObjectURL)
 			urlType=1; //Since comparing strings is hard, let's use integers: 	1=objectURL 2=normal URL 3=data:uri
 		else
@@ -20,6 +20,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 		urlType=1;
 	else
 		urlType=3;
+		
+		urlType=2;*/
 			
 
     function TTSService() {
@@ -49,7 +51,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 	      			data.snd_url = window.URL.createObjectURL(blob);
 				}
 				else 			//Slow url method...just for IE 9 and under
-					data.snd_url+=window.escape(data.text);*/
+					data.snd_url+=data.text;*/
 					
 	            if (data.res === 'OK') {
 	              if (callback)

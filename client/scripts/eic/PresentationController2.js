@@ -62,13 +62,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		// I know that the second generator in the array is the one with topic slides...    
 		if (this.generator.generators[1].ready){
 			logger.log("New hash: " + self.path);
-			//new SlideEditor(self.generator, self.path);
 			self.emit('slide_generation_finished')
 		}
 		else{
 			this.generator.generators[1].once('topic slides ready', function(){
 				logger.log("New hash: " + self.path); 
-				//new SlideEditor(self.generator, self.path);
 				self.emit('slide_generation_finished');
 			});
 		}

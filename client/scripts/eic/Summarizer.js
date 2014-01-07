@@ -158,6 +158,55 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           },
           error: function (err) {
             logger.log('Error retrieving abstracts', err);
+            
+            //Try to just run even with any actual extracted descriptions?
+            var abstracts = [];
+            
+            function retrieveAbstract(index, vertice) {
+              var uri = vertice.uri || '';
+              var tregex = /\n|([^\r\n.!?]+([.!?]+|$))/gim;
+
+              function getLabel(item) {
+                if (item.label)
+                  return item.label;
+
+                var label = uri.substr(uri.lastIndexOf('/') + 1);
+
+                return label.replace(/[^A-Za-z0-9]/g, ' ');
+              }
+
+              function getDescription(item) {
+                var abstract = item.abstract || '';
+                var sentences = abstract.match(tregex) || [];
+                var desc = sentences.slice(0, maxSentences).join(' ');
+                return desc;
+              }
+
+              var item = abstracts[uri] || {},
+                  desc = getDescription(item);
+                  
+              vertice.defaultText = desc;
+              
+              self.result.topics[index] = {
+                topic : {
+                  type: item.type || '',
+                  label: getLabel(item)
+                },
+                hash_object: vertice
+                //defaultText : desc,
+                //text: vertice.audio_text,
+                //slide_description: vertice.slide_description
+              };
+
+              if ((self.result.topics.length + self.result.links.length) === path.length) {
+                $(self).trigger('generated', formatResult(self.result, vertices));
+              }
+			  logger.log('created', self.result.topics[index]);
+              logger.log('Resource', vertice);
+              logger.log('Extracted text', desc);
+            }
+
+            $(vertices).each(retrieveAbstract);
           }
         });
       }
