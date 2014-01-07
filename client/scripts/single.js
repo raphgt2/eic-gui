@@ -36,22 +36,26 @@
     },
   });
 
-  require(['eic/PresentationController', 'eic/PiecesUI'], function (PresentationController, PiecesUI) {
+  require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs'], function (PresentationController, PiecesUI, urls) {
 		$('#frame').show();
 		
 		
-		//var html_obj=document.createElement("div");
-		//document.body.appendChild(html_obj);
-		
-		var controller = new PresentationController();
-			//view = new PiecesUI(controller);
-			
-        //controller.init();
-		//	view.init();
-			
-        $("#play-button").click(function(){		
-			view = new PiecesUI(controller);
-			
+					
+        $("#play-button").click(function(){	
+			 $.ajax({
+                type: "GET",
+                url: urls.singlepath,
+                dataType: "jsonp",
+                error: function () {
+                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
+                  self.loader.stopWaiting();
+                },
+                success: function (path) {
+					var controller = new PresentationController(path);
+					var view = new PiecesUI(controller);
+					view.initControls();
+                }
+           });                
 		 });
   });
   
