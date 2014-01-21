@@ -42,7 +42,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 				 type: 'GET',
 				 data: { req_text: text, url_type: urlType},
 				 dataType: 'jsonp',
-				 success: function (data) {												
+				 success: function (data) {					 
+					 												
 					 if (data.res === 'OK') {
 						logger.log('Received audio URL', text + 'url:' + data.snd_url);
 						
