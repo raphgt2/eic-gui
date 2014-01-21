@@ -43,8 +43,10 @@
 			controller = new PresentationController2(jsonObject);
 			view = new PiecesUI(controller);
 			controller.init();
+			console.log("Controller I ", controller);
             view.init();
-			console.log("Hash Object Output", jsonObject);
+			console.log("Controller II", controller);
+			console.log("View", view);
         		//view = new PiecesUI(controller);
 			// var controller = new PresentationController(jsonObject);
 			// view = new PiecesUI(controller);
