@@ -51,7 +51,7 @@
                   self.loader.stopWaiting();
                 },
                 success: function (path) {
-					var controller = new PresentationController(path);
+					var controller = new PresentationController(path, true, false);
 					var view = new PiecesUI(controller);
 					view.initControls();
                 }

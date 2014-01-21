@@ -42,26 +42,28 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 				 type: 'GET',
 				 data: { req_text: text, url_type: urlType},
 				 dataType: 'jsonp',
-				 success: function (data) {
-					if (urlType==3)                                //data:uri method
-						data.snd_url+=data.text;
-					else if (urlType == 1){                //createObjectURL method...only available for new browsers
-						var blob = new Blob([base64DecToArr(data.text)], {type: "audio/wav"});
-						data.snd_url = window.URL.createObjectURL(blob);
-					}
-					else //Slow url method...just for IE 9 and under
-						data.snd_url+=window.escape(data.text);
-												
+				 success: function (data) {												
 					 if (data.res === 'OK') {
+						logger.log('Received audio URL', text + 'url:' + data.snd_url);
+						
+						if (urlType==3)                                //data:uri method
+							data.snd_url+=data.text;
+						else if (urlType == 1){                //createObjectURL method...only available for new browsers
+						
+							var blob = new Blob([base64DecToArr(data.text)], {type: "audio/wav"});
+							data.snd_url = window.URL.createObjectURL(blob);
+						}
+						else //Slow url method...just for IE 9 and under
+							data.snd_url+=window.escape(data.text);
+							
 						if (callback)
 							callback(data);
-						logger.log('Received audio URL', text + 'url:' + data.snd_url);
+						
 						self.emit('speechReady', data);
 					 }
 					 else {
 						if (attempt==4){
-							logger.log('Error receiving speech', data);
-							alert("Speech synthesis error");
+							logger.log('Error receiving speech1', data);
 							self.emit('speechError', data);
 						}
 						else{
@@ -72,8 +74,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 				 },
 				 error: function (error) {
 					if (attempt==4){
-						logger.log('Error receiving speech', error);
-						alert("Speech synthesis error");
+						logger.log('Error receiving speech2', error);
 						self.emit('speechError', error);
 					}
 					else{

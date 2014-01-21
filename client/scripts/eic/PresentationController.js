@@ -14,8 +14,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     "use strict";
     var logger = new Logger("PresentationController");
 
-    function PresentationController(path) {
+    function PresentationController(path, intro, outro) {
       this.path = path;
+      //this.intro = intro;
+      //this.outro = outro;
     }
 
     /* Member functions */
@@ -47,11 +49,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		this.startTopic=this.path.source;
 		this.endTopic=this.path.destination;
 		
-		generator.addGenerators([
-			new IntroductionSlideGenerator(this.startTopic, this.profile),
-			new TopicToTopicSlideGenerator(this.path),
-			new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic)
-		]);
+		//if (this.intro)
+			generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
+		
+		generator.addGenerator(new TopicToTopicSlideGenerator(this.path));
+		
+		//if (this.outro)
+			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic));
 
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 		// I know that the second generator in the array is the one with topic slides...    
