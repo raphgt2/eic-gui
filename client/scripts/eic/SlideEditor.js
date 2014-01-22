@@ -89,7 +89,10 @@ define(['lib/jquery', 'eic/Logger',
         		var $button = $('<button>').attr("class", "btn btn-sm btn-primary")
         	    	.attr("id", topics[i].topic.label)
         	    	.html(topics[i].topic.label);
-        		$button.click(function(){ self.switchTopic(this.id, topics); });
+        		$button.click(function(){ 
+        			self.switchTopic(this.id, topics); 
+        			$("#movie-nav-bar").html('');
+        		});
         		$('#nodeNavBar').append($button);
         		if(!firstInit && topics[i] !== undefined){
         			self.curTopic = topics[i];

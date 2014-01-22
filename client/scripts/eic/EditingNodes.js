@@ -20,8 +20,9 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
     	subtract: function(){
     		console.log("10-3", this.a - this.b);
     	},
-    	EnableUIanimation: function(){
-    		$( "#node-element-list-img" ).sortable({
+    	EnableUIAnimation: function(){
+    		console.log("UI Animation");
+    		$( ".node-element-list" ).sortable({
 			  connectWith: "#movie-nav-bar",
 			  helper: "clone",
 		      appendTo: "#videoEditor",
@@ -52,12 +53,15 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
 					$("#movie-nav-bar").css("background", "grey");
 				},
 				receive: function(event, ui){
-					
+					console.log("Receive!");
 					ui.item.removeClass("nodeElementBarContentWrap")
 						   .addClass("movieNavElementWrap")
+				},
+				update: function(event, ui){
+					console.log("Update!");
 				}
 			});
-			$( "#movie-nav-bar, #node-element-list" ).disableSelection();
+			$( "#movie-nav-bar, .node-element-list" ).disableSelection();
     	},
     	grabMovieNav: function(){
     		var movieNav = $("#movie-nav-bar .nodeInformation");
