@@ -2,7 +2,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     var plugintype;
     var logger = new Logger("WAVPlayer");
       
-    if (Audio){
+    /*if (Audio){
         if (document.createElement('audio').canPlayType("audio/wav"))
             plugintype="Audio";
         else
@@ -10,8 +10,17 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     }
     else{
         plugintype=Plugin.getPluginsForMimeType("audio/wav");
+    }*/
+    
+    if (Audio){
+        if (document.createElement('audio').canPlayType("audio/mpeg"))
+            plugintype="Audio";
+        else
+            plugintype=Plugin.getPluginsForMimeType("audio/mpeg");
     }
-    //plugintype = Plugin.getPluginsForMimeType("audio/mpeg");
+    else{
+        plugintype=Plugin.getPluginsForMimeType("audio/mpeg");
+	}
   
     function WAVPlayer(){
         EventEmitter.call(this);

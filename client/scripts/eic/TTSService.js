@@ -3,24 +3,17 @@
 * Copyright 2012, Multimedia Lab - Ghent University - iMinds
 * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
 */
+
+//FESTIVAL INDEPENDENT VERSION OF THIS CLASS
+//
+//
+//
+
+
 define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_handler'],
   function ($, Logger, EventEmitter, urls) {
     "use strict";
-    var logger = new Logger("TTSService");
-    
-    //IE is the only current browser without data: uri support, so check if it supports Blobs...otherwise we must wait for synthesis during the embedding phase...
-    var urlType;
-    if (navigator.userAgent.indexOf('MSIE') !=-1){
-		if (window.URL.createObjectURL)
-			urlType=1; //Since comparing strings is hard, let's use integers:         1=objectURL 2=normal URL 3=data:uri
-        else
-            urlType=2;
-        }
-        else if (window.URL.createObjectURL)        //Try to get the objectURL method...otherwise fall back to data:uri
-			urlType=1;
-        else
-            urlType=3;
-                        
+    var logger = new Logger("TTSService");     
 
     function TTSService() {
       EventEmitter.call(this);
@@ -30,7 +23,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
       getSpeech: function (text, lang, callback) {
         var self = this;
         var speech_url;
-                speech_url = urls.festivalcheck;
 
         logger.log('Requesting audio URL ' + text);
         sendSpeech(0);
@@ -38,24 +30,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
         
          function sendSpeech(attempt){
 			 $.ajax({
-				 url: speech_url,
+				 url: urls.speech,
 				 type: 'GET',
-				 data: { req_text: text, url_type: urlType},
+				 data: { req_text: text},
 				 dataType: 'jsonp',
 				 success: function (data) {					 
 					 												
 					 if (data.res === 'OK') {
 						logger.log('Received audio URL', text + 'url:' + data.snd_url);
-						
-						if (urlType==3)                                //data:uri method
-							data.snd_url+=data.text;
-						else if (urlType == 1){                //createObjectURL method...only available for new browsers
-						
-							var blob = new Blob([base64DecToArr(data.text)], {type: "audio/wav"});
-							data.snd_url = window.URL.createObjectURL(blob);
-						}
-						else //Slow url method...just for IE 9 and under
-							data.snd_url+=window.escape(data.text);
 							
 						if (callback)
 							callback(data);

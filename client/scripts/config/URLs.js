@@ -5,7 +5,7 @@ define(function () {
     autocompletion: "http://pathfinding.restdesc.org/prefixes",
     abstracts: "http://pathfinding.restdesc.org/descriptions",
     topics: "http://pathfinding.restdesc.org/subjects",
-    festivalspeech: "http://speech.everythingisconnected.be/synthesizer/?jsoncallback=?",
+    speech: "http://speech.everythingisconnected.be/synthesizer/?jsoncallback=?",
     festivalcheck: "http://localhost:7001/festival_service/rest/audiotest/jsonfull/?jsoncallback=?",
     //festivalcheck: "http://localhost:7001/festival_service/rest/audiotest/jsonfull/?jsoncallback=?",
     //paths: "http://pathfinding.restdesc.org/paths",
