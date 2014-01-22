@@ -3,13 +3,15 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
     "use strict";
     var logger = new Logger("Editing Node");
     
-    function EditingNodes(controller){
+    function EditingNodes(controller, hashObj){
     	console.log("NOW WE START WITH EDITING THE NODES");
     	this.a = 10;
     	this.b = 3;
     	this._data_source = controller.generator.generators[1].generators;
+    	this._path = hashObj.path;
     	this._Slide_Element_Collection = new Object();
     	this._Play_Sequence = [];
+    	this.curNode = this._path[0];
     	var self = this;
     	
     	this.add();
@@ -26,11 +28,7 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
     		console.log("10-3", this.a - this.b);
     	},
     	initElementCollection: function(){
-    		
     		console.log("Data_Source", this._data_source);
-    		//while(this._data_source[1].slides.img){
-    		//console.log("Data_Source_Element_test", this._data_source[1].getSlides());
-    		//}
     		for(var i = 1; i < this._data_source.length; i++){
     			this._data_source[i].prepare();
     			var img = this._data_source[i].slides.img;
@@ -45,6 +43,11 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
     				this._Slide_Element_Collection[vid[k].slide_info.data.videoID]=vid[k].slide_info;
     			} 
     		}
+    		
+    		$(".nodeNavBtn").click(function(){
+    			console.log($(this).attr("order"));
+    			//this.PrepareNode($(this).attr("order"));
+    		});
     	},
     	EnableUIAnimation: function(){
     		console.log("UI Animation");

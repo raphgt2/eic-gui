@@ -50,7 +50,7 @@
 				console.log("Controllers", controller);
 				console.log("Hash Object Output", jsonObject);
 				var editor = new SlideEditor(controller.generator, controller.path);
-				var editorUI = new EditingNodes(controller);
+				var editorUI = new EditingNodes(controller, jsonObject);
 				console.log("editor", editor);
 				console.log("editorUI", editorUI);
 				editorUI.initElementCollection();

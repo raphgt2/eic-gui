@@ -86,8 +86,9 @@ define(['lib/jquery', 'eic/Logger',
         	
         	var firstInit = false;
         	for(var i = 1; i < topics.length; i++){
-        		var $button = $('<button>').attr("class", "btn btn-sm btn-primary")
+        		var $button = $('<button>').attr("class", "btn btn-sm btn-primary nodeNavBtn")
         	    	.attr("id", topics[i].topic.label)
+        	    	.attr("order", i)
         	    	.html(topics[i].topic.label);
         		$button.click(function(){ 
         			self.switchTopic(this.id, topics); 
