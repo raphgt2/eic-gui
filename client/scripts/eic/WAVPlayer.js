@@ -87,25 +87,20 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                 document.getElementById("track"+ this.CurrentTrack).play();
             else if (plugintype=="QuickTime" || plugintype=="Windows Media")
                 document.getElementById("track"+ this.CurrentTrack).Play();
-            else if (plugintype=="VLC"){
-                //try{
-                    document.getElementById("track"+ this.CurrentTrack).play();
-                //}
-                //catch(e){
-                    //document.getElementById("track"+ this.CurrentTrack).playlist.play();
-                    //logger.log(document.getElementById("track"+ this.CurrentTrack));
-                //}
-                //$('#vlcPlayer').play();
-            }
+            else if (plugintype=="VLC")
+                document.getElementById("track"+ this.CurrentTrack).play();
+
             success=true;
         }
         catch(err){
             logger.log("Playback attempt" + ++attempt + " of track" + this.CurrentTrack + " failed");
-            if (attempt < 20)
+            if (attempt < 10)
                 window.setTimeout(function(){self.playSound(attempt,true)},1000);
             else{
-                logger.log("Gave up on playing audio");
-                self.emit('wav_ended');
+                logger.log("Gave up on playing track " + this.CurrentTrack);
+                $(document.getElementById("track"+this.CurrentTrack)).remove();
+				this.CurrentTrack++;
+				this.nextTrack();
             }
         }
         if (success){
