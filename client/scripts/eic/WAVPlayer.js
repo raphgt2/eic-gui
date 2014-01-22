@@ -155,10 +155,10 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
             }
         }
         else if (plugintype=="VLC"){
-			        logger.log(document.getElementById("track"+ this.CurrentTrack));
-                    logger.log(document.getElementById("track"+ this.CurrentTrack).playlist);
+			        //logger.log(document.getElementById("track"+ this.CurrentTrack));
+                    //logger.log(document.getElementById("track"+ this.CurrentTrack).playlist);
 			//logger.log(document.getElementById("track"+ this.CurrentTrack));
-            /*try{
+            try{
                 if (document.getElementById("track"+ this.CurrentTrack).get_position() == document.getElementById("track"+ this.CurrentTrack).get_length()){
                     return false;
                 }
@@ -170,10 +170,10 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                     }
                 }
                 catch(err){
-                    alert("VLC failed");
+                    //alert("VLC failed");
                     window.clearInterval(this.IntervalCheck);
                 }
-            }*/
+            }
         }
         return true;
     }
