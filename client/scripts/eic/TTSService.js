@@ -29,17 +29,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
         sendSpeech();
         
          function sendSpeech(){
-			this.finished = true;
+			self.finished = true;
 			
 			if (self.attempt==4){
-				this.finished = true;
+				self.finished = true;
 				logger.log('Error receiving speech (timed out)', text);
 				self.emit('speechError', text);
 				return;
 			}
 			 
 			setTimeout(function(){	
-				if (!this.finished){
+				if (!self.finished){
 					self.attempt++;
 					sendSpeech(self.attempt);
 				}
@@ -53,7 +53,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 				 success: function (data) {					 
 					 												
 					 if (data.res === 'OK') {
-						this.finished = true;
+						self.finished = true;
 						logger.log('Received audio URL', text + 'url:' + data.snd_url);
 							
 						if (callback)
