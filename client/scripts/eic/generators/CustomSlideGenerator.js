@@ -108,6 +108,42 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         		this.emitNewSlidesEvent();
         },
         
+        resendSpeech: function(text){
+			this.ready=false;
+			var self = this,
+				tts = new TTSService();
+			tts.once('speechReady', function (event, data) {
+				self.durationLeft = Math.floor(data.snd_time);
+				//Add extra time because IE definitely needs a plugin, which takes time to embed
+				if (navigator.userAgent.indexOf('MSIE') !=-1)
+					self.durationLeft +=5000;
+					
+				self.hash_object.audio_time = self.durationLeft;
+				
+				self.audioURL = data.snd_url;
+				logger.log('Received speech for topic', self.topic.label);
+				self.ready=true;
+				// When speech is received, 'remind' the presenter that the slides are ready
+				self.emit('newSlides');
+			});
+			
+			//Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
+			tts.once('speechError', function(event, data){
+				self.durationLeft = 5000;
+				self.hash_object.audio_time = self.durationLeft;
+				
+				self.audioURL = null;
+				logger.log('Failed to receive speech for topic', self.topic.label);
+				self.ready=true;
+				// When speech is received, 'remind' the presenter that the slides are ready
+				self.emit('newSlides');
+			});
+			
+			logger.log('Getting speech for topic', this.topic.label);
+			tts.getSpeech(text, 'en_GB');	
+			this.hash_object.audio_text=text;
+		},
+        
         prepare: function () {
           this.curSlide = new TitleSlideGenerator(this.topic).next();
           this.curSlide.audioURL = this.audioURL;

@@ -22,7 +22,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
     TTSService.prototype = {
       getSpeech: function (text, lang, callback) {
         var self = this;
-        var speech_url;
 
         logger.log('Requesting audio URL ' + text);
         sendSpeech(0);
