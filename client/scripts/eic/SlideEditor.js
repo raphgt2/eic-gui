@@ -19,6 +19,7 @@ define(['lib/jquery', 'eic/Logger',
       
       $('#play-button').click(function () {
           	logger.log(self.hash_object);
+          	$('#body').html('');
           	new PresentationController(self.hash_object).playMovie();
       });
       
