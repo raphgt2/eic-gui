@@ -3,14 +3,19 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
     "use strict";
     var logger = new Logger("Editing Node");
     
-    function EditingNodes(){
+    function EditingNodes(controller){
     	console.log("NOW WE START WITH EDITING THE NODES");
     	this.a = 10;
     	this.b = 3;
+    	this._data_source = controller.generator.generators[1].generators;
+    	this._Slide_Element_Collection = new Object();
+    	this._Play_Sequence = [];
     	var self = this;
     	
     	this.add();
     	this.subtract();
+    	
+    	
     }
     
     EditingNodes.prototype = {
@@ -19,6 +24,27 @@ define(['lib/jquery', 'lib/jqueryUI','eic/Logger'],
     	},
     	subtract: function(){
     		console.log("10-3", this.a - this.b);
+    	},
+    	initElementCollection: function(){
+    		
+    		console.log("Data_Source", this._data_source);
+    		//while(this._data_source[1].slides.img){
+    		//console.log("Data_Source_Element_test", this._data_source[1].getSlides());
+    		//}
+    		for(var i = 1; i < this._data_source.length; i++){
+    			this._data_source[i].prepare();
+    			var img = this._data_source[i].slides.img;
+    			var vid = this._data_source[i].slides.vid;
+    			console.log("img", img);
+    			console.log("vid", vid);
+    			for (var j = 0; j < img.length; j++){
+    				//console.log(img[j].slides_info.data);
+    				this._Slide_Element_Collection[img[j].slide_info.data.url]=img[j].slide_info;
+    			}
+    			for (var k = 0; k < vid.length; k++){
+    				this._Slide_Element_Collection[vid[k].slide_info.data.videoID]=vid[k].slide_info;
+    			} 
+    		}
     	},
     	EnableUIAnimation: function(){
     		console.log("UI Animation");
