@@ -119,27 +119,29 @@ define(['lib/jquery', 'eic/Logger',
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
-      					$('#imgs').children().remove();
+      					var img = $('#node-element-list-img').children().remove();
       					for(var i = 0; i < s.length; i++){
       						var imgs = s[i].$element.clone().find('img'); //get just the image link
       						imgs.attr('id', val + 's' + i);
       						$(imgs).click(function () {
       							self.setContent(this.id, i, 'img');
       						});
-      					$('#imgs').append(imgs[0]);
+      						var li = img.append('<li>').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+      					li.append(imgs[0]).addClass('nodeElementBarContent');
       					}
+      					//li.append('<div>').addClass('nodeInformation').html()
       				}
       		    	if(val == 'vid'){
       		    		var s = slides[val];
       		    		this.tempSlides['vid'] = s;
-      		    		$('#vids').children().remove();
+      		    		$('#node-element-list-vid').children().remove();
       					for(var i = 0; i < s.length; i++){
       						var vids = s[i].$element.clone().find('img');
       						vids.attr('id', 'vids' + i);
       						$(vids).click(function () {
       							self.setContent(this.id, i, 'vid');
       						});
-      						$('#vids').append(vids[0]);
+      						$('#node-element-list-img-vid').append(vids[0]);
       					}
       				}
       			}

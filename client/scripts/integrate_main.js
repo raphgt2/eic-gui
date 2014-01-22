@@ -42,9 +42,16 @@
 			jsonObject = data;
 			controller = new PresentationController2(jsonObject);
 			view = new PiecesUI(controller);
-			controller.init();
-            view.init();
+			//controller.init();
+            view.initControls();
+            
+            controller.once("slide_generation_finish", function(){
+            	alert("controller finish");
+            	var editor = new SlideEditor(controller.generator, controller.path);
+            });
+            
 			console.log("Hash Object Output", jsonObject);
+			console.log("controller", controller);
         		//view = new PiecesUI(controller);
 			// var controller = new PresentationController(jsonObject);
 			// view = new PiecesUI(controller);
