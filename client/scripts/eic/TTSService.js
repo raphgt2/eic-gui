@@ -17,6 +17,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 
     function TTSService() {
       EventEmitter.call(this);
+      this.finished = false;
+      this.attempt = 0;
     }
 
     TTSService.prototype = {
@@ -24,10 +26,22 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
         var self = this;
 
         logger.log('Requesting audio URL ' + text);
-        sendSpeech(0);
+        sendSpeech();
         
-        
-         function sendSpeech(attempt){
+         function sendSpeech(){
+			if (self.attempt==4){
+				logger.log('Error receiving speech (timed out)', text);
+				self.emit('speechError', text);
+				return;
+			}
+			 
+			setTimeout(function(){	
+				if (!this.finished){
+					self.attempt++;
+					sendSpeech(self.attempt);
+				}
+			},5000);
+			 
 			 $.ajax({
 				 url: urls.speech,
 				 type: 'GET',
@@ -44,13 +58,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 						self.emit('speechReady', data);
 					 }
 					 else {
-						if (attempt==4){
+						if (self.attempt==4){
 							logger.log('Error receiving speech1', data);
 							self.emit('speechError', data);
 						}
 						else{
-							logger.log('Error with speech, new attempt: ' + attempt);
-							sendSpeech(attempt+1);
+							logger.log('Error with speech, new attempt: ' + self.attempt);
+							self.attempt++;
+							sendSpeech();
 						}
 					 }
 				 },
@@ -60,8 +75,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 						self.emit('speechError', error);
 					}
 					else{
-						logger.log('Error with speech, new attempt: ' + attempt);
-						sendSpeech(attempt+1);
+						logger.log('Error with speech2, new attempt: ' + self.attempt);
+							self.attempt++;
+							sendSpeech();
 					}
 				 }
 			 });
