@@ -29,8 +29,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
     TTSService.prototype = {
       getSpeech: function (text, lang, callback) {
         var self = this;
-        var speech_url;
-                speech_url = urls.festivalcheck;
 
         logger.log('Requesting audio URL ' + text);
         sendSpeech(0);
@@ -38,7 +36,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
         
          function sendSpeech(attempt){
 			 $.ajax({
-				 url: speech_url,
+				 url: urls.festivalspeech,
 				 type: 'GET',
 				 data: { req_text: text, url_type: urlType},
 				 dataType: 'jsonp',
