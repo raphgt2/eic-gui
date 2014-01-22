@@ -47,7 +47,6 @@
 			console.log("Hash Object Output", jsonObject);
 			
 			controller.once("slide_generation_finished", function(){
-				alert("slide generation finished");
 				var editor = new SlideEditor(controller.generator, controller.path);
 			});
         		//view = new PiecesUI(controller);
