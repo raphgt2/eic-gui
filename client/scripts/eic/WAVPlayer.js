@@ -2,7 +2,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     var plugintype;
     var logger = new Logger("WAVPlayer");
       
-    if (Audio){
+    /*if (Audio){
         if (document.createElement('audio').canPlayType("audio/wav"))
             plugintype="Audio";
         else
@@ -10,8 +10,17 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
     }
     else{
         plugintype=Plugin.getPluginsForMimeType("audio/wav");
+    }*/
+    
+    if (Audio){
+        if (document.createElement('audio').canPlayType("audio/mpeg"))
+            plugintype="Audio";
+        else
+            plugintype=Plugin.getPluginsForMimeType("audio/mpeg");
     }
-    //plugintype = Plugin.getPluginsForMimeType("audio/mpeg");
+    else{
+        plugintype=Plugin.getPluginsForMimeType("audio/mpeg");
+	}
   
     function WAVPlayer(){
         EventEmitter.call(this);
@@ -78,25 +87,20 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                 document.getElementById("track"+ this.CurrentTrack).play();
             else if (plugintype=="QuickTime" || plugintype=="Windows Media")
                 document.getElementById("track"+ this.CurrentTrack).Play();
-            else if (plugintype=="VLC"){
-                try{
-                    document.getElementById("track"+ this.CurrentTrack).play();
-                }
-                catch(e){
-                    //document.getElementById("track"+ this.CurrentTrack).playlist.play();
-                    logger.log(document.getElementById("track"+ this.CurrentTrack));
-                }
-                //$('#vlcPlayer').play();
-            }
+            else if (plugintype=="VLC")
+                document.getElementById("track"+ this.CurrentTrack).play();
+
             success=true;
         }
         catch(err){
             logger.log("Playback attempt" + ++attempt + " of track" + this.CurrentTrack + " failed");
-            if (attempt < 20)
+            if (attempt < 10)
                 window.setTimeout(function(){self.playSound(attempt,true)},1000);
             else{
-                logger.log("Gave up on playing audio");
-                self.emit('wav_ended');
+                logger.log("Gave up on playing track " + this.CurrentTrack);
+                $(document.getElementById("track"+this.CurrentTrack)).remove();
+				this.CurrentTrack++;
+				this.nextTrack();
             }
         }
         if (success){
@@ -146,10 +150,10 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
             }
         }
         else if (plugintype=="VLC"){
-			        logger.log(document.getElementById("track"+ this.CurrentTrack));
-                    logger.log(document.getElementById("track"+ this.CurrentTrack).playlist);
+			        //logger.log(document.getElementById("track"+ this.CurrentTrack));
+                    //logger.log(document.getElementById("track"+ this.CurrentTrack).playlist);
 			//logger.log(document.getElementById("track"+ this.CurrentTrack));
-            /*try{
+            try{
                 if (document.getElementById("track"+ this.CurrentTrack).get_position() == document.getElementById("track"+ this.CurrentTrack).get_length()){
                     return false;
                 }
@@ -161,10 +165,10 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                     }
                 }
                 catch(err){
-                    alert("VLC failed");
+                    //alert("VLC failed");
                     window.clearInterval(this.IntervalCheck);
                 }
-            }*/
+            }
         }
         return true;
     }
