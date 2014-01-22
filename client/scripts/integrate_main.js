@@ -50,11 +50,16 @@
 				console.log("Controllers", controller);
 				console.log("Hash Object Output", jsonObject);
 				var editor = new SlideEditor(controller.generator, controller.path);
-				var editorUI = new EditingNodes(controller, jsonObject);
-				console.log("editor", editor);
-				console.log("editorUI", editorUI);
-				editorUI.initElementCollection();
-				editorUI.EnableUIAnimation();
+				$("#lastStep").click(function(){
+					var editorUI = new EditingNodes(controller, jsonObject);
+					console.log("editor", editor);
+					console.log("editorUI", editorUI);
+					editorUI.initElementCollection();
+					editorUI.EnableUIAnimation();
+				});
+				// $("#play-edited").click(function(){
+// 					
+				// });
 			});
         		//view = new PiecesUI(controller);
 			// var controller = new PresentationController(jsonObject);
