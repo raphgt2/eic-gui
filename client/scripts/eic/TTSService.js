@@ -29,7 +29,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
         sendSpeech();
         
          function sendSpeech(){
-			self.finished = true;
+			if (self.finished)
+				return;
 			
 			if (self.attempt==4){
 				self.finished = true;
@@ -43,7 +44,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
 					self.attempt++;
 					sendSpeech(self.attempt);
 				}
-			},5000);
+			},3000);
 			 
 			 $.ajax({
 				 url: urls.speech,
