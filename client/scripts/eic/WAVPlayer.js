@@ -88,13 +88,13 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
             else if (plugintype=="QuickTime" || plugintype=="Windows Media")
                 document.getElementById("track"+ this.CurrentTrack).Play();
             else if (plugintype=="VLC"){
-                try{
+                //try{
                     document.getElementById("track"+ this.CurrentTrack).play();
-                }
-                catch(e){
+                //}
+                //catch(e){
                     //document.getElementById("track"+ this.CurrentTrack).playlist.play();
-                    logger.log(document.getElementById("track"+ this.CurrentTrack));
-                }
+                    //logger.log(document.getElementById("track"+ this.CurrentTrack));
+                //}
                 //$('#vlcPlayer').play();
             }
             success=true;
