@@ -46,8 +46,8 @@ define(['lib/jquery', 'eic/Logger',
       startEdit: function () {
 
 		//show the editing box
-		var myNode = document.getElementById("init");
-		myNode.innerHTML = '';
+		//var myNode = document.getElementById("init");
+		//myNode.innerHTML = '';
 		// var myNode2 = document.getElementById("del");
 		// myNode2.innerHTML = '';
 		$('#videoEditor').css('display', 'inline');

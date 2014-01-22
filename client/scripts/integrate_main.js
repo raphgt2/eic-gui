@@ -36,37 +36,40 @@
     },
   });
 
-	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/EditingNodes'], function(PresentationController, PresentationController2, PiecesUI, EditingNodes){
+	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor){
 		var jsonObject,view,controller;
 	    $.getJSON("../data_json/hash_object_test_1.json", function(data){
 			jsonObject = data;
 			controller = new PresentationController2(jsonObject);
 			view = new PiecesUI(controller);
-
 			//controller.init();
             view.initControls();
-            
-            controller.once("slide_generation_finish", function(){
-            	alert("controller finish");
-            	var editor = new SlideEditor(controller.generator, controller.path);
-            });
-            
 			console.log("Hash Object Output", jsonObject);
-			console.log("controller", controller);
 			
-			console.log("Controller I ", controller);
-            var editing = new EditingNodes();
-            console.log("Test Editing Nodes: ", editing);
-            editing.EnableUIanimation();
-            $("#lastStep").click(function(){
-            	editing.grabMovieNav();
-            });
-            
-            
-            view.init();
-			console.log("Controller II", controller);
-			console.log("View", view);
-
+			controller.once("slide_generation_finished", function(){
+				alert("slide generation finished");
+				var editor = new SlideEditor(controller.generator, controller.path);
+			});
+        		//view = new PiecesUI(controller);
+			// var controller = new PresentationController(jsonObject);
+			// view = new PiecesUI(controller);
+			// controller.makeMovie();
+			// controller.init();
+			// view.init();
+			
+			
+		});
+		
+		// $("#generateVideoEditor").click(function(){
+			// console.log("controller", controller);
+			// console.log("Hash Object Output", jsonObject);
+		// });
+// 			
+	    //var controller = new PresentationController(jsonObject);
+	      //  view = new PiecesUI(controller);
+	        //controller.makeMovie();
+	    //controller.init();
+	    //view.init();;;;
 	});
  
 })(requirejs);
