@@ -96,7 +96,7 @@ define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logg
                 window.setTimeout(function(){self.playSound(attempt,true)},1000);
             else{
                 logger.log("Gave up on playing audio");
-                self.emit('playback_error');
+                self.emit('wav_ended');
             }
         }
         if (success){
