@@ -45,6 +45,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           }
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
           result.topics[i].hash_object.defaultText = glue + result.topics[i].hash_object.defaultText;
+          
           if (!result.topics[i].hash_object.audio_text)
 			result.topics[i].hash_object.audio_text=result.topics[i].hash_object.defaultText;
 		  //updating the hash object
@@ -108,7 +109,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           },
           success: function (abstracts) {
             if (abstracts.length === 0)
-              logger.log('No abstracts found');
+				logger.log('No abstracts found');
 
             function retrieveAbstract(index, vertice) {
               var uri = vertice.uri || '';
@@ -159,7 +160,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           error: function (err) {
             logger.log('Error retrieving abstracts', err);
             
-            //Try to just run even with any actual extracted descriptions?
+            //Try to just run even without any actual extracted descriptions?
             var abstracts = [];
             
             function retrieveAbstract(index, vertice) {
@@ -193,9 +194,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
                   label: getLabel(item)
                 },
                 hash_object: vertice
-                //defaultText : desc,
-                //text: vertice.audio_text,
-                //slide_description: vertice.slide_description
+
               };
 
               if ((self.result.topics.length + self.result.links.length) === path.length) {

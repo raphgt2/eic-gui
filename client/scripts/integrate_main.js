@@ -36,12 +36,13 @@
     },
   });
 
-	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI'], function(PresentationController, PresentationController2, PiecesUI){
+	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/EditingNodes'], function(PresentationController, PresentationController2, PiecesUI, EditingNodes){
 		var jsonObject,view,controller;
 	    $.getJSON("../data_json/hash_object_test_1.json", function(data){
 			jsonObject = data;
 			controller = new PresentationController2(jsonObject);
 			view = new PiecesUI(controller);
+
 			//controller.init();
             view.initControls();
             
@@ -52,26 +53,20 @@
             
 			console.log("Hash Object Output", jsonObject);
 			console.log("controller", controller);
-        		//view = new PiecesUI(controller);
-			// var controller = new PresentationController(jsonObject);
-			// view = new PiecesUI(controller);
-			// controller.makeMovie();
-			// controller.init();
-			// view.init();
 			
-			
-		});
-		
-		$("#generateVideoEditor").click(function(){
-			console.log("controller", controller);
-			console.log("Hash Object Output", jsonObject);
-		});
-			
-	    //var controller = new PresentationController(jsonObject);
-	      //  view = new PiecesUI(controller);
-	        //controller.makeMovie();
-	    //controller.init();
-	    //view.init();;;;
+			console.log("Controller I ", controller);
+            var editing = new EditingNodes();
+            console.log("Test Editing Nodes: ", editing);
+            editing.EnableUIanimation();
+            $("#lastStep").click(function(){
+            	editing.grabMovieNav();
+            });
+            
+            
+            view.init();
+			console.log("Controller II", controller);
+			console.log("View", view);
+
 	});
  
 })(requirejs);

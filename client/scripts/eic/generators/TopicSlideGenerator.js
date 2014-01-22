@@ -77,6 +77,20 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             // When speech is received, 'remind' the presenter that the slides are ready
             self.emit('newSlides');
           });
+          
+          //Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
+			tts.once('speechError', function(event, data){
+				self.durationLeft = 5000;
+				self.hash_object.audio_time = self.durationLeft;
+				
+				self.audioURL = null;
+				logger.log('Failed to receive speech for topic', self.topic.label);
+				self.ready=true;
+				// When speech is received, 'remind' the presenter that the slides are ready
+				self.emit('newSlides');
+			});
+			
+			
           logger.log('Getting speech for topic', this.topic.label);
           tts.getSpeech(this.hash_object.audio_text, 'en_GB');
 
@@ -140,6 +154,19 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				// When speech is received, 'remind' the presenter that the slides are ready
 				self.emit('newSlides');
 			});
+			
+			//Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
+			tts.once('speechError', function(event, data){
+				self.durationLeft = 5000;
+				self.hash_object.audio_time = self.durationLeft;
+				
+				self.audioURL = null;
+				logger.log('Failed to receive speech for topic', self.topic.label);
+				self.ready=true;
+				// When speech is received, 'remind' the presenter that the slides are ready
+				self.emit('newSlides');
+			});
+			
 			logger.log('Getting speech for topic', this.topic.label);
 			tts.getSpeech(text, 'en_GB');	
 			this.hash_object.audio_text=text;
