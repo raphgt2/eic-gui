@@ -22,6 +22,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.topic = topic;
       this.durationLeft = 0;
       this.audioURL ='';
+      this.audio = true;
       
       this.generatorsHash = {}; //take care of this
       
@@ -70,6 +71,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             self.audioURL = data.snd_url;
             logger.log('Received speech for topic', self.topic.label);
             self.ready=true;
+            self.audio=true;
             // When speech is received, 'remind' the presenter that the slides are ready
             self.emit('newSlides');
           });
@@ -82,6 +84,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				self.audioURL = null;
 				logger.log('Failed to receive speech for topic', self.topic.label);
 				self.ready=true;
+				self.audio=false;
 				// When speech is received, 'remind' the presenter that the slides are ready
 				self.emit('newSlides');
 			});
@@ -127,6 +130,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				self.audioURL = data.snd_url;
 				logger.log('Received speech for topic', self.topic.label);
 				self.ready=true;
+				self.audio=true;
 				// When speech is received, 'remind' the presenter that the slides are ready
 				self.emit('newSlides');
 			});
@@ -139,6 +143,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				self.audioURL = null;
 				logger.log('Failed to receive speech for topic', self.topic.label);
 				self.ready=true;
+				self.audio = false;
 				// When speech is received, 'remind' the presenter that the slides are ready
 				self.emit('newSlides');
 			});
