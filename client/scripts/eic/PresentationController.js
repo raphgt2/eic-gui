@@ -16,8 +16,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 
     function PresentationController(path, intro, outro) {
       this.path = path;
-      //this.intro = intro;
-      //this.outro = outro;
+      this.intro = intro;
+      this.outro = outro;
     }
 
     /* Member functions */
