@@ -109,6 +109,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         },
         
         resendSpeech: function(text){
+			if (this.hash_object.audio_text==text){
+				return;
+			}
+			
 			this.ready=false;
 			var self = this,
 				tts = new TTSService();
