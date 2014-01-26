@@ -122,6 +122,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
         	}
         	self.switchTopic(topics[1].topic.label, topics);
           //}, 500);
+          
+          setTimeout(function() {
+          	self.initElementCollection();
+			self.EnableUIAnimation();
+          }, 5000);
       },
       
       switchTopic: function(id, topics){

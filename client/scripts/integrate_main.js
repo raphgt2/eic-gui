@@ -27,34 +27,60 @@
       'lib/prefixfree.jquery': {
         deps: ['lib/prefixfree.min']
       },
-	  'eic/pluginsniff':{
-		exports: 'pluginsniff'
-	  },
-	  'lib/base64_handler':{
-		exports: 'base64_handler'
-	  },	  
+          'eic/pluginsniff':{
+                exports: 'pluginsniff'
+          },
+          'lib/base64_handler':{
+                exports: 'base64_handler'
+          },          
     },
   });
 
-	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor', 'eic/EditingNodes'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, EditingNodes){
-		var jsonObject,view,controller;
-	    $.getJSON("../data_json/hash_object_test_1.json", function(data){
-			jsonObject = data;
-			controller = new PresentationController2(jsonObject);
-			view = new PiecesUI(controller);
-			//controller.init();
-            view.initControls();
-			console.log("Hash Object Output", jsonObject);
-			
-			controller.once("slide_generation_finished", function(){
-				console.log("Controllers", controller);
-				console.log("Hash Object Output", jsonObject);
-				var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
-					//editor.initElementCollection();
-					//editor.EnableUIAnimation();
-			
-		});
-	});
+        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/EditingNodes'], function(PresentationController, PresentationController2, PiecesUI, EditingNodes){
+                var jsonObject,view,controller;
+            $.getJSON("../data_json/hash_object_test_1.json", function(data){
+                        jsonObject = data;
+                        controller = new PresentationController2(jsonObject);
+                        view = new PiecesUI(controller);
+                        controller.init();
+                        console.log("Controller I ", controller);
+            var editing = new EditingNodes();
+            console.log("Test Editing Nodes: ", editing);
+            editing.EnableUIanimation();
+            $("#lastStep").click(function(){
+                    editing.grabMovieNav();
+            });
+            
+            
+            view.init();
+                        console.log("Controller II", controller);
+                        console.log("View", view);
+                        
+                        
+                        
+                        
+                        
+                        
+                        //view = new PiecesUI(controller);
+                        // var controller = new PresentationController(jsonObject);
+                        // view = new PiecesUI(controller);
+                        // controller.makeMovie();
+                        // controller.init();
+                        // view.init();
+                        
+                        
+                });
+                
+                $("#generateVideoEditor").click(function(){
+                        console.log("controller", controller);
+                        console.log("Hash Object Output", jsonObject);
+                });
+                        
+            //var controller = new PresentationController(jsonObject);
+              //  view = new PiecesUI(controller);
+                //controller.makeMovie();
+            //controller.init();
+            //view.init();;;;
+        });
  
 })(requirejs);
-
