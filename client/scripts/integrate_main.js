@@ -49,13 +49,13 @@
 			controller.once("slide_generation_finished", function(){
 				console.log("Controllers", controller);
 				console.log("Hash Object Output", jsonObject);
-				var editor = new SlideEditor(controller.generator, controller.path);
+				var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
 				$("#lastStep").click(function(){
-					var editorUI = new EditingNodes(controller, jsonObject);
-					console.log("editor", editor);
-					console.log("editorUI", editorUI);
-					editorUI.initElementCollection();
-					editorUI.EnableUIAnimation();
+					//var editorUI = new EditingNodes(controller, jsonObject);
+					//console.log("editor", editor);
+					//console.log("editorUI", editorUI);
+					editor.initElementCollection();
+					editor.EnableUIAnimation();
 				});
 				// $("#play-edited").click(function(){
 // 					
