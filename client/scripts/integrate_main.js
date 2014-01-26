@@ -36,7 +36,7 @@
     },
   });
 
-	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor){
+	require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor', 'eic/EditingNodes'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, EditingNodes){
 		var jsonObject,view,controller;
 	    $.getJSON("../data_json/hash_object_test_1.json", function(data){
 			jsonObject = data;
@@ -47,8 +47,19 @@
 			console.log("Hash Object Output", jsonObject);
 			
 			controller.once("slide_generation_finished", function(){
-				alert("slide generation finished");
+				console.log("Controllers", controller);
+				console.log("Hash Object Output", jsonObject);
 				var editor = new SlideEditor(controller.generator, controller.path);
+				$("#lastStep").click(function(){
+					var editorUI = new EditingNodes(controller, jsonObject);
+					console.log("editor", editor);
+					console.log("editorUI", editorUI);
+					editorUI.initElementCollection();
+					editorUI.EnableUIAnimation();
+				});
+				// $("#play-edited").click(function(){
+// 					
+				// });
 			});
         		//view = new PiecesUI(controller);
 			// var controller = new PresentationController(jsonObject);

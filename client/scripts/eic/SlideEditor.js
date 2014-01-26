@@ -62,7 +62,7 @@ define(['lib/jquery', 'eic/Logger',
         this.$slides = $slides;
 
         // Hide the main panel and show the slides panel
-        $('#screen2').append($wrapper);
+        $('#moviePreview').append($wrapper);
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
         
         // Hide the main panel and show the slides panel
@@ -86,11 +86,15 @@ define(['lib/jquery', 'eic/Logger',
         	
         	var firstInit = false;
         	for(var i = 1; i < topics.length; i++){
-        		var $button = $('<button>').attr("class", "btn btn-primary")
+        		var $button = $('<button>').attr("class", "btn btn-sm btn-primary nodeNavBtn")
         	    	.attr("id", topics[i].topic.label)
+        	    	.attr("order", i)
         	    	.html(topics[i].topic.label);
-        		$button.click(function(){ self.switchTopic(this.id, topics); });
-        		$('#slides-row').append($button);
+        		$button.click(function(){ 
+        			self.switchTopic(this.id, topics); 
+        			$("#movie-nav-bar").html('');
+        		});
+        		$('#nodeNavBar').append($button);
         		if(!firstInit && topics[i] !== undefined){
         			self.curTopic = topics[i];
         			var slide = topics[i].next();
@@ -98,7 +102,8 @@ define(['lib/jquery', 'eic/Logger',
         			self.$slides.append(slide.$element);
         		}
         	}
-          }, 5000);
+        	self.switchTopic(topics[1].topic.label, topics);
+          }, 500);
       },
       
       switchTopic: function(id, topics){
@@ -120,29 +125,37 @@ define(['lib/jquery', 'eic/Logger',
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
-      					var img = $('#node-element-list-img').children().remove();
+      					$('#imgs').children().remove();
       					for(var i = 0; i < s.length; i++){
       						var imgs = s[i].$element.clone().find('img'); //get just the image link
       						imgs.attr('id', val + 's' + i);
       						$(imgs).click(function () {
       							self.setContent(this.id, i, 'img');
       						});
-      						var li = img.append('<li>').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
-      					li.append(imgs[0]).addClass('nodeElementBarContent');
+      						$('#imgs').append('<li id=img' + i + '></li>')
+      						$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+      						$('#img' + i + '').append(imgs[0])
+      						$('#imgs' + i + '').addClass('nodeElementBarContent');
       					}
       					//li.append('<div>').addClass('nodeInformation').html()
       				}
       		    	if(val == 'vid'){
       		    		var s = slides[val];
       		    		this.tempSlides['vid'] = s;
-      		    		$('#node-element-list-vid').children().remove();
+      		    		$('#vids').children().remove();
+      		    		$('#vids').css('display', 'inline');
+      		    		//console.log(s[0]);
       					for(var i = 0; i < s.length; i++){
       						var vids = s[i].$element.clone().find('img');
       						vids.attr('id', 'vids' + i);
       						$(vids).click(function () {
       							self.setContent(this.id, i, 'vid');
       						});
-      						$('#node-element-list-img-vid').append(vids[0]);
+      						//$('#vids').append(vids[0]);
+      						$('#vids').append('<li id=vid' + i + '></li>')
+      						$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+      						$('#vid' + i + '').append(vids[0])
+      						$('#vids' + i + '').addClass('nodeElementBarContent');
       					}
       				}
       			}
@@ -163,7 +176,10 @@ define(['lib/jquery', 'eic/Logger',
         // start the transition of other children
         var children = this.$slides.children();
         children.remove();
-        this.$slides.append(this.curTopic.next().$element);
+        var newSlide = this.curTopic.next().$element.clone().find('img');
+        newSlide.css('display', 'block');
+        newSlide.addClass('imgPreview')
+        this.$slides.append(newSlide[0]);
       },
       
       getTopictoTopic: function(){
