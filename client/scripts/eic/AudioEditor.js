@@ -18,31 +18,7 @@ function($,Logger,SlidePresenter){
 		this.generator=generator;
 		this.curTopic = null;
 		this.previousText;		//Used to avoid excessive speech resends
-		
-		var self = this;		
-			
-		$('#textDescription').blur(function() {
-			if (self.previousText[i]==$('#textDescription').val()){
-				return;
-			}
-			
-			this.curTopic.resendSpeech($('#textDescription').val());
-			self.addAudio(this.curTopic);
-		});
-		
-		$('#textDescription').focus(function(){
-            self.previousText=$('#textDescription').val();
-		});
-			
-		$('#editTestDescription').click(function() {	
-			if (this.curTopic.hash_object.audio_text == this.curTopic.hash_object.defaultText){
-				return;
-			}
-			
-			this.curTopic.resendSpeech(this.curTopic.hash_object.defaultText);
-			$('#textDescription').val(this.curTopic.hash_object.defaultText);
-			self.addAudio(this.curTopic);
-		});
+	
 	}
 	
 	AudioEditor.prototype={
@@ -51,6 +27,31 @@ function($,Logger,SlidePresenter){
 			this.curTopic = topic;
 			$('#textDescription').val(topic.hash_object.audio_text);
 			this.addAudio(topic);
+			
+			var self = this;		
+			
+			$('#textDescription').blur(function() {
+				if (self.previousText[i]==$('#textDescription').val()){
+					return;
+				}
+				
+				this.curTopic.resendSpeech($('#textDescription').val());
+				self.addAudio(this.curTopic);
+			});
+			
+			$('#textDescription').focus(function(){
+				self.previousText=$('#textDescription').val();
+			});
+				
+			$('#editTestDescription').click(function() {	
+				if (this.curTopic.hash_object.audio_text == this.curTopic.hash_object.defaultText){
+					return;
+				}
+				
+				this.curTopic.resendSpeech(this.curTopic.hash_object.defaultText);
+				$('#textDescription').val(this.curTopic.hash_object.defaultText);
+				self.addAudio(this.curTopic);
+			});
 		},
 		
 		addAudio: function(slide){
