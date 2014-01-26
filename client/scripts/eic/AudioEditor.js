@@ -29,6 +29,7 @@ function($,Logger,SlidePresenter){
 			var self = this;		
 			
 			$('#textDescription').blur(function() {
+				alert("something");
 				if (self.previousText[i]==$('#textDescription').val()){
 					return;
 				}
