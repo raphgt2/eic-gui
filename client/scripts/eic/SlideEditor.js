@@ -1,8 +1,8 @@
-define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
+define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController'],
-  function ($, Logger, jqueryUI,
+  function ($, Logger, jqueryUI, AudioEditor,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
     ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController) {
@@ -15,7 +15,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
       this.topicToTopic = generator.generators[1];
       this.hash_object = path;
       
-      var self = this;
+      
       
       //EDITING NODES//
     	this.a = 10;
@@ -26,17 +26,34 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     	this._Play_Sequence = [];
     	this._curNode = this._path[0];
     	this._hash = hashObj;
-    	var self = this;
+    	//var self = this;
     	
     	this.add();
     	this.subtract();
+    	var self = this;
     	
+    	this.audio_editor = new AudioEditor();
     //////////
+      // $('#play-button').click(function () {
+      	// //var self=this;
+      	// //self.restoreCurrentNode();
+      	// //console.log(this._hash);
+      	// logger.log("play button click", self._hash);
+          	// $('#body').html('');
+          	// new PresentationController(self._hash, true, true).playMovie();
+      // });
+      
+      
+      
+      
+      
       
       $('#play-button').click(function () {
-          	logger.log(self.hash_object);
+      	var self=this;
+      	//self.restoreCurrentNode();
+      	logger.log("play button click", this._hash);
           	$('#body').html('');
-          	new PresentationController(self.hash_object).playMovie();
+          	new PresentationController(self._hash, true, true).playMovie();
       });
       
       $('#play-slide').click(function () {
@@ -122,12 +139,28 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
         	}
         	self.switchTopic(topics[1].topic.label, topics);
           //}, 500);
+          
+          setTimeout(function() {
+          	self.initElementCollection();
+			self.EnableUIAnimation();
+			// $('#play-button').click(function () {
+      	// //var self=this;
+      	// //self.restoreCurrentNode();
+      	// //console.log(this._hash);
+      	// logger.log("play button click", self._hash);
+          	// $('#body').html('');
+          	// new PresentationController(self._hash, true, true).playMovie();
+      // });
+          }, 5000);
       },
       
       switchTopic: function(id, topics){
 	  	for(var i = 1; i < topics.length; i++){
 	  		if(topics[i] !== undefined && topics[i].topic.label == id){
+	  			
 	  			this.curTopic = topics[i];
+	  			this.audio_editor.setTopic(this.curTopic);
+	  			
 	  			var slide = topics[i].next();
 	  			this.$slides.children('.transition-out').remove();
         		// start the transition of other children
@@ -260,9 +293,27 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
     		}
     		console.log("slide_content", slide_content);
-    		this._curNode.slide_description = slide_content;
+    		if (slide_content[0] != undefined){
+    			this._curNode.slide_description = slide_content;
+    		}
+    		
     		
     		console.log("Updated Hash", this._hash);
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+      
+      
+      
+      
+      
+      
+      
     	},
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");

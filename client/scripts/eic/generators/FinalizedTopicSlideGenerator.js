@@ -50,7 +50,20 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		var self  = this;
 		  if (this.hash_object.slide_description) {
 			  logger.log("slide description found", this.hash_object.slide_description);
-			  
+			  if (this.hash_object.slide_description.length == 0){
+				  //Create all generators depending on the type of the topic
+					switch (this.topic.type) {
+					case "http://dbpedia.org/ontology/PopulatedPlace":
+						this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+						this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
+						break;
+					default:
+						this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+						break;
+					}
+			  }			  
 			  this.hash_object.slide_description.forEach(function(description){
 				  var slide;
 				  switch(description.type){
