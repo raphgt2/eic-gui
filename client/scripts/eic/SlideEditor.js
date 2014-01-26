@@ -1,8 +1,8 @@
-define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
+define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController'],
-  function ($, Logger, jqueryUI,
+  function ($, Logger, jqueryUI, AudioEditor,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
     ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController) {
@@ -31,6 +31,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     	this.add();
     	this.subtract();
     	var self = this;
+    	
+    	this.audio_editor = new AudioEditor();
     //////////
       // $('#play-button').click(function () {
       	// //var self=this;
@@ -46,13 +48,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
       
       
       
-      // $('#play-button').click(function () {
-      	// var self=this;
-      	// //self.restoreCurrentNode();
-      	// logger.log("play button click", this._hash);
-          	// $('#body').html('');
-          	// new PresentationController(self._hash, true, true).playMovie();
-      // });
+      $('#play-button').click(function () {
+      	var self=this;
+      	//self.restoreCurrentNode();
+      	logger.log("play button click", this._hash);
+          	$('#body').html('');
+          	new PresentationController(self._hash, true, true).playMovie();
+      });
       
       $('#play-slide').click(function () {
                  if($('#play-slide').html() == 'Play Slide'){
@@ -141,21 +143,24 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
           setTimeout(function() {
           	self.initElementCollection();
 			self.EnableUIAnimation();
-			$('#play-button').click(function () {
-      	//var self=this;
-      	//self.restoreCurrentNode();
-      	//console.log(this._hash);
-      	logger.log("play button click", self._hash);
-          	$('#body').html('');
-          	new PresentationController(self._hash, true, true).playMovie();
-      });
+			// $('#play-button').click(function () {
+      	// //var self=this;
+      	// //self.restoreCurrentNode();
+      	// //console.log(this._hash);
+      	// logger.log("play button click", self._hash);
+          	// $('#body').html('');
+          	// new PresentationController(self._hash, true, true).playMovie();
+      // });
           }, 5000);
       },
       
       switchTopic: function(id, topics){
 	  	for(var i = 1; i < topics.length; i++){
 	  		if(topics[i] !== undefined && topics[i].topic.label == id){
+	  			
 	  			this.curTopic = topics[i];
+	  			this.audio_editor.setTopic(this.curTopic);
+	  			
 	  			var slide = topics[i].next();
 	  			this.$slides.children('.transition-out').remove();
         		// start the transition of other children
