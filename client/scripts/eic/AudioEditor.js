@@ -30,7 +30,7 @@ function($,Logger,SlidePresenter){
 			
 			$('#textDescription').blur(function() {
 				alert("something");
-				if (self.previousText[i]==$('#textDescription').val()){
+				if (self.previousText==$('#textDescription').val()){
 					return;
 				}
 				
