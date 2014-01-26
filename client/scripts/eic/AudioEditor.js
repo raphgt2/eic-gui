@@ -31,7 +31,7 @@ function($,Logger,SlidePresenter){
 		});
 		
 		$('#textDescription').focus(function(){
-            self.previousText=$('#textDescription').val()
+            self.previousText=$('#textDescription').val();
 		}
 			
 		$('#editTestDescription').click(function() {	
@@ -51,7 +51,7 @@ function($,Logger,SlidePresenter){
 			this.curTopic = topic;
 			$('#textDescription').val(topic.hash_object.audio_text);
 			this.addAudio(topic);
-		}
+		},
 		
 		addAudio: function(slide){
 			//REPLACE ALL THE HTML_OBJECTS
