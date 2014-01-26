@@ -29,10 +29,11 @@ function($,Logger,SlidePresenter){
 			var self = this;		
 			
 			$('#textDescription').blur(function() {
-				alert("something");
 				if (self.previousText==$('#textDescription').val()){
 					return;
 				}
+				
+				$('#playButtonGroup').html("loading");
 				
 				self.curTopic.resendSpeech($('#textDescription').val());
 				self.addAudio(self.curTopic);
@@ -75,7 +76,6 @@ function($,Logger,SlidePresenter){
 			}
 			else{
 				slide.once('newSlides', function(){
-					logger.log(id+": finished waiting");
 					if (plugintype=="Audio"){
 			             $('#playButtonGroup').html(
 			                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
