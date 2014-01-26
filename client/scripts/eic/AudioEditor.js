@@ -14,8 +14,6 @@ function($,Logger,SlidePresenter){
     }
 	
 	function AudioEditor(){
-		this.hash_object = path;
-		this.generator=generator;
 		this.curTopic = null;
 		this.previousText;		//Used to avoid excessive speech resends
 	
