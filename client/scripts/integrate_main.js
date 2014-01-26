@@ -50,37 +50,10 @@
 				console.log("Controllers", controller);
 				console.log("Hash Object Output", jsonObject);
 				var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
-				$("#lastStep").click(function(){
-					//var editorUI = new EditingNodes(controller, jsonObject);
-					//console.log("editor", editor);
-					//console.log("editorUI", editorUI);
-					editor.initElementCollection();
-					editor.EnableUIAnimation();
-				});
-				// $("#play-edited").click(function(){
-// 					
-				// });
-			});
-        		//view = new PiecesUI(controller);
-			// var controller = new PresentationController(jsonObject);
-			// view = new PiecesUI(controller);
-			// controller.makeMovie();
-			// controller.init();
-			// view.init();
-			
+					//editor.initElementCollection();
+					//editor.EnableUIAnimation();
 			
 		});
-		
-		// $("#generateVideoEditor").click(function(){
-			// console.log("controller", controller);
-			// console.log("Hash Object Output", jsonObject);
-		// });
-// 			
-	    //var controller = new PresentationController(jsonObject);
-	      //  view = new PiecesUI(controller);
-	        //controller.makeMovie();
-	    //controller.init();
-	    //view.init();;;;
 	});
  
 })(requirejs);

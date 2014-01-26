@@ -91,7 +91,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
           var self = this;
           
           //give time for the initialization to finish
-          setTimeout(function () {
+          //setTimeout(function () {
           	//adding the grid
         	var topics = [];
         	
@@ -121,7 +121,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
         		}
         	}
         	self.switchTopic(topics[1].topic.label, topics);
-          }, 500);
+          //}, 500);
       },
       
       switchTopic: function(id, topics){
@@ -229,7 +229,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     		console.log("10-3", this.a - this.b);
     	},
     	initElementCollection: function(){
-    		console.log("HERPADERP DERP");
     		var self = this;
     		console.log("Data_Source", this._data_source);
     		for(var i = 1; i < this._data_source.length; i++){
