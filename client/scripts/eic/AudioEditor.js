@@ -33,8 +33,8 @@ function($,Logger,SlidePresenter){
 					return;
 				}
 				
-				this.curTopic.resendSpeech($('#textDescription').val());
-				self.addAudio(this.curTopic);
+				self.curTopic.resendSpeech($('#textDescription').val());
+				self.addAudio(self.curTopic);
 			});
 			
 			$('#textDescription').focus(function(){
@@ -42,13 +42,13 @@ function($,Logger,SlidePresenter){
 			});
 				
 			$('#editTestDescription').click(function() {	
-				if (this.curTopic.hash_object.audio_text == this.curTopic.hash_object.defaultText){
+				if (self.curTopic.hash_object.audio_text == self.curTopic.hash_object.defaultText){
 					return;
 				}
 				
-				this.curTopic.resendSpeech(this.curTopic.hash_object.defaultText);
-				$('#textDescription').val(this.curTopic.hash_object.defaultText);
-				self.addAudio(this.curTopic);
+				self.curTopic.resendSpeech(self.curTopic.hash_object.defaultText);
+				$('#textDescription').val(self.curTopic.hash_object.defaultText);
+				self.addAudio(self.curTopic);
 			});
 		},
 		
