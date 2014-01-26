@@ -56,19 +56,19 @@ function($,Logger,SlidePresenter){
 			//REPLACE ALL THE HTML_OBJECTS
 			if (slide.ready){
 				if (plugintype=="Audio"){
-		             $(html_obj).innerHTML(
+		             $(html_obj).html(
 		                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
 		        }
 		        else if (plugintype=="QuickTime"){
-		             $(html_obj).innerHTML(
+		             $(html_obj).html(
 		                "<embed id='audioPlayer' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
 		        }
 		        else if (plugintype=="Windows Media"){
-		             $(html_obj).innerHTML(
+		             $(html_obj).html(
 		                "<embed id='audioPlayer' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
 		        }
 		        else if (plugintype=="VLC"){
-		             $(html_obj).innerHTML(
+		             $(html_obj).html(
 		                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
 		        }
 			}
@@ -76,19 +76,19 @@ function($,Logger,SlidePresenter){
 				slide.once('newSlides', function(){
 					logger.log(id+": finished waiting");
 					if (plugintype=="Audio"){
-			             $(html_obj).innerHTML(
+			             $(html_obj).html(
 			                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
 			        }
 			        else if (plugintype=="QuickTime"){
-			             $(html_obj).innerHTML(
+			             $(html_obj).html(
 			                "<embed id='audioPlayer' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
 			        }
 			        else if (plugintype=="Windows Media"){
-			             $(html_obj).innerHTML(
+			             $(html_obj).html(
 			                "<embed id='audioPlayer' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
 			        }
 			        else if (plugintype=="VLC"){
-			             $(html_obj).innerHTML(
+			             $(html_obj).html(
 			                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
 			        }	
 				});
