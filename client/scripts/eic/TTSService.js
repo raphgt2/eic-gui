@@ -34,7 +34,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
       this.finished = false;
       this.attempt = 0;
     }
-
+ 
     TTSService.prototype = {
       getSpeech: function (text, lang, callback) {
         var self = this;
