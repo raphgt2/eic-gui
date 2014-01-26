@@ -15,7 +15,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
       this.topicToTopic = generator.generators[1];
       this.hash_object = path;
       
-      var self = this;
+      
       
       //EDITING NODES//
     	this.a = 10;
@@ -30,14 +30,29 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     	
     	this.add();
     	this.subtract();
-    	
+    	var self = this;
     //////////
+      // $('#play-button').click(function () {
+      	// //var self=this;
+      	// //self.restoreCurrentNode();
+      	// //console.log(this._hash);
+      	// logger.log("play button click", self._hash);
+          	// $('#body').html('');
+          	// new PresentationController(self._hash, true, true).playMovie();
+      // });
       
-      $('#play-button').click(function () {
-          	logger.log("play button click", self._hash);
-          	//$('#body').html('');
-          	//new PresentationController(self._hash).playMovie();
-      });
+      
+      
+      
+      
+      
+      // $('#play-button').click(function () {
+      	// var self=this;
+      	// //self.restoreCurrentNode();
+      	// logger.log("play button click", this._hash);
+          	// $('#body').html('');
+          	// new PresentationController(self._hash, true, true).playMovie();
+      // });
       
       $('#play-slide').click(function () {
                  if($('#play-slide').html() == 'Play Slide'){
@@ -126,6 +141,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
           setTimeout(function() {
           	self.initElementCollection();
 			self.EnableUIAnimation();
+			$('#play-button').click(function () {
+      	//var self=this;
+      	//self.restoreCurrentNode();
+      	//console.log(this._hash);
+      	logger.log("play button click", self._hash);
+          	$('#body').html('');
+          	new PresentationController(self._hash, true, true).playMovie();
+      });
           }, 5000);
       },
       
@@ -265,9 +288,27 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
     		}
     		console.log("slide_content", slide_content);
-    		this._curNode.slide_description = slide_content;
+    		if (slide_content[0] != undefined){
+    			this._curNode.slide_description = slide_content;
+    		}
+    		
     		
     		console.log("Updated Hash", this._hash);
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+      
+      
+      
+      
+      
+      
+      
     	},
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");
