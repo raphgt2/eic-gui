@@ -26,7 +26,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     	this._Play_Sequence = [];
     	this._curNode = this._path[0];
     	this._hash = hashObj;
-    	var self = this;
+    	//var self = this;
     	
     	this.add();
     	this.subtract();
@@ -34,9 +34,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI',
     //////////
       
       $('#play-button').click(function () {
-          	logger.log(self.hash_object);
-          	$('#body').html('');
-          	new PresentationController(self.hash_object).playMovie();
+          	logger.log("play button click", self._hash);
+          	//$('#body').html('');
+          	//new PresentationController(self._hash).playMovie();
       });
       
       $('#play-slide').click(function () {
