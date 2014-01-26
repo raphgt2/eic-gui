@@ -26,13 +26,13 @@ function($,Logger,SlidePresenter){
 				return;
 			}
 			
-			this.curTopic.resendSpeech($('#textDescription').val());;
+			this.curTopic.resendSpeech($('#textDescription').val());
 			self.addAudio(this.curTopic);
 		});
 		
 		$('#textDescription').focus(function(){
             self.previousText=$('#textDescription').val();
-		}
+		});
 			
 		$('#editTestDescription').click(function() {	
 			if (this.curTopic.hash_object.audio_text == this.curTopic.hash_object.defaultText){
