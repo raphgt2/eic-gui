@@ -49,6 +49,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		
 		var self  = this;
 		  if (this.hash_object.slide_description) {
+			  logger.log("slide description found", this.hash_object.slide_description);
+			  
 			  this.hash_object.slide_description.forEach(function(description){
 				  var slide;
 				  switch(description.type){
@@ -87,6 +89,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		  }
 		  else{
 			//Create all generators depending on the type of the topic
+			logger.log("no slide description found, going to default");
+			
 			switch (this.topic.type) {
 			case "http://dbpedia.org/ontology/PopulatedPlace":
 				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
