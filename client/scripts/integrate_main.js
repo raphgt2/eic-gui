@@ -161,6 +161,10 @@
 					console.log("Controllers", controller);
 					console.log("Hash Object Output", jsonObject);
 					var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
+					
+					
+					
+					
 						//editor.initElementCollection();
 						//editor.EnableUIAnimation();
 //	        	});

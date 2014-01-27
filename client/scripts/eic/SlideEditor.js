@@ -18,8 +18,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       
       
       //EDITING NODES//
-    	this.a = 10;
-    	this.b = 3;
     	this._data_source = controller.generator.generators[1].generators;
     	this._path = hashObj.path;
     	this._Slide_Element_Collection = new Object();
@@ -28,48 +26,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     	this._hash = hashObj;
     	//var self = this;
     	
-    	this.add();
-    	this.subtract();
     	var self = this;
     	
     	this.audio_editor = new AudioEditor();
-    //////////
-      // $('#play-button').click(function () {
-      	// //var self=this;
-      	// //self.restoreCurrentNode();
-      	// //console.log(this._hash);
-      	// logger.log("play button click", self._hash);
-          	// $('#body').html('');
-          	// new PresentationController(self._hash, true, true).playMovie();
-      // });
-      
-      
-      
-      
-      
-      
-      $('#play-button').click(function () {
-      	var self=this;
-      	//self.restoreCurrentNode();
-      	logger.log("play button click", this._hash);
-          	$('#body').html('');
-          	new PresentationController(self._hash, true, true).playMovie();
-      });
-      
-      $('#play-slide').click(function () {
-                 if($('#play-slide').html() == 'Play Slide'){
-                          $('#play-slide').html('Pause Slide');
-                          self.playSlide();
-                  }
-                  else{
-                          $('#play-slide').html('Play Slide');
-                          self.pauseSlide();
-                  }
-      });
+
       
       logger.log("Created slideEditor");
-      //logger.log(generator.generators[1]);
-      
       this.startEdit();
     }
 
@@ -143,14 +105,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
           setTimeout(function() {
           	self.initElementCollection();
 			self.EnableUIAnimation();
-			// $('#play-button').click(function () {
-      	// //var self=this;
-      	// //self.restoreCurrentNode();
-      	// //console.log(this._hash);
-      	// logger.log("play button click", self._hash);
-          	// $('#body').html('');
-          	// new PresentationController(self._hash, true, true).playMovie();
-      // });
+			
           }, 5000);
       },
       
@@ -253,14 +208,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       pauseSlide: function(){
       	this.curTopic.next().stop();
       },
-      
-      ////EDITING NODES///
-      add: function(){
-    		console.log("10+3", this.a + this.b);
-    	},
-    	subtract: function(){
-    		console.log("10-3", this.a - this.b);
-    	},
     	initElementCollection: function(){
     		var self = this;
     		console.log("Data_Source", this._data_source);
@@ -286,7 +233,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     	restoreCurrentNode: function(n){
     		console.log("RESTORE NODE");
     		this._data_source[n-1].slide_order = this._Play_Sequence;
-    		var slide_content = [];
+    		var slide_content = new Array;
     		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
     			console.log(i, this._Play_Sequence[i]);
@@ -299,21 +246,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     		
     		
     		console.log("Updated Hash", this._hash);
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-      
-      
-      
-      
-      
-      
-      
     	},
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");
@@ -324,6 +256,30 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     	EnableUIAnimation: function(){
     		var self = this;
     		console.log("UI Animation");
+    		$('#lastStep').click(function(){
+    			console.log("Hash Object Test: ", self._hash);
+    		});
+    		$('#play-button').click(function () {
+	      		logger.log("Play Button Click", self._hash);
+	          	console.log("Play Button Click Test II: ", self._hash);
+	          	//$('#body').html('');
+	          	var play = new PresentationController(self._hash, true, true);
+	          	console.log("PresentationController: ", play, play.path.path);
+	          	//play.playMovie();
+	      	});
+	      
+	      	$('#play-slide').click(function () {
+	                 if($('#play-slide').html() == 'Play Slide'){
+	                          $('#play-slide').html('Pause Slide');
+	                          self.playSlide();
+	                  }
+	                  else{
+	                          $('#play-slide').html('Play Slide');
+	                          self.pauseSlide();
+	                  }
+	      	});
+    		
+    		
     		$( ".node-element-list" ).sortable({
 			  connectWith: "#movie-nav-bar",
 			  helper: "clone",
@@ -360,6 +316,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 						   .addClass("movieNavElementWrap")
 				},
 				update: function(event, ui){
+					
 					console.log("Update!");
 					console.log("self", self);
 					self.grabMovieNav();
