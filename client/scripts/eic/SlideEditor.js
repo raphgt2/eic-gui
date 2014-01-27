@@ -265,7 +265,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 	          	//$('#body').html('');
 	          	var play = new PresentationController(self._hash, true, true);
 	          	console.log("PresentationController: ", play, play.path.path);
-	          	//play.playMovie();
+	          	////play.playMovie();
 	      	});
 	      
 	      	$('#play-slide').click(function () {
