@@ -47,7 +47,8 @@
     view.initControls();
     
     controller.once('slide_generation_finished', function(){
-		new SlideEditor(controller.generator, controller.path);
+		var player = new PresentationController(controller.path, true, true);
+		player.playMovie();
 	});
   });
 })(requirejs);

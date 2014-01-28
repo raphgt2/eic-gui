@@ -262,10 +262,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     		$('#play-button').click(function () {
 	      		logger.log("Play Button Click", self._hash);
 	          	console.log("Play Button Click Test II: ", self._hash);
-	          	//$('#body').html('');
+	          	$('#body').html('');
 	          	var play = new PresentationController(self._hash, true, true);
 	          	console.log("PresentationController: ", play, play.path.path);
-	          	////play.playMovie();
+				play.playMovie();
 	      	});
 	      
 	      	$('#play-slide').click(function () {
