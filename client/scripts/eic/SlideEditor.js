@@ -323,8 +323,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 					'vertical-align': 'middle',
                 });
                 
-                $('#screen').show();
-                                
+                $('#screen').show();               
 	          	
 	          	var play = new PresentationController(self._hash, true, true);
 	          	console.log("PresentationController: ", play, play.path.path);
