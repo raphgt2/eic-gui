@@ -200,9 +200,9 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
               if ((self.result.topics.length + self.result.links.length) === path.length) {
                 $(self).trigger('generated', formatResult(self.result, vertices));
               }
-			  logger.log('created', self.result.topics[index]);
+			  /*logger.log('created', self.result.topics[index]);
               logger.log('Resource', vertice);
-              logger.log('Extracted text', desc);
+              logger.log('Extracted text', desc);*/
             }
 
             $(vertices).each(retrieveAbstract);
