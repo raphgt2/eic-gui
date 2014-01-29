@@ -233,7 +233,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 		      })
 		      .remove();
 		      
-		$("path").on("mouseover", function(){
+		//$("path").on("mouseover", function(){
+		$("path").mouseover(function(){	
 			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"));
 			$(this).mousemove(function(e){
 				var mouse = self.getMousePosition(e.pageX, e.pageY);
