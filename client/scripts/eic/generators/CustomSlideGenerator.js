@@ -183,7 +183,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         	return this.slides;
         },
         
-        getEditedSLides: function(){
+        getEditedSlides: function(){
         	return this.editedSlides;
         },
         

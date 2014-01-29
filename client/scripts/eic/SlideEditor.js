@@ -110,6 +110,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       },
       
       switchTopic: function(id, topics){
+      	//console.log("PLAY SEQUENCE: " + this._Play_Sequence);
 	  	for(var i = 1; i < topics.length; i++){
 	  		if(topics[i] !== undefined && topics[i].topic.label == id){
 	  			
@@ -224,7 +225,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     			this._data_source[i].slide_order = [];
     			//this._data_source[i].prepare();
     			var slides = this._data_source[i].getSlides();
-    			console.log("GET SLIDES: ", slides);
+    			console.log(slides);
     			var img = slides.img;
     			var vid = slides.vid;
     			console.log("img", img);

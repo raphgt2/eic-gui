@@ -43,6 +43,22 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
     	this.duration = 500;
     	this.root;
     	this.appendList = [];
+    	this.diagramDepth = 0;
+    	this.round = 1;
+		this.appendMap = new Object();
+		this.mainDepth = 1;
+		this.tree = new Object();
+		this.diagnal = new Object;
+		
+		
+var userPath = [];
+var userHash = new Object(); 
+var keyWord		
+//var diagonal = d3.svg.diagonal()
+ //   .projection(function(d) { return [d.y, d.x]; });		
+//var tree = d3.layout.tree()
+//	.size([h, w]);
+    	
 		
     }
 
