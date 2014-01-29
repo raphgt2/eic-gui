@@ -36,7 +36,7 @@
     },
   });
 
-        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor){
+        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, PathFinder){
             //var jsonObject,view,controller;
            // $.getJSON("../data_json/hash_object_test_1.json", function(data){
             

@@ -3,7 +3,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
     "use strict";
     var logger = new Logger("PathFinder");
   		
-    function PathFinder(generator, path, controller, hashObj) {
+    function PathFinder(hashObj, key) {
     	/* Define HTML Elements*/
     	this.chartHTML = '<div id="chart">';
 			 	chartHTML += '<div id="nodeInfo">';
@@ -31,9 +31,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 		this.relationBox = '<div id="relation" style="display: none;"></div>';
 		
 		this.URLRef = new Object;
-				URLRef['Bill Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FBill_Clinton";
-				URLRef['Hillary Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2F";
-				URLRef['Ray Bradbury'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2F";
+				URLRef['Bill_Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FBill_Clinton";
+				URLRef['Hillary_Rodham_Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2F";
+				URLRef['Ray_Bradbury'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2F";
 				
 				
 		/* Define Constants and Data */
@@ -49,11 +49,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 		this.mainDepth = 1;
 		this.tree = new Object();
 		this.diagnal = new Object;
-		
-		
-var userPath = [];
-var userHash = new Object(); 
-var keyWord		
+		this.userPath = [];
+		this.userHash = hashObj; 
+		this.keyWord = key;		
 //var diagonal = d3.svg.diagonal()
  //   .projection(function(d) { return [d.y, d.x]; });		
 //var tree = d3.layout.tree()
