@@ -74,7 +74,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 							// add the image if it loads and we still need slides
 							slide.addImageSlide(image.src, description.data.duration);
 						});
-						image.src = description.data.uri;		
+						image.src = description.data.url;		
 						self.addGenerator(slide,true);
 						
 						break;
