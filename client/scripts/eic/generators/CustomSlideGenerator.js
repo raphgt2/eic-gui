@@ -187,6 +187,18 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         	return this.editedSlides;
         },
         
+        setEditedSlide: function(newSlide){
+        	var present = false;
+        	for(var i = 0; i < this.editedSlides.length; i++){
+        		if(this.editedSlides[i] == newSlide) present = true;
+        	}
+        	if(!present) this.editedSlides.push(newSlide);
+        },
+        
+        deleteEditedSlide: function(i){
+        	this.editedSlides.splice(i, 1);
+        },
+        
         setCurSlide: function (slide) {
         	this.curSlide = slide;	
         },
