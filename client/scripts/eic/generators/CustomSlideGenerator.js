@@ -29,6 +29,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       //stuff
       this.curSlide = null;
       this.slides = {};
+      this.editedSlides = [];
     }
 
     $.extend(CustomSlideGenerator.prototype,
@@ -180,6 +181,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         
         getSlides: function() {
         	return this.slides;
+        },
+        
+        getEditedSLides: function(){
+        	return this.editedSlides;
         },
         
         setCurSlide: function (slide) {

@@ -117,7 +117,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 	  			this.audio_editor.setTopic(this.curTopic);
 	  			
 	  			var slide = topics[i].next();
-	  			this.$slides.children('.transition-out').remove();
+	  			//this.$slides.children('.transition-out').remove();
         		// start the transition of other children
         		var children = this.$slides.children();
           	    children.remove();
@@ -127,23 +127,32 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
         		
         		//add appropriate slides to edit box
         		var slides = topics[i].getSlides();
+        		var editedSlides = topics[i].getEditedSlides();
         		for(var val in slides){
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
       					$('#imgs').children().remove();
       					for(var i = 0; i < s.length; i++){
-      						var imgs = s[i].$element.clone().find('img'); //get just the image link
-      						imgs.attr('id', val + 's' + i);
-      						$(imgs).click(function () {
-      							self.setContent(this.id, i, 'img');
-      						});
-      						$('#imgs').append('<li id=img' + i + '></li>')
-      						$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
-      						$('#img' + i + '').append(imgs[0])
-      						$('#imgs' + i + '').addClass('nodeElementBarContent');
+      						var isEdited = false;
+      						for(var j = 0; j < editedSlides.length; j++){
+      							if(editedSlides[j] == s[i]){
+      								isEdited = true;
+      								break;
+      							}
+      						}
+      						if(!isEdited){
+      							var imgs = s[i].$element.clone().find('img'); //get just the image link
+      							imgs.attr('id', val + 's' + i);
+      							$(imgs).click(function () {
+      								self.setContent(this.id, i, 'img');
+      							});
+      							$('#imgs').append('<li id=img' + i + '></li>')
+      							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+      							$('#img' + i + '').append(imgs[0])
+      							$('#imgs' + i + '').addClass('nodeElementBarContent');
+      						}
       					}
-      					//li.append('<div>').addClass('nodeInformation').html()
       				}
       		    	if(val == 'vid'){
       		    		var s = slides[val];
