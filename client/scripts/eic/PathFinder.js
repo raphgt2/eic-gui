@@ -1,5 +1,5 @@
-define(['lib/jquery', 'eic/Logger', 'lib/d3'],
-  function ($, Logger, d3) {
+define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor'],
+  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor) {
     "use strict";
     var logger = new Logger("PathFinder");
   		
@@ -43,6 +43,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
       initLinkedDataEdu: function () {
       	console.log("[===================Initialize Linked Data Edu App===================]");
       	var self=this;
+      	console.log("Draw: ", $("#draw"));
+      	
       	$("#draw").click(function(){
       		self.keyWord = $("#input").val();
       		self.addNode(self.keyWord, self.keyWord);
@@ -54,20 +56,27 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 					     .attr("height", self.h )
 					  	 .append("svg:g")
 					     .attr("transform", "translate(40,0)");
+			
 			$("#finish").click(function(){
+				/*Shift Screen*/
 				self.generateHashObject();
-				//$("#contentWrap").html(JSON.stringify(userHash));
 				$("#canvasWindow").css("display", "none");
-				
-				//$("chart").css("display", "none");
 				$("#body").css("display", "block");
 				console.log("userPath", self.userPath);
 				
-				// var controller = new PresentationController2(userHash);
-				// var view = new PiecesUI(controller);
-				// view.drawScreen($("#screen"));
-				
-			});
+				/*Prepare Video Editor*/
+            	var controller = new PresentationController2(self.userHash);
+	            var view = new PiecesUI(controller);
+	            console.log("Controller I ", controller);
+	            view.initControls();
+				console.log("Hash Object Output", self.userHash);
+		        controller.once("slide_generation_finished", function(){
+					console.log("Controllers", controller);
+					console.log("Hash Object Output", jsonObject);
+					var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
+		        });
+            });
+			
 			$("redraw").click(function(){
 				location.reload();
 			});
@@ -281,10 +290,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 			self.mainDepth = 0;	
 			var getDepth = self.getTreeWidth(self.root);
 			self.w = (self.mainDepth + 1) * 120;
-			console.log("mainDepth: ", self.mainDepth, " , w: ", w);
+			console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
 			$("svg").attr("width", self.w + 120 + "");
 			self.tree.size([self.h, self.w]);
-			self.add(d.uri, d.name);
+			self.addNode(d.uri, d.name);
 		}
 			self.userPath = [];
 			self.trackPath(d);
@@ -315,9 +324,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;
-			console.log("Root Test: ", root);
+			console.log("Root Test: ", self.root);
 			if (treeRoot.children == null){
-				if (treeRoot.depth > mainDepth){
+				if (treeRoot.depth > self.mainDepth){
 					self.mainDepth = treeRoot.depth;
 				}
 			}
@@ -371,8 +380,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3'],
 			self.userHash.source.name = self.userPath[0].name;
 			self.userHash.source.uri = self.userPath[0].uri;
 			self.userHash.destination = new Object();
-			self.userHash.destination.name = self.userPath[userPath.length - 1].name;
-			self.userHash.destination.uri = self.userPath[userPath.length - 1].uri;
+			self.userHash.destination.name = self.userPath[self.userPath.length - 1].name;
+			self.userHash.destination.uri = self.userPath[self.userPath.length - 1].uri;
 			self.userHash.path = [];
 			for (var i = 0; i < self.userPath.length; i++){
 				if (self.userPath[i].relation != "none"){
