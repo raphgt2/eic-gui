@@ -110,6 +110,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       },
       
       switchTopic: function(id, topics, prevTopic){
+		  alert("BLAH");
+		  
       	//set the previous slide's chosen topics
       	var prevSlides = prevTopic.getSlides();
       	for(var val in prevSlides){
