@@ -270,7 +270,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  d.children = null;
 			  
 			  self.mainDepth = 0;
-			  var getDepth = getTreeWidth(self.root);		
+			  var getDepth = self.getTreeWidth(self.root);		
 			  self.w = (self.mainDepth) * 150;
 			  console.log("mainDepth: ", self.mainDepth, " , w: ", w);
 			  self.tree.size([h, w]);
@@ -281,7 +281,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);
-			  self.w = (mainDepth) * 140;
+			  self.w = (self.mainDepth) * 140;
 			  console.log("mainDepth: ", self.mainDepth, " , w: ", w);
 			  $("svg").attr("width", self.w + 140 + "");
 			  self.tree.size([self.h, self.w]);
