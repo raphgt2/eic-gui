@@ -93,7 +93,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
           	self.initElementCollection();
 			self.EnableUIAnimation();
 
-          }, 5000);
+          }, 500);
       },
       
       switchTopic: function(id, topics, prevTopic){
@@ -169,9 +169,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       							$(imgs).click(function () {
       								self.setContent(this.id, i, 'img');
       							});
-      							$('#imgs').append('<li id=img' + i + '></li>')
+      							$('#imgs').append('<li id=img' + i + '></li>');
       							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
-      							$('#img' + i + '').append(imgs[0])
+      							$('#img' + i + '').append(imgs[0]);
       							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
       					}
@@ -180,19 +180,26 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
                         $('#vids').children().remove();
-                        $('#vids').css('display', 'inline');
                         for(var i = 0; i < s.length; i++){
-                          	var vids = s[i].slide_info.data.videoID;
-                          	
-                         $('#vids').append('<li id=vid' + i + '></li>');
-                         $('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
-                         $('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
-                         $('#vids' + i + '').addClass('nodeElementBarContent');
-                         $('#vids' + i + '').addClass('nodeElementBarContent');
-                         $('#vids' + i).click(function () {
-                         	var id = "vids" + i;
-                         	self.setContent(id, i, 'vid');
-                         });
+                        	var isEdited = false;
+      						for(var j = 0; j < editedSlides.length; j++){
+      							if(editedSlides[j] == s[i]){
+      								isEdited = true;
+      								break;
+      							}
+      						}
+      						if(!isEdited){
+                          		var vids = s[i].slide_info.data.videoID;
+                         		$('#vids').append('<li id=vid' + i + '></li>');
+                         		$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+                         		$('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
+                         		$('#vids' + i + '').addClass('nodeElementBarContent');
+                         		$('#vids' + i + '').addClass('nodeElementBarContent');
+                         		$('#vids' + i).click(function () {
+                         		var id = "vids" + i;
+                         			self.setContent(id, i, 'vid');
+                         		});
+                        	}
                         }
                      }
       			}
@@ -225,7 +232,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
         children.remove();
         var newSlide = this.curTopic.next().$element.clone().find('img');
         newSlide.css('display', 'block');
-        newSlide.addClass('imgPreview')
+        newSlide.addClass('imgPreview');
         this.$slides.append(newSlide[0]);
       },
       
