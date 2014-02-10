@@ -40,12 +40,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     SlideEditor.prototype = {
       // Starts the movie about the connection between the user and the topic.
       startEdit: function () {
-
-		//show the editing box
-		//var myNode = document.getElementById("init");
-		//myNode.innerHTML = '';
-		// var myNode2 = document.getElementById("del");
-		// myNode2.innerHTML = '';
 		$('#videoEditor').css('display', 'inline');
 
         
@@ -60,13 +54,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
         $('#moviePreview').append($wrapper);
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
         
-        // Hide the main panel and show the slides panel
-        //$('#screen').append($wrapper);
-        //$wrapper.hide().fadeIn($.proxy(this.$slides.hide(), 'fadeIn', 1000));
-          /*
-          this.topicToTopic = new TopicToTopicSlideGenerator(this.startTopic, this.endTopic);
-          this.topicToTopic.init();
-          */
           var self = this;
           
           //give time for the initialization to finish
@@ -110,18 +97,19 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       },
       
       switchTopic: function(id, topics, prevTopic){
-		  alert("BLAH");
-		  
       	//set the previous slide's chosen topics
       	var prevSlides = prevTopic.getSlides();
       	for(var val in prevSlides){
       		var s = prevSlides[val];
       		for(var i = 0; i < s.length-1; i++){
       			var imgs = s[i].$element.clone().find('img');
-      			//console.log(img);
+      			var vids = s[i].slide_info.data.videoID;
+      			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
+      			console.log('HFJFDSF');
+      			console.log(this._Play_Sequence);
       			for(var j = 0; j < this._Play_Sequence.length; j++){
       				if(imgs[0].src == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
-      				//break;
+      				if(vidsString == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
       			}
       		}
       	}
@@ -132,10 +120,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
   			var imgs = eSlides[i].$element.clone().find('img');
   			var present = false;
   			for(var j = 0; j < this._Play_Sequence.length; j++){
-  				console.log("HERPADERPDERP");
-  				console.log(imgs[0].src);
-  				console.log(this._Play_Sequence[j]);
-  				if(imgs[0].src == this._Play_Sequence[j]) present = true;
+  				if(imgs == undefined){
+  					var vids = eSlides[i].slide_info.data.videoID;
+  					var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
+  					if(vidsString == this._Play_Sequence[j]) present = true;
+  				} else if(imgs[0].src == this._Play_Sequence[j]) present = true;
   			}
   			if(present == false) prevTopic.deleteEditedSlide(i);
   		}
@@ -188,31 +177,34 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       					}
       				}
       		    	if(val == 'vid'){
-      		    		var s = slides[val];
-      		    		this.tempSlides['vid'] = s;
-      		    		$('#vids').children().remove();
-      		    		$('#vids').css('display', 'inline');
-      		    		//console.log(s[0]);
-      					for(var i = 0; i < s.length; i++){
-      						var vids = s[i].$element.clone().find('img');
-      						vids.attr('id', 'vids' + i);
-      						$(vids).click(function () {
-      							self.setContent(this.id, i, 'vid');
-      						});
-      						//$('#vids').append(vids[0]);
-      						$('#vids').append('<li id=vid' + i + '></li>')
-      						$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
-      						$('#vid' + i + '').append(vids[0])
-      						$('#vids' + i + '').addClass('nodeElementBarContent');
-      					}
-      				}
+                        var s = slides['vid'];
+                        this.tempSlides['vid'] = s;
+                        $('#vids').children().remove();
+                        $('#vids').css('display', 'inline');
+                        for(var i = 0; i < s.length; i++){
+                          	var vids = s[i].slide_info.data.videoID;
+                          	
+                         $('#vids').append('<li id=vid' + i + '></li>');
+                         $('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+                         $('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
+                         $('#vids' + i + '').addClass('nodeElementBarContent');
+                         $('#vids' + i + '').addClass('nodeElementBarContent');
+                         $('#vids' + i).click(function () {
+                         	var id = "vids" + i;
+                         	self.setContent(id, i, 'vid');
+                         });
+                        }
+                     }
       			}
       			for(var i = 0; i < editedSlides.length; i++){
         			var theImg = editedSlides[i].$element.clone().find('img');
         			$('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
       				$('#hurr' + i + '').addClass('ui-state-default btn btn-default movieNavElementWrap');
       				$('#hurr' + i + '').css('display', 'block');
-      				$('#hurr' + i + '').append('<img src=' + theImg[0].src + " id=hurrs+" + i + " class='nodeElementBarContent'>");
+        			if(theImg == undefined){
+        				var theVid = editedSlides[i].slide_info.data.videoID;
+					  $('#hurr' + i + '').append('<img src=http://img.youtube.com/vi/' + theVid + "/default.jpg id=hurrs+" + i + " class='nodeElementBarContent'>");
+        			} else $('#hurr' + i + '').append('<img src=' + theImg[0].src + " id=hurrs+" + i + " class='nodeElementBarContent'>");
         		}
       			break;	
 	  		}
@@ -337,7 +329,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 		      scroll: false,
 		      receive: function(event, ui){
 		      	ui.item.removeClass("movieNavElementWrap")
-					   .addClass("nodeElementBarContentWrap")
+					   .addClass("nodeElementBarContentWrap");
 		      }
 		      // drag: function(event, ui){
 		      	// ui.helper.css({
@@ -362,7 +354,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 				receive: function(event, ui){
 					console.log("Receive!");
 					ui.item.removeClass("nodeElementBarContentWrap")
-						   .addClass("movieNavElementWrap")
+						   .addClass("movieNavElementWrap");
 				},
 				update: function(event, ui){
 
