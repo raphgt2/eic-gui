@@ -101,14 +101,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       	var prevSlides = prevTopic.getSlides();
       	for(var val in prevSlides){
       		var s = prevSlides[val];
-      		for(var i = 0; i < s.length-1; i++){
+      		for(var i = 0; i < s.length; i++){
+      			console.log("DFDSFDS");
+      			console.log(s[i]);
       			var imgs = s[i].$element.clone().find('img');
       			var vids = s[i].slide_info.data.videoID;
       			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
-      			console.log('HFJFDSF');
-      			console.log(this._Play_Sequence);
       			for(var j = 0; j < this._Play_Sequence.length; j++){
-      				if(imgs[0].src == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
+      				if(imgs[0] != undefined && imgs[0].src == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
       				if(vidsString == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
       			}
       		}
@@ -120,7 +120,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
   			var imgs = eSlides[i].$element.clone().find('img');
   			var present = false;
   			for(var j = 0; j < this._Play_Sequence.length; j++){
-  				if(imgs == undefined){
+  				if(imgs[0] == undefined){
   					var vids = eSlides[i].slide_info.data.videoID;
   					var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
   					if(vidsString == this._Play_Sequence[j]) present = true;
@@ -201,7 +201,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
         			$('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
       				$('#hurr' + i + '').addClass('ui-state-default btn btn-default movieNavElementWrap');
       				$('#hurr' + i + '').css('display', 'block');
-        			if(theImg == undefined){
+        			if(theImg[0] == undefined){
         				var theVid = editedSlides[i].slide_info.data.videoID;
 					  $('#hurr' + i + '').append('<img src=http://img.youtube.com/vi/' + theVid + "/default.jpg id=hurrs+" + i + " class='nodeElementBarContent'>");
         			} else $('#hurr' + i + '').append('<img src=' + theImg[0].src + " id=hurrs+" + i + " class='nodeElementBarContent'>");
