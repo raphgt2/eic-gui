@@ -16,6 +16,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		this.w = 150;
     	this.h = 580;
     	this.i = 0;
+    	this.url_ref = new Object;
     	this.duration = 500;
     	this.root = new Object;
     	this.appendList = [];
@@ -43,11 +44,52 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       initLinkedDataEdu: function () {
       	console.log("[===================Initialize Linked Data Edu App===================]");
       	var self=this;
-      	console.log("Draw: ", $("#draw"));
+      	$.getJSON('../data_json/uri_matching.json', function(data) {
+      		self.url_ref = data;
+      	});
+      	$('#search').keyup(function() {
+			var searchField = $('#search').val();
+			var myExp = new RegExp(searchField, "i");
+			
+			console.log("URI Data: ", self.url_ref, searchField);
+			var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
+			$.each(self.url_ref, function(key, val) {
+				console.log(key, val.name.search(myExp));
+				if ((val.name.search(myExp) != -1)) {
+					console.log("Yes");
+					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
+					output += val.name;
+					output += '</li>';
+				}else{console.log("No");}
+			});
+			output += '</ul>';
+			$('#liveSearch').html(output);
+			$(".searchItem").click(function(){
+				var uriMatch = new RegExp($(this).html());
+				$.each(self.url_ref, function(key, val) {
+					console.log(key, val.name.search(myExp));
+					if ((val.name.search(uriMatch) != -1)) {
+						$("#liveSearchResult").html(val.uri);
+						
+					}else{console.log("No");}
+			});
+				$('#search').val($(this).html());
+				self.keyWord = $(this).html(); 
+				$('#liveSearch').empty();
+			});
+		});
+		
+
+      	
+      	
+      	
+      	
+      	
+      	
       	
       	$("#draw").click(function(){
       		self.keyWord = $("#input").val();
-      		self.addNode(self.URLRef[self.keyWord], self.keyWord);
+      		self.addNode($("#liveSearchResult").html(), $("#search").val());
       		$("#searchWindow").css("display", "none");
       		$("#canvasWindow").css("display", "block");
       		self.tree = d3.layout.tree().size([self.h, self.w]);
@@ -76,7 +118,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
 		        });
             });
-			
+			$("#chart").click(function(){
+				$("#relation").empty();
+			});
 			$("redraw").click(function(){
 				location.reload();
 			});
@@ -146,7 +190,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    .attr("class", "node")
 		    .attr("transform", function(d) { 
 		    	console.log("nodeEnter: ", d);
-		    	return "translate(" + source.y0 + "," + source.x0 + ")"; 
+		    	return "translate(" + source.y0 + "," + source.x0+20 + ")"; 
 		    })
 		    .on("click", function(d){
 		    	console.log("Click Test: ", d);
@@ -165,13 +209,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      
 		nodeEnter.append("svg:text")
 				 .attr("class", "textNormal")
-			     .attr("x", function(d) { return d.children || d._children ? 13 : 8; })
+			     .attr("x", function(d) { return d.children || d._children ? 15 : 8; })
 				 .attr("y", function(d){
 					 	return d.children || d._children ? -13 : 0;
 				 })
 	    		 .attr("dy", ".35em")
 	    		 .style("fill", function(d){
-	    		 	return d.children || d._children ? "#ffff00" : "#fff";
+	    		 	return d.children || d._children ? "#ff4719" : "#000";
 	    		  })
 	      		 .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
 	      		 .text(function(d) { return d.name; })
@@ -264,6 +308,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
      click: function(d) {
      	var self = this;
      	console.log("Click Data Test", d);
+     	console.log("Self Test", self);
 		if (d.search == 1){		
 			if (d.children) {
 			  d._children = d.children;
@@ -271,29 +316,32 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);		
-			  self.w = (self.mainDepth) * 150;
-			  console.log("mainDepth: ", self.mainDepth, " , w: ", w);
-			  self.tree.size([h, w]);
-			  self.update(d);
-			} else {
+			  self.w = (self.mainDepth) * 200;
+			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+			  self.tree.size([self.h, self.w]);
+			  
+//			  this.update(d);
+			} 
+			else {
 			  d.children = d._children;
 			  d._children = null;
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);
-			  self.w = (self.mainDepth) * 140;
-			  console.log("mainDepth: ", self.mainDepth, " , w: ", w);
-			  $("svg").attr("width", self.w + 140 + "");
+			  self.w = (self.mainDepth) * 200;
+			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+			  $("svg").attr("width", self.w + 200 + "");
 			  self.tree.size([self.h, self.w]);
-			  this.update(d);
+			  //this.update(d);
 			}
+			this.update(d);
 		}
 		else if (d.search == 0){
 			self.mainDepth = 0;	
 			var getDepth = self.getTreeWidth(self.root);
-			self.w = (self.mainDepth + 1) * 150;
+			self.w = (self.mainDepth + 1) * 200;
 			console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
-			$("svg").attr("width", self.w + 160 + "");
+			$("svg").attr("width", self.w + 200 + "");
 			self.tree.size([self.h, self.w]);
 			self.addNode(d.uri, d.name);
 		}
@@ -303,22 +351,22 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 	  },
 	    getMousePosition: function(x, y){
 	  	  console.log(x, y);
-		  $("#relation").css("top", y - 130 + "")
+		  $("#relation").css("top", y - 90 + "")
 			            .css("left", x - 100 + "")
 					  	.css("display", "block");
 	    },
 	    nodeMouseOver: function(name, catalog) {
-			$("#name").empty();
-			$("#catalog").empty();
-			var nameContent = "Name: " + name;
-			var catalogContent = "Catalog: " + catalog;
-			$("#name").append(nameContent);
-			$("#catalog").append(catalogContent);
+			// $("#name").empty();
+			// $("#catalog").empty();
+			// var nameContent = "Name: " + name;
+			// var catalogContent = "Catalog: " + catalog;
+			// $("#name").append(nameContent);
+			// $("#catalog").append(catalogContent);
 		},
 		linkMouseOver: function(source, target) {
 			console.log(source, "~", target);
 			$("#relation").empty();
-			var relationContent = '<p id="relationContent" class="close">This is a relation between <b>' + source + '</b> and <b>' + target +'</b></p><h5 id="close">close</h5>';
+			var relationContent = '<p id="relationContent" class="close" style="color:white;">This is a relation between <b>' + source + '</b> and <b>' + target +'</b>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){
 				$("#relation").empty();
@@ -348,13 +396,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			for (var i = 0; i < allNodes[0].length; i++){
 				if (allNodes[0][i].__data__.search == 1){
 					allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
-					allNodes[0][i].childNodes[1].style.fill = "ffff00";
+					allNodes[0][i].childNodes[1].style.fill = "ff3300";
 				}
 			}
 			for (var i = 0; i < allLinks[0].length; i++){
 				if (allLinks[0][i].__data__.target.children != null & allLinks[0][i].__data__.source.search == 1){
 				//if (allLinks[0][i].__data__.target.search == 1 & allLinks[0][i].__data__.source.search == 1){
-					allLinks[0][i].style.stroke = "#ff6600";
+					allLinks[0][i].style.stroke = "#4747d1";
 					allLinks[0][i].style.strokeWidth = "4.5px";
 				}
 				else {
