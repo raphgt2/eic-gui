@@ -86,12 +86,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						if (!window.YT){
 							$.getScript("http://www.youtube.com/player_api", function () {
 								setTimeout(function(){
-									slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.end);
+									slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
 								},3000);
 							});
 						}
 						else
-							slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.stop);
+							slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
 						
 						break;
 					  /*case "GoogleMapSlide":

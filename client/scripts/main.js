@@ -63,7 +63,7 @@
 				'data':{
 					'videoID':'bTvr_2v-0HI',
 					'start':'10000',
-					'end':'15000'
+					'end':'13000'
 				}},{	
 				'type':'GoogleImageSlide',	
 				'data':{
