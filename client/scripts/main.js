@@ -57,6 +57,13 @@
 				'data':{
 					'duration':'2000',	
 					'url':'http://www.shootuporputup.co.uk/wp-content/uploads/2011/07/number1.png'
+				}},{
+				'type':'YouTubeSlide',
+				'duration':'5000',
+				'data':{
+					'videoID':'bTvr_2v-0HI',
+					'start':'10000',
+					'end':'13000'
 				}},{	
 				'type':'GoogleImageSlide',	
 				'data':{

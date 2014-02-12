@@ -45,33 +45,33 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
          function sendSpeech(){
 			if (self.finished)
 				return;
-			
+
 			self.attempt++;
-			
+
 			if (self.attempt==5){
 				self.finished = true;
 				logger.log('Error receiving speech (timed out)', text);
 				self.emit('speechError', text);
 				return;
 			}
-			 
+
 			setTimeout(function(){	
 				if (!self.finished){
 					self.attempt++;
 					sendSpeech(self.attempt);
 				}
 			},5000);
-			 
+
 			 $.ajax({
 				 url: urls.speech,
 				 type: 'GET',
 				 data: { req_text: text},
 				 dataType: 'jsonp',
 				 success: function (data) {					 
-					 												
+
 					 if (data.res === 'OK') {
 						self.finished = true;
-						
+
 						/*if (urlType==3) //data:uri method
 							data.snd_url+=data.text;
                         else if (urlType == 1){ //createObjectURL method...only available for new browsers
@@ -80,12 +80,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'lib/base64_hand
                         }
                         else //Slow url method...just for IE 9 and under
                             data.snd_url+=window.escape(data.text);*/
-						
+
 						logger.log('Received audio URL', text + 'url:' + data.snd_url);
-							
+
 						if (callback)
 							callback(data);
-						
+
 						self.emit('speechReady', data);
 					 }
 					 else {

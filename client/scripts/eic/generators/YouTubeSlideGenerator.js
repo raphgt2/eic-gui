@@ -82,23 +82,39 @@ function ($, BaseSlideGenerator, Logger) {
     },
 
     /** Adds a new video slide. */
-    addVideoSlide: function (videoID, duration, Start, Stop) {
+    addVideoSlide: function (videoID, Duration, Start, Stop) {
 
-      var self = this, start, end;
+      var self = this, start, end, duration;
       
       if (!Start && !Stop){
           start = this.skipVideoDuration,
           end = this.skipVideoDuration + this.maxVideoDuration;
-		if (duration <= this.maxVideoDuration + this.skipVideoDuration)
-			end = duration;
-		if (duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
+		if (Duration <= this.maxVideoDuration + this.skipVideoDuration)
+			end = Duration;
+		if (Duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
 			start = 0;
+	  }
+	  else if (!Start){
+		  end = Stop;
+		  if ((Stop-Duration)<=0)
+			start = 0;
+		  else
+			start = Stop-Duration;
+	  }
+	  else if (!Stop){
+		  start = Start;
+		  end = Start+Duration;
 	  }
 	  else{
 		  start = Start;
 		  end = Stop;
 	  }
       duration = end - start;
+      
+      //Just a random error handler to prevent stalling on videos
+      if (!duration)
+		duration = 5000;
+		
       this.totalDuration += duration;
       
 
