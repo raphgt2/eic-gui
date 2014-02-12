@@ -126,6 +126,8 @@ define(['lib/jquery','lib/prefixfree.jquery'],
       },
       initControls: function () {
                  //Dipa's slide-editing stuff
+               $('#imgs').css('display', 'inline');
+               $('#vids').css('display', 'none');
                $('#edit-imgs').click(function(){
                        $('#imgs').css('display', 'inline');
                           $('#vids').css('display', 'none');

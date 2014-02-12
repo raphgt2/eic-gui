@@ -29,6 +29,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       //stuff
       this.curSlide = null;
       this.slides = {};
+      this.editedSlides = [];
     }
 
     $.extend(CustomSlideGenerator.prototype,
@@ -180,6 +181,22 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
         
         getSlides: function() {
         	return this.slides;
+        },
+        
+        getEditedSlides: function(){
+        	return this.editedSlides;
+        },
+        
+        setEditedSlide: function(newSlide){
+        	var present = false;
+        	for(var i = 0; i < this.editedSlides.length; i++){
+        		if(this.editedSlides[i] == newSlide) present = true;
+        	}
+        	if(!present) this.editedSlides.push(newSlide);
+        },
+        
+        deleteEditedSlide: function(i){
+        	this.editedSlides.splice(i, 1);
         },
         
         setCurSlide: function (slide) {

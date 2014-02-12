@@ -6,6 +6,9 @@
       'lib/jquery': {
         exports: 'jQuery'
       },
+      'lib/d3': {
+      	exports: 'd3'
+      },
       'lib/jquery.ui.core': {
         deps: ['lib/jquery']
       },
@@ -27,17 +30,21 @@
       'lib/prefixfree.jquery': {
         deps: ['lib/prefixfree.min']
       },
-	  'eic/pluginsniff':{
-		exports: 'pluginsniff'
-	  },
-	  'lib/base64_handler':{
-		exports: 'base64_handler'
-	  },	  
+          'eic/pluginsniff':{
+                exports: 'pluginsniff'
+          },
+          'lib/base64_handler':{
+                exports: 'base64_handler'
+          },          
     },
   });
 
-  require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor'], function (PresentationController, PresentationController2, PiecesUI, SlideEditor) {
-    var path = {
+        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, PathFinder){
+            //var jsonObject,view,controller;
+           // $.getJSON("../data_json/hash_object_test_1.json", function(data){
+            var jsonObject = new Object;
+            
+            jsonObject = {
     "hash": "h-3690378823082678040",
     "source": {
         "name": "Hillary Rodham Clinton",
@@ -51,25 +58,8 @@
         {
             "type": "node",
             "name": "Hillary Rodham Clinton",
-            "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton",
-            'slide_description':[	{	
-				'type':'GoogleImageSlide',	
-				'data':{
-					'duration':'2000',	
-					'url':'http://www.shootuporputup.co.uk/wp-content/uploads/2011/07/number1.png'
-				}},{
-				'type':'YouTubeSlide',
-				'duration':'5000',
-				'data':{
-					'videoID':'bTvr_2v-0HI',
-					'start':'10000',
-					'end':'13000'
-				}},{	
-				'type':'GoogleImageSlide',	
-				'data':{
-					'duration':'3000',
-					'url':'http://cast.thirdage.com/files/originals/number%202.jpg'
-				}},]},
+            "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
+        },
         {
             "type": "link",
             "inverse": true,
@@ -152,19 +142,33 @@
         }
     ]
 };
-
-//console.log(path);
-    var controller = new PresentationController2(path),
-        view = new PiecesUI(controller);
-        //controller.makeMovie();
-    //controller.init();
-    //view.init();
-    view.initControls();
-    
-    controller.once('slide_generation_finished', function(){
-		var player = new PresentationController(controller.path, true, true);
-		player.playMovie();
-	});
-  });
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            var path_finder = new PathFinder(jsonObject);
+            
+            
+            //console.log("Finish: ", $("#finish"));
+            // $("#finish").click(function(){
+            	// var controller = new PresentationController2(jsonObject);
+	            // var view = new PiecesUI(controller);
+	            // //controller.init();
+	            // console.log("Controller I ", controller);
+	            // view.initControls();
+				// console.log("Hash Object Output", jsonObject);
+		        // controller.once("slide_generation_finished", function(){
+					// console.log("Controllers", controller);
+					// console.log("Hash Object Output", jsonObject);
+					// var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
+		        // });
+            // });
+            
+        });
+ 
 })(requirejs);
-
