@@ -15,6 +15,10 @@ function ($, BaseSlideGenerator, Logger) {
 **/
   var logger = new Logger("YouTubeSlideGenerator");
   var playerCount = 0;
+  
+  //Try to grab the api once, and only once
+  $.getScript("http://www.youtube.com/player_api", function () {
+  });
 
   /** Generator of YouTube videos using the YouTube API
 * The option parameter is a hash consisting of
@@ -49,9 +53,9 @@ function ($, BaseSlideGenerator, Logger) {
         return;
       
       var self = this;
-      $.getScript("http://www.youtube.com/player_api", function () {
+      /*$.getScript("http://www.youtube.com/player_api", function () {
         searchVideos(self, 0, self.maxVideoCount, 0);
-      });
+      });*/
       
       this.inited = true;
       this.status = "inited";
@@ -83,102 +87,203 @@ function ($, BaseSlideGenerator, Logger) {
 
     /** Adds a new video slide. */
     addVideoSlide: function (videoID, Duration, Start, Stop) {
-
-      var self = this, start, end, duration;
-      
-      if (!Start && !Stop){
-          start = this.skipVideoDuration,
-          end = this.skipVideoDuration + this.maxVideoDuration;
-		if (Duration <= this.maxVideoDuration + this.skipVideoDuration)
-			end = Duration;
-		if (Duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
-			start = 0;
-	  }
-	  else if (!Start){
-		  end = Stop;
-		  if ((Stop-Duration)<=0)
-			start = 0;
-		  else
-			start = Stop-Duration;
-	  }
-	  else if (!Stop){
-		  start = Start;
-		  end = Start+Duration;
-	  }
-	  else{
-		  start = Start;
-		  end = Stop;
-	  }
-      duration = end - start;
-      
-      //Just a random error handler to prevent stalling on videos
-      if (!duration)
-		duration = 5000;
 		
-      this.totalDuration += duration;
-      
+	var self = this, start, end, duration;
+	
+		if (!window.YT){
+			$.getScript("http://www.youtube.com/player_api", function () {
+			
+			if (!Start && !Stop){
+				start = this.skipVideoDuration,
+				end = this.skipVideoDuration + this.maxVideoDuration;
+				if (Duration <= this.maxVideoDuration + this.skipVideoDuration)
+					end = Duration;
+				if (Duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
+					start = 0;
+			}
+			else if (!Start){
+				end = Stop;
+				if ((Stop-Duration)<=0)
+					start = 0;
+				else
+					start = Stop-Duration;
+			}
+			else if (!Stop){
+				start = Start;
+				end = Start+Duration;
+			}
+			else{
+				start = Start;
+				end = Stop;
+			}
+			  duration = end - start;
+			  
+			  //Just a random error handler to prevent stalling on videos
+			  if (!duration)
+				duration = 5000;
+				
+			  this.totalDuration += duration;
+			  
 
-      // create a container that will hide the player
-      var playerId = 'ytplayer' + (++playerCount),
-          $container = $('<div>').append($('<div>').prop('id', playerId))
-                                 .css({ width: 0, height: 0, overflow: 'hidden' });
-      $('body').append($container);
-      // create the player in the container
-      var player = this.player = new window.YT.Player(playerId, {
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          start: (start / 1000),
-          end: (end / 1000),
-          wmode: 'opaque'
-        },
-        videoId: videoID,
-        width: 800,
-        height: 600,
-        events: { onReady: function (event) { event.target.mute(); } }
-      });
-      
-      // create a placeholder on the slide where the player will come
-      var $placeholder = $('<div>'),
-          slide = this.createBaseSlide('youtube', $placeholder, duration);
-      // if the slide starts, move the player to the slide
-      slide.once('started', function () {
-        // flag our state to make sure prepare doesn't pause the video
-        self.status = 'started';
-        
-        // make video visible
-        var offset = $placeholder.offset();
-        player.playVideo();
-        $container.css({
-          // move to the location of the placeholder
-          position: 'absolute',
-          top: offset.top,
-          left: offset.left,
-          // and make the container show its contents
-          width: 'auto',
-          height: 'auto',
-          overflow: 'auto'
-        });
-      });
-      slide.once('stopped', function () {
-        $container.fadeOut(function () {
-          player.stopVideo();
-          $container.remove();
-        });
-      });
-      
-      slide.slide_info = {
-		type: "YouTubeSlide",
-		data: {
-			videoID: videoID,
-			start: start,
-			end: end,
-			duration: duration,  
-		},
-	  };
-      
-      this.slides.push(slide);
-      this.emit('newSlides');
+			  // create a container that will hide the player
+			  var playerId = 'ytplayer' + (++playerCount),
+				  $container = $('<div>').append($('<div>').prop('id', playerId))
+										 .css({ width: 0, height: 0, overflow: 'hidden' });
+			  $('body').append($container);
+			  // create the player in the container
+			  var player = this.player = new window.YT.Player(playerId, {
+				playerVars: {
+				  autoplay: 0,
+				  controls: 0,
+				  start: (start / 1000),
+				  end: (end / 1000),
+				  wmode: 'opaque'
+				},
+				videoId: videoID,
+				width: 800,
+				height: 600,
+				events: { onReady: function (event) { event.target.mute(); } }
+			  });
+			  
+			  // create a placeholder on the slide where the player will come
+			  var $placeholder = $('<div>'),
+				  slide = this.createBaseSlide('youtube', $placeholder, duration);
+			  // if the slide starts, move the player to the slide
+			  slide.once('started', function () {
+				// flag our state to make sure prepare doesn't pause the video
+				self.status = 'started';
+				
+				// make video visible
+				var offset = $placeholder.offset();
+				player.playVideo();
+				$container.css({
+				  // move to the location of the placeholder
+				  position: 'absolute',
+				  top: offset.top,
+				  left: offset.left,
+				  // and make the container show its contents
+				  width: 'auto',
+				  height: 'auto',
+				  overflow: 'auto'
+				});
+			  });
+			  slide.once('stopped', function () {
+				$container.fadeOut(function () {
+				  player.stopVideo();
+				  $container.remove();
+				});
+			  });
+			  
+			  slide.slide_info = {
+				type: "YouTubeSlide",
+				data: {
+					videoID: videoID,
+					start: start,
+					end: end,
+					duration: duration,  
+				},
+			  };
+			  
+			  this.slides.push(slide);
+			  this.emit('newSlides');
+			
+		  });
+		}
+		else{
+			if (!Start && !Stop){
+				start = this.skipVideoDuration,
+				end = this.skipVideoDuration + this.maxVideoDuration;
+				if (Duration <= this.maxVideoDuration + this.skipVideoDuration)
+					end = Duration;
+				if (Duration < this.maxVideoDuration + this.skipVideoDuration && duration >= this.maxVideoDuration)
+					start = 0;
+			}
+			else if (!Start){
+				end = Stop;
+				if ((Stop-Duration)<=0)
+					start = 0;
+				else
+					start = Stop-Duration;
+			}
+			else if (!Stop){
+				start = Start;
+				end = Start+Duration;
+			}
+			else{
+				start = Start;
+				end = Stop;
+			}
+			  duration = end - start;
+			  
+			  //Just a random error handler to prevent stalling on videos
+			  if (!duration)
+				duration = 5000;
+				
+			  this.totalDuration += duration;
+			  
+
+			  // create a container that will hide the player
+			  var playerId = 'ytplayer' + (++playerCount),
+				  $container = $('<div>').append($('<div>').prop('id', playerId))
+										 .css({ width: 0, height: 0, overflow: 'hidden' });
+			  $('body').append($container);
+			  // create the player in the container
+			  var player = this.player = new window.YT.Player(playerId, {
+				playerVars: {
+				  autoplay: 0,
+				  controls: 0,
+				  start: (start / 1000),
+				  end: (end / 1000),
+				  wmode: 'opaque'
+				},
+				videoId: videoID,
+				width: 800,
+				height: 600,
+				events: { onReady: function (event) { event.target.mute(); } }
+			  });
+			  
+			  // create a placeholder on the slide where the player will come
+			  var $placeholder = $('<div>'),
+				  slide = this.createBaseSlide('youtube', $placeholder, duration);
+			  // if the slide starts, move the player to the slide
+			  slide.once('started', function () {
+				// flag our state to make sure prepare doesn't pause the video
+				self.status = 'started';
+				
+				// make video visible
+				var offset = $placeholder.offset();
+				player.playVideo();
+				$container.css({
+				  // move to the location of the placeholder
+				  position: 'absolute',
+				  top: offset.top,
+				  left: offset.left,
+				  // and make the container show its contents
+				  width: 'auto',
+				  height: 'auto',
+				  overflow: 'auto'
+				});
+			  });
+			  slide.once('stopped', function () {
+				$container.fadeOut(function () {
+				  player.stopVideo();
+				  $container.remove();
+				});
+			  });
+			  
+			  slide.slide_info = {
+				type: "YouTubeSlide",
+				data: {
+					videoID: videoID,
+					start: start,
+					end: end,
+					duration: duration,  
+				},
+			  };
+			  
+			  this.slides.push(slide);
+			  this.emit('newSlides');
+		}
     },
   });
   
