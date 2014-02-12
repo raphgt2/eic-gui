@@ -1,3 +1,9 @@
+/*
+* LODStory Slide Editor
+* Copyright 2014, LOD Story Team - University of Southern California - Information Sciences Institute
+* Licensed under 
+*/
+
 define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',

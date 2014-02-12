@@ -1,3 +1,10 @@
+/*
+* LODStory Path Finder
+* Copyright 2014, LOD Story Team - University of Southern California - Information Sciences Institute
+* Licensed under 
+*/
+
+
 define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor'],
   function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor) {
     "use strict";
