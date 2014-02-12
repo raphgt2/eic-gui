@@ -1,3 +1,13 @@
+/*
+* LODStory Main Javascript
+* Copyright 2014, LOD Story Team - University of Southern California - Information Sciences Institute
+* Licensed under 
+*/
+
+
+
+
+
 (function (requirejs) {
   "use strict";
 
