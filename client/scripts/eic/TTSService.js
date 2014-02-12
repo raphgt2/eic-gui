@@ -123,7 +123,7 @@ function ($, Logger, EventEmitter, urls) {
 					}
 				},
 				error: function (error) {
-					if (attempt>=4){
+					if (self.attempt>=4){
 						if (!self.finished){
 							logger.log('Error receiving speech2', error);
 							self.emit('speechError', error);
