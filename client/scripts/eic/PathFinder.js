@@ -121,7 +121,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			$("#chart").click(function(){
 				$("#relation").empty();
 			});
-			$("redraw").click(function(){
+			$("#redraw").click(function(){
 				location.reload();
 			});
       	});
