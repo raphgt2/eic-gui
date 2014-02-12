@@ -304,6 +304,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	EnableUIAnimation: function(){
     		var self = this;
     		console.log("UI Animation");
+
     		$('#lastStep').click(function(){
     			console.log("Hash Object Test: ", self._hash);
     		});
@@ -311,6 +312,21 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 	      		logger.log("Play Button Click", self._hash);
 	          	console.log("Play Button Click Test II: ", self._hash);
 	          	$('#body').html('');
+	          	
+	          	$('#body').html("<div id='screen'> </div>");
+                 
+                $('#screen').css({
+					display: 'none',
+					position: 'relative',
+					margin: 'auto',
+					overflow: 'hidden',
+					height: 600,
+					width: 800,
+					'vertical-align': 'middle',
+                });
+                
+                $('#screen').show();               
+	          	
 	          	var play = new PresentationController(self._hash, true, true);
 	          	console.log("PresentationController: ", play, play.path.path);
 				play.playMovie();
@@ -326,7 +342,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 	                          self.pauseSlide();
 	                  }
 	      	});
-    		
     		
     		$( ".node-element-list" ).sortable({
 			  connectWith: "#movie-nav-bar",
