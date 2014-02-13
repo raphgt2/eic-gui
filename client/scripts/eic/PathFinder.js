@@ -137,9 +137,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       addNode: function(nodeURI, name){
       	console.log("[===================Add New Node===================]");
       	var self = this;
-      	var searchURI = "/Maven_DataVisualization-0.0.1-SNAPSHOT/rankServlet?uri=";
+      	var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
 			searchURI += nodeURI;
-			searchURI += '&num=5';
+			searchURI += '&num=7';
 		console.log(searchURI);
 		d3.json(searchURI, function(json){
 		//json.x0 = 800;
