@@ -146,7 +146,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
   		//json.y0 = 0;
 			console.log("json: ", json, nodeURI, name);
 			if (json){
-				if (self.round == 1){
+				if (json.children.lengh == 0){
+					alert("No data available for ' " + name + " ', please try other nodes");
+				}
+				else if (self.round == 1){
 					self.history = json;
 					self.appendMap[self.keyWord] = json;
 					self.appendMap[self.keyWord].name = name;
@@ -174,7 +177,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				self.updateCanvas(self.root);
 			}
 			else {
-				alert("no available data for ' " + name + " '");
+				alert("No data available for ' " + name + " ', please try other nodes");
 			}
 		});
 	 },//addNode

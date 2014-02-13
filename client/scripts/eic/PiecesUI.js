@@ -126,15 +126,15 @@ define(['lib/jquery','lib/prefixfree.jquery'],
       },
       initControls: function () {
                  //Dipa's slide-editing stuff
-               $('#imgs').css('display', 'inline');
+               $('#imgs').css('display', 'inline-block');
                $('#vids').css('display', 'none');
                $('#edit-imgs').click(function(){
-                       $('#imgs').css('display', 'inline');
+                       $('#imgs').css('display', 'inline-block');
                           $('#vids').css('display', 'none');
                });
                $('#edit-vids').click(function(){
                        $('#imgs').css('display', 'none');
-                          $('#vids').css('display', 'inline');
+                          $('#vids').css('display', 'inline-block');
                });
       },
 
