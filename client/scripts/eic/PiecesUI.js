@@ -130,11 +130,15 @@ define(['lib/jquery','lib/prefixfree.jquery'],
                $('#vids').css('display', 'none');
                $('#edit-imgs').click(function(){
                        $('#imgs').css('display', 'inline-block');
-                          $('#vids').css('display', 'none');
+                       $('#vids').css('display', 'none');
+                       $('#edit-imgs').addClass('btn-primary');
+                       $('#edit-vids').removeClass('btn-primary');
                });
                $('#edit-vids').click(function(){
                        $('#imgs').css('display', 'none');
-                          $('#vids').css('display', 'inline-block');
+                       $('#vids').css('display', 'inline-block');
+                       $('#edit-imgs').addClass('btn-primary');
+                       $('#edit-vids').removeClass('btn-primary');
                });
       },
 

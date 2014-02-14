@@ -39,11 +39,11 @@
   color: #E20177;
 }
 .slide.titleSlide .inner {
-  -webkit-transform: rotate(-7deg);
+  /*-webkit-transform: rotate(-7deg);
   -moz-transform: rotate(-7deg);
   -o-transform: rotate(-7deg);
   -ms-transform: rotate(-7deg);
-  transform: rotate(-7deg);
+  transform: rotate(-7deg);*/
 }
 .slide.titleSlide h1 {
   padding: 1em 1em 2em 1em;

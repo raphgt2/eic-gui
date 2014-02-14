@@ -164,7 +164,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           //add all the slides for each generator
           for(var val in this.generatorsHash){
           	var s = [];
-          	for(var i = 0; i < 3 && this.generatorsHash[val].hasNext() && 
+          	for(var i = 0; i < 20 && this.generatorsHash[val].hasNext() && 
           		this.generatorsHash[val].next !== undefined; i++){
           		s.push(this.generatorsHash[val].next());
           	}

@@ -52,8 +52,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	console.log("[===================Initialize Linked Data Edu App===================]");
       	var self=this;
       	$.getJSON('../data_json/uri_matching.json', function(data) {
+      		console.log("Here");
       		self.url_ref = data;
+      		console.log(data);
       	});
+      	console.log("data_Test", self.url_ref);
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
 			var myExp = new RegExp(searchField, "i");

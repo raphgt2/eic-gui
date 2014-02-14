@@ -43,8 +43,10 @@ footer {
 }
 
 .title .pieces {
-	position:absolute;
+	/*position:absolute;*/
+	position: relative;
 	z-index: 0;
+	
 }
 
 .title .content {
@@ -62,42 +64,42 @@ footer {
 #title_1 {
 	top:40px;
 	left:20px;
-	transform: rotate(-7deg);
+	/*transform: rotate(-7deg);
 	-moz-transform: rotate(-7deg);
 	-webkit-transform: rotate(-7deg);
 	-o-transform: rotate(-7deg);
-	-ms-transform: rotate(-7deg);
+	-ms-transform: rotate(-7deg);*/
 }
 
 #title_2 {
 	top: -40px;
 	left: 520px;
-	transform: rotate(-5deg);
+	/*transform: rotate(-5deg);
 	-moz-transform: rotate(-5deg);
 	-webkit-transform: rotate(-5deg);
 	-o-transform: rotate(-5deg);
-	-ms-transform: rotate(-5deg);
+	-ms-transform: rotate(-5deg);*/
 }
 
 #title_3 {
 	top: -20px;
 	right: -300px;
-	transform: rotate(10deg);
+	/*transform: rotate(10deg);
 	-moz-transform: rotate(10deg);
 	-webkit-transform: rotate(10deg);
 	-o-transform: rotate(10deg);
-	-ms-transform: rotate(10deg);
+	-ms-transform: rotate(10deg);*/
 }
 
 #play {
 	position: absolute;
 	bottom: 50px;
 	right: 160px;
-	transform: rotate(-10deg);
+	/*transform: rotate(-10deg);
 	-moz-transform: rotate(-10deg);
 	-webkit-transform: rotate(-10deg);
 	-o-transform: rotate(-10deg);
-	-ms-transform: rotate(-10deg);
+	-ms-transform: rotate(-10deg);*/
 	cursor: pointer;
 }
 
@@ -123,11 +125,11 @@ footer {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	transform: rotate(5deg);
+	/*transform: rotate(5deg);
 	-moz-transform: rotate(5deg);
 	-webkit-transform: rotate(5deg);
 	-o-transform: rotate(5deg);
-	-ms-transform: rotate(5deg);
+	-ms-transform: rotate(5deg);*/
 	z-index: 2;
 }
 

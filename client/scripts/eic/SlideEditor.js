@@ -160,8 +160,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
-      					//$('#imgs').children().remove();
-      					var imgList = '<ul id="imgs" class="droptrue node-element-list">';
+      					$('#imgs').children().remove();
+      					//var imgList = '<ul id="imgs" class="droptrue node-element-list">';
 		
 						
       					for(var i = 0; i < s.length; i++){
@@ -179,24 +179,24 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       							$(imgs).click(function () {
       								self.setContent(this.id, i, 'img');
       							});
-      							imgList += '<li id="img' + i + '" class="ui-state-default nodeElementBarContentWrap btn btn-default">';
-      							imgList += imgs[0].outerHTML;
-      							console.log("**********************imgs******************", imgs[0].outerHTML);
-      							imgList += '</li>';
-      							// $('#imgs').append('<li id=img' + i + '></li>');
-      							// $('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
-      							// $('#img' + i + '').append(imgs[0]);
-      							// $('#imgs' + i + '').addClass('nodeElementBarContent');
+      							// imgList += '<li id="img' + i + '" class="ui-state-default nodeElementBarContentWrap btn btn-default">';
+      							// imgList += imgs[0].outerHTML;
+      							// console.log("**********************imgs******************", imgs[0].outerHTML);
+      							// imgList += '</li>';
+      							$('#imgs').append('<li id=img' + i + '></li>');
+      							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+      							$('#img' + i + '').append(imgs[0]);
+      							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
       					}
-      					imgList += '</ul>';
-      					$("#img-element-list-wrap").append(imgList);
+      					//imgList += '</ul>';
+      					//$("#img-element-list-wrap").append(imgList);
       				}
       		    	if(val == 'vid'){
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
-                        //$('#vids').children().remove();
-                        var vidList = '<ul id="vids" class="droptrue node-element-list">';
+                        $('#vids').children().remove();
+                       // var vidList = '<ul id="vids" class="droptrue node-element-list">';
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
       						for(var j = 0; j < editedSlides.length; j++){
@@ -385,10 +385,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 				revert: true,
 				scroll: false,
 				over: function(event, ui){
-					$("#movie-nav-bar").css("background", "yellow");
+					//$("#movie-nav-bar").css("background", "yellow");
 				},
 				out: function(event, ui){
-					$("#movie-nav-bar").css("background", "grey");
+					//$("#movie-nav-bar").css("background", "grey");
 				},
 				receive: function(event, ui){
 					console.log("Receive!");
