@@ -247,6 +247,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         var children = this.$slides.children();
         children.remove();
         var newSlide;
+        //fdafds
         if(type == 'vid'){
             newSlide = this.curTopic.next().slide_info.data.videoID;
             this.$slides.append('<img src=http://img.youtube.com/vi/' + newSlide + "/default.jpg class='imgPreview'>")
