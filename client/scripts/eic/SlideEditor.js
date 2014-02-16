@@ -99,7 +99,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
           	self.initElementCollection();
 			self.EnableUIAnimation();
 
-          }, 500);
+          }, 10);
       },
       
       switchTopic: function(id, topics, prevTopic){
@@ -237,9 +237,15 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       setContent: function(id, index, type){
       	var arr = this.tempSlides[type];
 
+        /*TODO: BETTER WAY TO DO THIS!!!!*/
       	if(id == 'imgs0' || id == 'maps0' || id == 'vids0') this.curTopic.setCurSlide(arr[0]);
-      	else if(id == 'imgs1' || id == 'maps1' || id == 'vids1') this.curTopic.setCurSlide(arr[1]);
-      	else if(id == 'imgs2' | id == 'maps2' || id == 'vids2') this.curTopic.setCurSlide(arr[2]);
+      	else if(id == 'imgs1' || id == 'vids1') this.curTopic.setCurSlide(arr[1]);
+      	else if(id == 'imgs2' || id == 'vids2') this.curTopic.setCurSlide(arr[2]);
+      	else if(id == 'imgs3' || id == 'vids3') this.curTopic.setCurSlide(arr[3]);
+      	else if(id == 'imgs4' || id == 'vids4') this.curTopic.setCurSlide(arr[4]);
+      	else if(id == 'imgs5' || id == 'vids5') this.curTopic.setCurSlide(arr[5]);
+      	else if(id == 'imgs6' || id == 'vids6') this.curTopic.setCurSlide(arr[6]);
+      	else if(id == 'imgs7' || id == 'vids7') this.curTopic.setCurSlide(arr[7]);
       	else this.curTopic.setCurSlide(arr[index]);
       	
       	this.$slides.children('.transition-out').remove();
@@ -247,7 +253,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         var children = this.$slides.children();
         children.remove();
         var newSlide;
-        //fdafds
         if(type == 'vid'){
             newSlide = this.curTopic.next().slide_info.data.videoID;
             this.$slides.append('<img src=http://img.youtube.com/vi/' + newSlide + "/default.jpg class='imgPreview'>")
