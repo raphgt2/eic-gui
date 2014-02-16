@@ -246,10 +246,15 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         // start the transition of other children
         var children = this.$slides.children();
         children.remove();
-        var newSlide = this.curTopic.next().$element.clone().find('img');
-        newSlide.css('display', 'block');
-        newSlide.addClass('imgPreview');
-        this.$slides.append(newSlide[0]);
+        var newSlide;
+        if(type == 'vid'){
+            newSlide = this.curTopic.next().slide_info.data.videoID;
+            this.$slides.append('<img src=http://img.youtube.com/vi/' + newSlide + "/default.jpg class='imgPreview'>")
+        } else {
+            newSlide = this.curTopic.next().$element.clone().find('img');
+            newSlide.addClass('imgPreview');
+            this.$slides.append(newSlide[0]);
+        }
       },
       
       getTopictoTopic: function(){
