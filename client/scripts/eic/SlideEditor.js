@@ -211,9 +211,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
                          		$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
                          		$('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
                          		$('#vids' + i + '').addClass('nodeElementBarContent');
-                         		$('#vids' + i + '').addClass('nodeElementBarContent');
                          		$('#vids' + i).click(function () {
-                         		var id = "vids" + i;
+                         		    var id = "vids" + i;
                          			self.setContent(id, i, 'vid');
                          		});
                         	}
