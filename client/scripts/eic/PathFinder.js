@@ -20,7 +20,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				this.URLRef['Bill Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FBill_Clinton";
 				this.URLRef['Hillary Rodham Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FHillary_Rodham_Clinton";
 				this.URLRef['Ray Bradbury'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FRay_Bradbury";
-		this.w = 150;
+		this.w = 180;
     	this.h = 580;
     	this.i = 0;
     	this.url_ref = new Object;
@@ -54,23 +54,23 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	$.getJSON('../data_json/uri_matching.json', function(data) {
       		console.log("Here");
       		self.url_ref = data;
-      		console.log(data);
+      		//console.log(data);
       	});
       	console.log("data_Test", self.url_ref);
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
 			var myExp = new RegExp(searchField, "i");
 			
-			console.log("URI Data: ", self.url_ref, searchField);
+			//console.log("URI Data: ", self.url_ref, searchField);
 			var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
 			$.each(self.url_ref, function(key, val) {
-				console.log(key, val.name.search(myExp));
+				//console.log(key, val.name.search(myExp));
 				if ((val.name.search(myExp) != -1)) {
-					console.log("Yes");
+					//console.log("Yes");
 					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
 					output += val.name;
 					output += '</li>';
-				}else{console.log("No");}
+				}//else{//console.log("No");}
 			});
 			output += '</ul>';
 			$('#liveSearch').html(output);
@@ -104,7 +104,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       		$("#canvasWindow").css("display", "block");
       		self.tree = d3.layout.tree().size([self.h, self.w]);
       		self.vis = d3.select("#chart").append("svg:svg")
-					     .attr("width", self.w + 240)
+					     .attr("width", self.w + 270)
 					     .attr("height", self.h )
 					  	 .append("svg:g")
 					     .attr("transform", "translate(40,0)");
@@ -140,9 +140,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       addNode: function(nodeURI, name){
       	console.log("[===================Add New Node===================]");
       	var self = this;
-      	var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
-			searchURI += nodeURI;
-			searchURI += '&num=7';
+      	// var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
+			// searchURI += nodeURI;
+			// searchURI += '&num=7';
+			var searchURI = "../data_json/";
+	searchURI += name;
+	searchURI += ".json";
 		console.log(searchURI);
 		d3.json(searchURI, function(json){
 		//json.x0 = 800;
@@ -203,7 +206,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    .attr("class", "node")
 		    .attr("transform", function(d) { 
 		    	console.log("nodeEnter: ", d);
-		    	return "translate(" + source.y0 + "," + source.x0+20 + ")"; 
+		    	return "translate(" + source.y0 + "," + source.x0+35 + ")"; 
 		    })
 		    .on("click", function(d){
 		    	console.log("Click Test: ", d);
@@ -212,19 +215,19 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    .on("mouseover", function(d){
 		   		var output = self.nodeMouseOver(d.name, d.relation);
 		    });	
-				
+	//	console.log("g.width", $("g").width());
 	// Enter any new nodes at the parent's previous position.
 		nodeEnter.append("svg:circle")
-		   	 	 .attr("r", 5.5)
+		   	 	 .attr("r", 6.5)
 		   		 .style("fill", function(d) { 
 					 return d.children || d._children ? "lightsteelblue" : "#fff"; 
 				 });
 		      
 		nodeEnter.append("svg:text")
 				 .attr("class", "textNormal")
-			     .attr("x", function(d) { return d.children || d._children ? 15 : 8; })
+			     .attr("x", function(d) { return d.children || d._children ? 20 : 8; })
 				 .attr("y", function(d){
-					 	return d.children || d._children ? -13 : 0;
+					 	return d.children || d._children ? -15 : 0;
 				 })
 	    		 .attr("dy", ".35em")
 	    		 .style("fill", function(d){
@@ -254,7 +257,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		node.exit().transition()
 		      .duration(self.duration)
 		      .attr("transform", function(d) {
-			    console.log("nodeRemove: ", d);
+			    //console.log("nodeRemove: ", d);
 				return "translate(" + source.y + "," + source.x + ")"; 
 				})
 		      .style("opacity", 1e-6)
@@ -320,6 +323,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 	 },//updateCanvas
      click: function(d) {
      	var self = this;
+     	console.log("[*********************************Node Clicked********************************]", self.diagramDepth, self.mainDepth);
      	console.log("Click Data Test", d);
      	console.log("Self Test", self);
 		if (d.search == 1){		
@@ -329,9 +333,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);		
-			  self.w = (self.mainDepth) * 200;
+			  self.w = (self.mainDepth) * 180 + 270;
 			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
-			  self.tree.size([self.h, self.w]);
+			  self.tree.size([self.h, self.w - 270 + ""]);
 			  
 //			  this.update(d);
 			} 
@@ -341,21 +345,23 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);
-			  self.w = (self.mainDepth) * 200;
+			  self.w = (self.diagramDepth) * 180 + 270;
 			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
-			  $("svg").attr("width", self.w + 200 + "");
-			  self.tree.size([self.h, self.w]);
+			  $("svg").attr("width", self.w);
+			  self.tree.size([self.h, self.w - 270 + ""]);
 			  //this.update(d);
 			}
-			this.update(d);
+			this.updateCanvas(d);
 		}
 		else if (d.search == 0){
 			self.mainDepth = 0;	
-			var getDepth = self.getTreeWidth(self.root);
-			self.w = (self.mainDepth + 1) * 200;
-			console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
-			$("svg").attr("width", self.w + 200 + "");
-			self.tree.size([self.h, self.w]);
+			if (d.depth == self.diagramDepth){
+				var getDepth = self.getTreeWidth(self.root);
+				self.w = (self.diagramDepth + 1) * 180 + 270;
+				console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+				$("svg").attr("width", self.w);
+				self.tree.size([self.h, self.w - 270 + ""]);
+			}
 			self.addNode(d.uri, d.name);
 		}
 			self.userPath = [];
@@ -379,7 +385,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		linkMouseOver: function(source, target) {
 			console.log(source, "~", target);
 			$("#relation").empty();
-			var relationContent = '<p id="relationContent" class="close" style="color:white;">This is a relation between <b>' + source + '</b> and <b>' + target +'</b>';
+			var relationContent = '<div id="relationContent" class="close" >This is a relation between <b>' + source + '</b> and <b>' + target +'</b></div>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){
 				$("#relation").empty();
@@ -387,10 +393,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;
-			console.log("Root Test: ", self.root);
+			//console.log("Root Test: ", self.root);
 			if (treeRoot.children == null){
 				if (treeRoot.depth > self.mainDepth){
 					self.mainDepth = treeRoot.depth;
+					console.log("**********************************", self.mainDepth);
 				}
 			}
 			else {
