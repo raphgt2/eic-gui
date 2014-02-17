@@ -74,7 +74,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         	
         	var firstInit = false;
         	for(var i = 1; i < topics.length; i++){
-        		var $button = $('<button>').attr("class", "btn btn-sm btn-primary nodeNavBtn")
+        		var $button = $('<button>').attr("class", "btn btn-sm btn-info nodeNavBtn")
         	    	.attr("id", topics[i].topic.label)
         	    	.attr("order", i)
         	    	.html(topics[i].topic.label);
@@ -108,8 +108,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       	for(var val in prevSlides){
       		var s = prevSlides[val];
       		for(var i = 0; i < s.length; i++){
-      			console.log("DFDSFDS");
-      			console.log(s[i]);
       			var imgs = s[i].$element.clone().find('img');
       			var vids = s[i].slide_info.data.videoID;
       			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
