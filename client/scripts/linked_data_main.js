@@ -9,6 +9,9 @@
       'lib/d3': {
       	exports: 'd3'
       },
+      'lib/jqyerUI': {
+      	deps: ['lib/jquery__ui']
+      },
       'lib/jquery.ui.core': {
         deps: ['lib/jquery']
       },
