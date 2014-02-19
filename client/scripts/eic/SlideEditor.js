@@ -1,11 +1,17 @@
-define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
+/*
+* LODStory Slide Editor
+* Copyright 2014, LOD Story Team - University of Southern California - Information Sciences Institute
+* Licensed under 
+*/
+
+define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController'],
-  function ($, Logger, jqueryUI, AudioEditor,
+  'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController','lib/jquery__ui'],
+  function ($, Logger, AudioEditor,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
-    ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController) {
+    ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController,jquery__ui) {
     "use strict";
     var logger = new Logger("SlideEditor");
   		
@@ -40,7 +46,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
     SlideEditor.prototype = {
       // Starts the movie about the connection between the user and the topic.
       startEdit: function () {
-		$('#videoEditor').css('display', 'inline');
+		$('#videoEditor').css('display', 'block');
 
         
         // Create the slides panel
@@ -68,7 +74,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
         	
         	var firstInit = false;
         	for(var i = 1; i < topics.length; i++){
-        		var $button = $('<button>').attr("class", "btn btn-sm btn-primary nodeNavBtn")
+        		var $button = $('<button>').attr("class", "btn btn-sm btn-info nodeNavBtn")
         	    	.attr("id", topics[i].topic.label)
         	    	.attr("order", i)
         	    	.html(topics[i].topic.label);
@@ -93,7 +99,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
           	self.initElementCollection();
 			self.EnableUIAnimation();
 
-          }, 500);
+          }, 10);
       },
       
       switchTopic: function(id, topics, prevTopic){
@@ -102,8 +108,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       	for(var val in prevSlides){
       		var s = prevSlides[val];
       		for(var i = 0; i < s.length; i++){
-      			console.log("DFDSFDS");
-      			console.log(s[i]);
       			var imgs = s[i].$element.clone().find('img');
       			var vids = s[i].slide_info.data.videoID;
       			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
@@ -155,6 +159,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
       					$('#imgs').children().remove();
+      					//var imgList = '<ul id="imgs" class="droptrue node-element-list">';
+		
+						
       					for(var i = 0; i < s.length; i++){
       						var isEdited = false;
       						for(var j = 0; j < editedSlides.length; j++){
@@ -165,21 +172,29 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       						}
       						if(!isEdited){
       							var imgs = s[i].$element.clone().find('img'); //get just the image link
-      							imgs.attr('id', val + 's' + i);
+      							imgs.attr('id', val + 's' + i)
+      								.attr('class', 'nodeElementBarContent');
       							$(imgs).click(function () {
       								self.setContent(this.id, i, 'img');
       							});
+      							// imgList += '<li id="img' + i + '" class="ui-state-default nodeElementBarContentWrap btn btn-default">';
+      							// imgList += imgs[0].outerHTML;
+      							// console.log("**********************imgs******************", imgs[0].outerHTML);
+      							// imgList += '</li>';
       							$('#imgs').append('<li id=img' + i + '></li>');
       							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
       							$('#img' + i + '').append(imgs[0]);
       							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
       					}
+      					//imgList += '</ul>';
+      					//$("#img-element-list-wrap").append(imgList);
       				}
       		    	if(val == 'vid'){
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
                         $('#vids').children().remove();
+                       // var vidList = '<ul id="vids" class="droptrue node-element-list">';
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
       						for(var j = 0; j < editedSlides.length; j++){
@@ -194,9 +209,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
                          		$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
                          		$('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
                          		$('#vids' + i + '').addClass('nodeElementBarContent');
-                         		$('#vids' + i + '').addClass('nodeElementBarContent');
                          		$('#vids' + i).click(function () {
-                         		var id = "vids" + i;
+                         		    var id = "vids" + i;
                          			self.setContent(id, i, 'vid');
                          		});
                         	}
@@ -221,19 +235,30 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
       setContent: function(id, index, type){
       	var arr = this.tempSlides[type];
 
+        /*TODO: BETTER WAY TO DO THIS!!!!*/
       	if(id == 'imgs0' || id == 'maps0' || id == 'vids0') this.curTopic.setCurSlide(arr[0]);
-      	else if(id == 'imgs1' || id == 'maps1' || id == 'vids1') this.curTopic.setCurSlide(arr[1]);
-      	else if(id == 'imgs2' | id == 'maps2' || id == 'vids2') this.curTopic.setCurSlide(arr[2]);
+      	else if(id == 'imgs1' || id == 'vids1') this.curTopic.setCurSlide(arr[1]);
+      	else if(id == 'imgs2' || id == 'vids2') this.curTopic.setCurSlide(arr[2]);
+      	else if(id == 'imgs3' || id == 'vids3') this.curTopic.setCurSlide(arr[3]);
+      	else if(id == 'imgs4' || id == 'vids4') this.curTopic.setCurSlide(arr[4]);
+      	else if(id == 'imgs5' || id == 'vids5') this.curTopic.setCurSlide(arr[5]);
+      	else if(id == 'imgs6' || id == 'vids6') this.curTopic.setCurSlide(arr[6]);
+      	else if(id == 'imgs7' || id == 'vids7') this.curTopic.setCurSlide(arr[7]);
       	else this.curTopic.setCurSlide(arr[index]);
       	
       	this.$slides.children('.transition-out').remove();
         // start the transition of other children
         var children = this.$slides.children();
         children.remove();
-        var newSlide = this.curTopic.next().$element.clone().find('img');
-        newSlide.css('display', 'block');
-        newSlide.addClass('imgPreview');
-        this.$slides.append(newSlide[0]);
+        var newSlide;
+        if(type == 'vid'){
+            newSlide = this.curTopic.next().slide_info.data.videoID;
+            this.$slides.append('<img src=http://img.youtube.com/vi/' + newSlide + "/default.jpg class='imgPreview'>")
+        } else {
+            newSlide = this.curTopic.next().$element.clone().find('img');
+            newSlide.addClass('imgPreview');
+            this.$slides.append(newSlide[0]);
+        }
       },
       
       getTopictoTopic: function(){
@@ -368,10 +393,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jqueryUI','eic/AudioEditor',
 				revert: true,
 				scroll: false,
 				over: function(event, ui){
-					$("#movie-nav-bar").css("background", "yellow");
+					//$("#movie-nav-bar").css("background", "yellow");
 				},
 				out: function(event, ui){
-					$("#movie-nav-bar").css("background", "grey");
+					//$("#movie-nav-bar").css("background", "grey");
 				},
 				receive: function(event, ui){
 					console.log("Receive!");

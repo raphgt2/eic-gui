@@ -1,3 +1,10 @@
+/*
+* LODStory Path Finder
+* Copyright 2014, LOD Story Team - University of Southern California - Information Sciences Institute
+* Licensed under 
+*/
+
+
 define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor'],
   function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor) {
     "use strict";
@@ -13,9 +20,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				this.URLRef['Bill Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FBill_Clinton";
 				this.URLRef['Hillary Rodham Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FHillary_Rodham_Clinton";
 				this.URLRef['Ray Bradbury'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FRay_Bradbury";
-		this.w = 150;
+		this.w = 180;
     	this.h = 580;
     	this.i = 0;
+    	this.url_ref = new Object;
     	this.duration = 500;
     	this.root = new Object;
     	this.appendList = [];
@@ -43,16 +51,60 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       initLinkedDataEdu: function () {
       	console.log("[===================Initialize Linked Data Edu App===================]");
       	var self=this;
-      	console.log("Draw: ", $("#draw"));
+      	$.getJSON('../data_json/uri_matching.json', function(data) {
+      		//console.log("Here");
+      		self.url_ref = data;
+      		//console.log(data);
+      	});
+      	console.log("data_Test", self.url_ref);
+      	$('#search').keyup(function() {
+			var searchField = $('#search').val();
+			var myExp = new RegExp(searchField, "i");
+			
+			//console.log("URI Data: ", self.url_ref, searchField);
+			var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
+			$.each(self.url_ref, function(key, val) {
+				//console.log(key, val.name.search(myExp));
+				if ((val.name.search(myExp) != -1)) {
+					//console.log("Yes");
+					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
+					output += val.name;
+					output += '</li>';
+				}//else{//console.log("No");}
+			});
+			output += '</ul>';
+			$('#liveSearch').html(output);
+			$(".searchItem").click(function(){
+				var uriMatch = new RegExp($(this).html());
+				$.each(self.url_ref, function(key, val) {
+					//console.log(key, val.name.search(myExp));
+					if ((val.name.search(uriMatch) != -1)) {
+						$("#liveSearchResult").html(val.uri);
+						
+					}
+			});
+				$('#search').val($(this).html());
+				self.keyWord = $(this).html(); 
+				$('#liveSearch').empty();
+			});
+		});
+		
+
+      	
+      	
+      	
+      	
+      	
+      	
       	
       	$("#draw").click(function(){
       		self.keyWord = $("#input").val();
-      		self.addNode(self.URLRef[self.keyWord], self.keyWord);
+      		self.addNode($("#liveSearchResult").html(), $("#search").val());
       		$("#searchWindow").css("display", "none");
       		$("#canvasWindow").css("display", "block");
       		self.tree = d3.layout.tree().size([self.h, self.w]);
       		self.vis = d3.select("#chart").append("svg:svg")
-					     .attr("width", self.w + 240)
+					     .attr("width", self.w + 270)
 					     .attr("height", self.h )
 					  	 .append("svg:g")
 					     .attr("transform", "translate(40,0)");
@@ -76,8 +128,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
 		        });
             });
-			
-			$("redraw").click(function(){
+			$("#chart").click(function(){
+				$("#relation").empty();
+			});
+			$(".redraw").click(function(){
 				location.reload();
 			});
       	});
@@ -86,44 +140,67 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       addNode: function(nodeURI, name){
       	console.log("[===================Add New Node===================]");
       	var self = this;
-      	var searchURI = "/Maven_DataVisualization-0.0.1-SNAPSHOT/rankServlet?uri=";
+      	var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
 			searchURI += nodeURI;
-			searchURI += '&num=5';
+			searchURI += '&num=7';
+			// var searchURI = "../data_json/";
+	// searchURI += name;
+	// searchURI += ".json";
 		console.log(searchURI);
 		d3.json(searchURI, function(json){
 		//json.x0 = 800;
   		//json.y0 = 0;
-			console.log("json: ", json, nodeURI, name);
+			console.log("json: ", json, nodeURI, name, "Length:", json.children.length);
 			if (json){
-				if (self.round == 1){
+				if (json.children.length == 0){
+					alert("No data available for ' " + name + " ', please try other nodes.");
+				}
+				else if (self.round == 1){
 					self.history = json;
-					self.appendMap[self.keyWord] = json;
-					self.appendMap[self.keyWord].name = name;
-					self.appendMap[self.keyWord].search = 1;
+					self.appendMap[name] = json;
+					self.appendMap[name].name = name;
+					self.appendMap[name].search = 1;
+					//self.appendMap[name].children = json.children;
 					console.log("====>AppendMap", self.appendMap);
 					for (var i = 0; i < json.children.length; i++){
 						json.children[i].search = 0;
 						json.children[i].children = null;
 						self.appendMap[json.children[i].name] = json.children[i];
 					}
+					self.root = self.history;
+					self.updateCanvas(self.root);
 				}
 				else {
+					
+					console.log("set up search", self.appendMap[name]);
 					self.appendMap[name].search = 1;
-					self.appendMap[name].children = json.children;
+					self.appendMap[name].children = json.children; // Have repetitive nodes
+					var children = [];
 					for (var i = 0; i < json.children.length; i++){
-						json.children[i].search = 0;
-						json.children[i].children = null;
-						self.appendMap[json.children[i].name] = json.children[i];
+						console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
+						if (self.appendMap[json.children[i].name] == undefined){
+							json.children[i].search = 0;
+							json.children[i].children = null;
+							self.appendMap[json.children[i].name] = json.children[i];
+							children.push(json.children[i]);
+						}
+						// else {
+							// json.children.pop()
+						// }
+						
+						
 					}
+					//json.children = children;
 					console.log("====>AppendMap", self.appendMap);
+					self.root = self.history;
+					self.updateCanvas(self.root);
 				}
 				console.log("history test: ", self.history);
 			////	root = jQuery.extend(true, {}, history);
-				self.root = self.history;
-				self.updateCanvas(self.root);
+				
 			}
 			else {
-				alert("no available data for ' " + name + " '");
+				alert("No data available for ' " + name + " ', please try other nodes");
 			}
 		});
 	 },//addNode
@@ -146,7 +223,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    .attr("class", "node")
 		    .attr("transform", function(d) { 
 		    	console.log("nodeEnter: ", d);
-		    	return "translate(" + source.y0 + "," + source.x0 + ")"; 
+		    	return "translate(" + source.y0 + "," + source.x0 + 80 + ")"; 
 		    })
 		    .on("click", function(d){
 		    	console.log("Click Test: ", d);
@@ -155,26 +232,38 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    .on("mouseover", function(d){
 		   		var output = self.nodeMouseOver(d.name, d.relation);
 		    });	
-				
+	//	console.log("g.width", $("g").width());
 	// Enter any new nodes at the parent's previous position.
 		nodeEnter.append("svg:circle")
-		   	 	 .attr("r", 5.5)
+		   	 	 .attr("r", 7)
 		   		 .style("fill", function(d) { 
 					 return d.children || d._children ? "lightsteelblue" : "#fff"; 
 				 });
 		      
 		nodeEnter.append("svg:text")
 				 .attr("class", "textNormal")
-			     .attr("x", function(d) { return d.children || d._children ? 13 : 8; })
+			     .attr("x", function(d) { return d.children || d._children ? 70 : 8; })
 				 .attr("y", function(d){
-					 	return d.children || d._children ? -13 : 0;
+					 	return d.children || d._children ? 0 : 0;
 				 })
 	    		 .attr("dy", ".35em")
 	    		 .style("fill", function(d){
-	    		 	return d.children || d._children ? "#ffff00" : "#fff";
+	    		 	return d.children || d._children ? "#3399ff" : "#000";
 	    		  })
 	      		 .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-	      		 .text(function(d) { return d.name; })
+	      		 .text(function(d) {
+	      		 	var name_data = "";
+	      		 	if (d.name.length > 22) {
+	      		 		for (var i = 0; i < 23; i++){
+	      		 			name_data += d.name[i];
+	      		 		}
+	      		 		name_data += '...';
+	      		 	}
+	      		 	else {
+	      		 		name_data = d.name;
+	      		 	}
+	      		 	return name_data; 
+	      		 })
 	
 		nodeEnter.transition()
 				 .duration(self.duration)
@@ -197,7 +286,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		node.exit().transition()
 		      .duration(self.duration)
 		      .attr("transform", function(d) {
-			    console.log("nodeRemove: ", d);
+			    //console.log("nodeRemove: ", d);
 				return "translate(" + source.y + "," + source.x + ")"; 
 				})
 		      .style("opacity", 1e-6)
@@ -225,7 +314,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      })
 		      .attr("target", function(d){
 		      	return d.target.name;
-		      });		  
+		      })
+		      .attr("relation", function(d){
+		      	return d.target.relation;
+		      });
 			
 	
 		 
@@ -245,7 +337,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      
 		//$("path").on("mouseover", function(){
 		$("path").mouseover(function(){	
-			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"));
+			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"), $(this).attr("relation"));
 			$(this).mousemove(function(e){
 				var mouse = self.getMousePosition(e.pageX, e.pageY);
 			})
@@ -263,7 +355,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 	 },//updateCanvas
      click: function(d) {
      	var self = this;
+     	console.log("[*********************************Node Clicked********************************]", self.diagramDepth, self.mainDepth);
      	console.log("Click Data Test", d);
+     	console.log("Self Test", self);
 		if (d.search == 1){		
 			if (d.children) {
 			  d._children = d.children;
@@ -271,54 +365,64 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);		
-			  self.w = (self.mainDepth) * 150;
-			  console.log("mainDepth: ", self.mainDepth, " , w: ", w);
-			  self.tree.size([h, w]);
-			  self.update(d);
-			} else {
+			  self.w = (self.mainDepth) * 180 + 270;
+			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+			  self.tree.size([self.h, self.w - 270 + ""]);
+			  
+//			  this.update(d);
+			} 
+			else {
 			  d.children = d._children;
 			  d._children = null;
 			  
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);
-			  self.w = (self.mainDepth) * 140;
-			  console.log("mainDepth: ", self.mainDepth, " , w: ", w);
-			  $("svg").attr("width", self.w + 140 + "");
-			  self.tree.size([self.h, self.w]);
-			  this.update(d);
+			  self.w = (self.mainDepth) * 180 + 270;
+			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+			  $("svg").attr("width", self.w);
+			  self.tree.size([self.h, self.w - 270 + ""]);
+			  //this.update(d);
 			}
+			this.updateCanvas(d);
 		}
-		else if (d.search == 0){
-			self.mainDepth = 0;	
-			var getDepth = self.getTreeWidth(self.root);
-			self.w = (self.mainDepth + 1) * 150;
-			console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
-			$("svg").attr("width", self.w + 160 + "");
-			self.tree.size([self.h, self.w]);
-			self.addNode(d.uri, d.name);
+		else{
+			if ( self.appendMap[d.name].children == null){
+				self.mainDepth = 0;	
+				if (d.depth == self.diagramDepth){
+					var getDepth = self.getTreeWidth(self.root);
+					self.w = (self.diagramDepth + 1) * 180 + 270;
+					console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+					$("svg").attr("width", self.w);
+					self.tree.size([self.h, self.w - 270 + ""]);
+				}
+				self.addNode(d.uri, d.name);
+			}
+			else {
+				alert("This node has been explored, please try a different path.");
+			}
 		}
 			self.userPath = [];
 			self.trackPath(d);
 			console.log("HIGHLIGHTPATH: ", self.userPath);
 	  },
 	    getMousePosition: function(x, y){
-	  	  console.log(x, y);
-		  $("#relation").css("top", y - 130 + "")
+	  	  //console.log(x, y);
+		  $("#relation").css("top", y - 90 + "")
 			            .css("left", x - 100 + "")
 					  	.css("display", "block");
 	    },
 	    nodeMouseOver: function(name, catalog) {
-			$("#name").empty();
-			$("#catalog").empty();
-			var nameContent = "Name: " + name;
-			var catalogContent = "Catalog: " + catalog;
-			$("#name").append(nameContent);
-			$("#catalog").append(catalogContent);
+			// $("#name").empty();
+			// $("#catalog").empty();
+			// var nameContent = "Name: " + name;
+			// var catalogContent = "Catalog: " + catalog;
+			// $("#name").append(nameContent);
+			// $("#catalog").append(catalogContent);
 		},
-		linkMouseOver: function(source, target) {
-			console.log(source, "~", target);
+		linkMouseOver: function(source, target, relation) {
+			//console.log(source, "~", target);
 			$("#relation").empty();
-			var relationContent = '<p id="relationContent" class="close">This is a relation between <b>' + source + '</b> and <b>' + target +'</b></p><h5 id="close">close</h5>';
+			var relationContent = '<div id="relationContent" class="close" >This is a relation between <b>' + source + '</b> and <b>' + target +'</b>: '+ relation +'.</div>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){
 				$("#relation").empty();
@@ -326,10 +430,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;
-			console.log("Root Test: ", self.root);
+			//console.log("Root Test: ", self.root);
 			if (treeRoot.children == null){
 				if (treeRoot.depth > self.mainDepth){
 					self.mainDepth = treeRoot.depth;
+					console.log("**********************************", self.mainDepth);
 				}
 			}
 			else {
@@ -348,13 +453,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			for (var i = 0; i < allNodes[0].length; i++){
 				if (allNodes[0][i].__data__.search == 1){
 					allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
-					allNodes[0][i].childNodes[1].style.fill = "ffff00";
+					allNodes[0][i].childNodes[1].style.fill = "ff3300";
 				}
 			}
 			for (var i = 0; i < allLinks[0].length; i++){
 				if (allLinks[0][i].__data__.target.children != null & allLinks[0][i].__data__.source.search == 1){
 				//if (allLinks[0][i].__data__.target.search == 1 & allLinks[0][i].__data__.source.search == 1){
-					allLinks[0][i].style.stroke = "#ff6600";
+					allLinks[0][i].style.stroke = "#4747d1";
 					allLinks[0][i].style.strokeWidth = "4.5px";
 				}
 				else {

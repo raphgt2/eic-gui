@@ -126,15 +126,23 @@ define(['lib/jquery','lib/prefixfree.jquery'],
       },
       initControls: function () {
                  //Dipa's slide-editing stuff
-               $('#imgs').css('display', 'inline');
+               $('#imgs').css('display', 'inline-block');
                $('#vids').css('display', 'none');
                $('#edit-imgs').click(function(){
-                       $('#imgs').css('display', 'inline');
-                          $('#vids').css('display', 'none');
+                       $('#imgs').css('display', 'inline-block');
+                       $('#img-element-list-wrap').css('display', 'inline-block');
+                       $('#vids').css('display', 'none');
+                       $('#vid-element-list-wrap').css('display', 'none');
+                       $('#edit-imgs').addClass('btn-primary');
+                       $('#edit-vids').removeClass('btn-primary');
                });
                $('#edit-vids').click(function(){
                        $('#imgs').css('display', 'none');
-                          $('#vids').css('display', 'inline');
+                       $('#img-element-list-wrap').css('display', 'none');
+                       $('#vids').css('display', 'inline-block');
+                       $('#vid-element-list-wrap').css('display', 'inline-block');
+                       $('#edit-imgs').removeClass('btn-primary');
+                       $('#edit-vids').addClass('btn-primary');
                });
       },
 
