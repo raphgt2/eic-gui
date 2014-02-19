@@ -150,7 +150,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		d3.json(searchURI, function(json){
 		//json.x0 = 800;
   		//json.y0 = 0;
-			console.log("json: ", json, nodeURI, name);
+			console.log("json: ", json, nodeURI, name, "Length:", json.children.length);
 			if (json){
 				if (json.children.length == 0){
 					alert("No data available for ' " + name + " ', please try other nodes.");
@@ -160,6 +160,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					self.appendMap[name] = json;
 					self.appendMap[name].name = name;
 					self.appendMap[name].search = 1;
+					//self.appendMap[name].children = json.children;
 					console.log("====>AppendMap", self.appendMap);
 					for (var i = 0; i < json.children.length; i++){
 						json.children[i].search = 0;
@@ -183,15 +184,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							self.appendMap[json.children[i].name] = json.children[i];
 							children.push(json.children[i]);
 						}
-						else {
-							json.children.pop()
-						}
+						// else {
+							// json.children.pop()
+						// }
 						
 						
 					}
-
-					
-					
 					//json.children = children;
 					console.log("====>AppendMap", self.appendMap);
 					self.root = self.history;
