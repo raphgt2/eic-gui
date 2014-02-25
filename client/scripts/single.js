@@ -43,18 +43,27 @@
 					
         $("#play-button").click(function(){	
 			 $.ajax({
-                type: "GET",
-                url: urls.singlepath,
-                dataType: "jsonp",
-                error: function () {
-                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
-                  self.loader.stopWaiting();
-                },
-                success: function (path) {
-					var controller = new PresentationController(path, true, false);
-					var view = new PiecesUI(controller);
-					view.initControls();
-                }
+				 url: urls.singlepath,
+				 type: 'GET',
+				 dataType: 'jsonp',
+				 success: function (data) {					 
+
+					 if (data.res === 'OK') {
+						var controller = new PresentationController(data, false, false);
+						var view = new PiecesUI(controller);
+						view.initControls();
+						
+						player.playMovie();
+					}
+					else{
+						alert("Problem loading path from server end");
+					}
+				 },
+				 error: function (error) {
+					console.log(error);
+					alert(error.responseText);
+				 }
+			 
            });                
 		 });
   });
