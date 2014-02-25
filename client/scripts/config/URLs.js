@@ -9,7 +9,7 @@ define(function () {
     festivalspeech: "http://lodstories.isi.edu/festival_service-1.0-SNAPSHOT/rest/audiotest/jsonfull/?jsoncallback=?",
     //paths: "http://pathfinding.restdesc.org/paths",
     paths: "http://lodstories.isi.edu/festival_service-1.0-SNAPSHOT/rest/path/sample/?jsoncallback=?",
-    singlepath: "http://lodstories.isi.edu/festival_service-1.0-SNAPSHOT/rest/path/single/?jsoncallback=?",
+    singlepath: "http://localhost:8080/festival_service-1.0-SNAPSHOT/rest/path/single/?jsoncallback=?",
     jplayerSWF: "/scripts/swf"
   }
 });
