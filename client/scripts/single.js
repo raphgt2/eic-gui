@@ -43,27 +43,24 @@
 					
         $("#play-button").click(function(){	
 			 $.ajax({
-				 url: urls.singlepath,
-				 type: 'GET',
-				 dataType: 'jsonp',
-				 success: function (data) {					 
-
-					 if (data.res === 'OK') {
-						var controller = new PresentationController(data, false, false);
-						var view = new PiecesUI(controller);
-						view.initControls();
-						
-						player.playMovie();
+                type: "GET",
+                url: urls.singlepath,
+                dataType: "json",
+				success: function(path){
+					if (!path.hash){
+						alert("Internal server error");
+						console.log(path);
 					}
 					else{
-						alert("Problem loading path from server end");
+						var controller = new PresentationController(path, true, false);
+						var view = new PiecesUI(controller);
+						view.initControls();
 					}
-				 },
-				 error: function (error) {
+				},
+				error: function(error){
+					alert("error" + error.status);
 					console.log(error);
-					alert(error.responseText);
-				 }
-			 
+				}
            });                
 		 });
   });
