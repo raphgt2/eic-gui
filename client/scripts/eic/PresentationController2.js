@@ -21,7 +21,9 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       EventEmitter.call(this);
 	  this.intro = intro;
 	  this.outro = outro;
-      logger.log("Created PresentationController2, ready to generate slides");    
+      logger.log("Created PresentationController2, ready to generate slides");
+
+	  this.topicToTopic;
     }
 
     /* Member functions */
@@ -42,38 +44,24 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		if (this.intro)
 			this.generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
-		this.generator.addGenerator(new TopicToTopicSlideGenerator2(this.path));
+		this.topicToTopic = new TopicToTopicSlideGenerator2(this.path);
+		this.generator.addGenerator(this.topicToTopic);
 		
 		if (this.outro)
 			this.generator.addGenerator(new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic));
 			
 
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-		// I know that the second generator in the array is the one with topic slides...    
 		
-		if (this.intro){
-			if (this.generator.generators[1].ready){
-				logger.log("New hash: " + self.path);
-				self.emit('slide_generation_finished')
-			}
-			else{
-				this.generator.generators[1].once('topic slides ready', function(){
-					logger.log("New hash: " + self.path); 
-					self.emit('slide_generation_finished');
-				});
-			}
+		if (this.topicToTopic.ready){
+			logger.log("New hash: " + self.path);
+			self.emit('slide_generation_finished')
 		}
 		else{
-			if (this.generator.generators[0].ready){
-					logger.log("New hash: " + self.path);
-					self.emit('slide_generation_finished')
-				}
-				else{
-					this.generator.generators[0].once('topic slides ready', function(){
-						logger.log("New hash: " + self.path); 
-						self.emit('slide_generation_finished');
-					});
-				}
+			this.topicToTopic.once('topic slides ready', function(){
+				logger.log("New hash: " + self.path); 
+				self.emit('slide_generation_finished');
+			});
 		}
 
       }

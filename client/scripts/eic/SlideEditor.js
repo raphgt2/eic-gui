@@ -18,13 +18,14 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     function SlideEditor(generator, path, controller, hashObj) {
       this.curTopic = null;
       this.tempSlides = {};
-      this.topicToTopic = generator.generators[1];
+      this.topicToTopic = controller.topicToTopic;
       this.hash_object = path;
       
       
       
       //EDITING NODES//
-    	this._data_source = controller.generator.generators[1].generators;
+		this._data_source = controller.topicToTopic;
+			
     	this._path = hashObj.path;
     	this._Slide_Element_Collection = new Object();
     	this._Play_Sequence = [];
