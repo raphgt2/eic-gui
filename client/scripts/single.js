@@ -45,16 +45,22 @@
 			 $.ajax({
                 type: "GET",
                 url: urls.singlepath,
-                dataType: "jsonp",
-                error: function () {
-                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
-                  self.loader.stopWaiting();
-                },
-                success: function (path) {
-					var controller = new PresentationController(path, true, false);
-					var view = new PiecesUI(controller);
-					view.initControls();
-                }
+                dataType: "json",
+				success: function(path){
+					if (!path.hash){
+						alert("Internal server error");
+						console.log(path);
+					}
+					else{
+						var controller = new PresentationController(path, true, false);
+						var view = new PiecesUI(controller);
+						view.initControls();
+					}
+				},
+				error: function(error){
+					alert("error" + error.status);
+					console.log(error);
+				}
            });                
 		 });
   });
