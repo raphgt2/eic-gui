@@ -28,6 +28,9 @@
       'lib/jquery.ui.autocomplete': {
         deps: ['lib/jquery.ui.core', 'lib/jquery.ui.widget', 'lib/jquery.ui.position']
       },
+	  'lib/jquery__ui': {
+		deps: ['lib/jquery']
+	  },
       'lib/jvent': {
         exports: 'jvent'
       },

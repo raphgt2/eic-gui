@@ -353,7 +353,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
                 
                 $('#screen').show();               
 	          	
-	          	var play = new PresentationController(self._hash, true, true);
+	          	var play = new PresentationController(self._hash, false, false);
 	          	console.log("PresentationController: ", play, play.path.path);
 				play.playMovie();
 	      	});
