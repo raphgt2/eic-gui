@@ -108,7 +108,13 @@ function ($, Logger, EventEmitter, urls) {
 						self.emit('speechReady', data);
 					}
 					else {
-						if (self.attempt>=4){
+						if (data.err_code == 404){
+							if (!self.finished){
+								logger.log('Blank speech request, aborted');
+								self.emit('speechError',data);
+							}
+						}
+						else if (self.attempt>=4){
 							if (!self.finished){
 								logger.log('Error receiving speech1', data);
 								self.emit('speechError', data);
