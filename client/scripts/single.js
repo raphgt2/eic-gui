@@ -37,11 +37,10 @@
   });
 
   require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs'], function (PresentationController, PiecesUI, urls) {
-		$('#frame').show();
-		
-		
 					
-        $("#play-button").click(function(){	
+        $("#play-button").click(function(){
+			$('#screenWrap').html("<div id='screen'> </div>");
+		
 			 $.ajax({
                 type: "GET",
                 url: urls.singlepath,
@@ -52,7 +51,7 @@
 						console.log(path);
 					}
 					else{
-						var controller = new PresentationController(path, true, false);
+						var controller = new PresentationController(path, false, false);
 						var view = new PiecesUI(controller);
 						view.initControls();
 					}
