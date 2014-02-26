@@ -69,16 +69,18 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					//console.log("Yes");
 					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
 					output += val.name;
+					//output += val.uri;
 					output += '</li>';
 				}//else{//console.log("No");}
 			});
 			output += '</ul>';
 			$('#liveSearch').html(output);
 			$(".searchItem").click(function(){
-				var uriMatch = new RegExp($(this).html());
+				//var uriMatch = new RegExp($(this).html());
+				var uriMatch = $(this).html();
 				$.each(self.url_ref, function(key, val) {
-					//console.log(key, val.name.search(myExp));
-					if ((val.name.search(uriMatch) != -1)) {
+					//console.log(key, val.name, uriMatch);
+					if (val.name == uriMatch) {
 						$("#liveSearchResult").html(val.uri);
 						
 					}
@@ -160,11 +162,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					self.appendMap[name] = json;
 					self.appendMap[name].name = name;
 					self.appendMap[name].search = 1;
+					self.appendMap[name].parent = null;
 					//self.appendMap[name].children = json.children;
 					console.log("====>AppendMap", self.appendMap);
 					for (var i = 0; i < json.children.length; i++){
 						json.children[i].search = 0;
 						json.children[i].children = null;
+						//json.children[i].parent = name;
 						self.appendMap[json.children[i].name] = json.children[i];
 					}
 					self.root = self.history;
@@ -184,6 +188,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							self.appendMap[json.children[i].name] = json.children[i];
 							children.push(json.children[i]);
 						}
+						// else {
+							// //var newObject = jQuery.extend(true, {}, oldObject);
+							// json.children[i] = $.extend(true, {}, self.appendMap[json.children[i].name]);
+							// json.children[i].children = [];
+						// }
 						// else {
 							// json.children.pop()
 						// }
@@ -223,7 +232,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    .attr("class", "node")
 		    .attr("transform", function(d) { 
 		    	console.log("nodeEnter: ", d);
-		    	return "translate(" + source.y0 + "," + source.x0 + 80 + ")"; 
+		    	return "translate(" + source.y0 + "," + source.x0 + 160 + ")"; 
 		    })
 		    .on("click", function(d){
 		    	console.log("Click Test: ", d);
@@ -315,6 +324,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      .attr("target", function(d){
 		      	return d.target.name;
 		      })
+		      .attr("id", function(d){
+		      	return d.source.name+d.target.name;
+		      })
 		      .attr("relation", function(d){
 		      	return d.target.relation;
 		      });
@@ -345,7 +357,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		
 		
 	//highlight nodes and links
-		var getHighlight = self.highlightPath();	 
+		var getHighlight = self.highlightPath();
+		self.emphasizeRecent();	 
 	
 	// Stash the old positions for transition.
 		  nodes.forEach(function(d) {
@@ -358,6 +371,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
      	console.log("[*********************************Node Clicked********************************]", self.diagramDepth, self.mainDepth);
      	console.log("Click Data Test", d);
      	console.log("Self Test", self);
+     	
 		if (d.search == 1){		
 			if (d.children) {
 			  d._children = d.children;
@@ -401,9 +415,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				alert("This node has been explored, please try a different path.");
 			}
 		}
-			self.userPath = [];
-			self.trackPath(d);
-			console.log("HIGHLIGHTPATH: ", self.userPath);
+		self.userPath = [];
+		self.trackPath(d);
+		console.log("HIGHLIGHTPATH: ", self.userPath);
+		
+			
 	  },
 	    getMousePosition: function(x, y){
 	  	  //console.log(x, y);
@@ -453,7 +469,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			for (var i = 0; i < allNodes[0].length; i++){
 				if (allNodes[0][i].__data__.search == 1){
 					allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
-					allNodes[0][i].childNodes[1].style.fill = "ff3300";
+					allNodes[0][i].childNodes[1].style.fill = "33ADFF";
 				}
 			}
 			for (var i = 0; i < allLinks[0].length; i++){
@@ -467,6 +483,22 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					allLinks[0][i].style.strokeWidth = "3px";
 				}
 			}
+			
+		},
+		emphasizeRecent: function(){
+			var self=this;
+			var allLinks = self.vis.selectAll("path.link");
+			console.log("self.userPath", self.userPath);
+			for (var i = 0; i < self.userPath.length-1; i++){
+				var linkSearch = self.userPath[i].name + self.userPath[i+1].name;
+				console.log("Link Search Test: ", linkSearch);
+				console.log($("#" + linkSearch + ""));
+				for (var j = 0; j < allLinks[0].length; j++){
+					if (allLinks[0][j].id == linkSearch) {
+						allLinks[0][j].style.stroke = "#ff6600";
+					}
+				}
+			}
 		},
 		trackPath: function(data) {
 			var self = this;
@@ -475,6 +507,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			if (data.parent != null){
 				self.trackPath(data.parent);
 			}
+			//var allLinks = self.vis.selectAll("path.link");
 		},
 		generateHashObject: function(){
 			var self = this;
