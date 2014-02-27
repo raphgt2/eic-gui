@@ -152,7 +152,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		d3.json(searchURI, function(json){
 		//json.x0 = 800;
   		//json.y0 = 0;
-			console.log("json: ", json, nodeURI, name, "Length:", json.children.length);
+  		
+  		$.getJSON( searchURI, function( data ) {
+  			json = data;
+  		});
+			//console.log("json: ", json, nodeURI, name, "Length:", json.children.length);
+			console.log("Json: ", json);
 			if (json){
 				if (json.children.length == 0){
 					alert("No data available for ' " + name + " ', please try other nodes.");
