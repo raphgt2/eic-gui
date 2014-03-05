@@ -52,26 +52,23 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	console.log("[===================Initialize Linked Data Edu App===================]");
       	var self=this;
       	$.getJSON('../data_json/uri_matching.json', function(data) {
-      		//console.log("Here");
       		self.url_ref = data;
-      		//console.log(data);
       	});
       	console.log("data_Test", self.url_ref);
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
 			var myExp = new RegExp(searchField, "i");
 			
-			//console.log("URI Data: ", self.url_ref, searchField);
+			
 			var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
 			$.each(self.url_ref, function(key, val) {
 				//console.log(key, val.name.search(myExp));
 				if ((val.name.search(myExp) != -1)) {
-					//console.log("Yes");
 					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
 					output += val.name;
-					//output += val.uri;
+					
 					output += '</li>';
-				}//else{//console.log("No");}
+				}
 			});
 			output += '</ul>';
 			$('#liveSearch').html(output);
@@ -112,12 +109,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				/*Prepare Video Editor*/
             	var controller = new PresentationController2(self.userHash);
 	            var view = new PiecesUI(controller);
-	            console.log("Controller I ", controller);
+	            //console.log("Controller I ", controller);
 	            view.initControls();
 				console.log("Hash Object Output", self.userHash);
 		        controller.once("slide_generation_finished", function(){
-					console.log("Controllers", controller);
-					console.log("Hash Object Output", self.userHash);
+					//console.log("Controllers", controller);
+					//console.log("Hash Object Output", self.userHash);
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
 		        });
             });
@@ -131,7 +128,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	
       },
       addNode: function(nodeURI, name, data_prev){
-      	console.log("[===================Add New Node===================]");
+      	//console.log("[===================Add New Node===================]");
       	var self = this;
       	var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
 			searchURI += nodeURI;
@@ -139,7 +136,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			// var searchURI = "../data_json/";
 	// searchURI += name;
 	// searchURI += ".json";
-		console.log(searchURI);
+		//console.log(searchURI);
 		d3.json(searchURI, function(json){
 		//json.x0 = 800;
   		//json.y0 = 0;
@@ -159,7 +156,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					self.appendMap[name].name = name;
 					self.appendMap[name].search = 1;
 					self.appendMap[name].parent = null;
-					console.log("====>AppendMap", self.appendMap);
+					//console.log("====>AppendMap", self.appendMap);
 					for (var i = 0; i < json.children.length; i++){
 						json.children[i].search = 0;
 						json.children[i].children = null;
@@ -170,11 +167,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				}
 				else {
 					
-					console.log("set up search", self.appendMap[name]);
+					//console.log("set up search", self.appendMap[name]);
 					data_prev.children = json.children; // Have repetitive nodes
 					var children = [];
 					for (var i = 0; i < json.children.length; i++){
-						console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
+						//console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
 						if (self.appendMap[json.children[i].name] == undefined){
 							json.children[i].search = 0;
 							json.children[i].children = null;
@@ -183,15 +180,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						}
 					}
 					//json.children = children;
-					console.log("====>AppendMap", self.appendMap);
+					//console.log("====>AppendMap", self.appendMap);
 					self.root = self.history;
-					console.log("############Called Track Path Parent##############");
+					//console.log("############Called Track Path Parent##############");
 					self.userPath = [];
 					self.trackPathParent(data_prev);
 					
 					self.updateCanvas(self.root);
 				}
-				console.log("history test: ", self.history);
+				console.log("[Path Finder Test]", self);
 			////	root = jQuery.extend(true, {}, history);
 				
 			}
@@ -201,7 +198,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		});
 	 },//addNode
 	 updateCanvas: function(source){
-	 	console.log("[===================Update Canvas===================]");
+	 	//console.log("[===================Update Canvas===================]");
 	 	var self = this;
 	 	
 	 	if (self.round != 1){
@@ -218,11 +215,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		var nodeEnter = node.enter().append("svg:g")
 		    .attr("class", "node")
 		    .attr("transform", function(d) { 
-		    	console.log("nodeEnter: ", d);
+		    	//console.log("nodeEnter: ", d);
 		    	return "translate(" + source.y0 + "," + source.x0 + 160 + ")"; 
 		    })
 		    .on("click", function(d){
-		    	console.log("Click Test: ", d);
+		    	//console.log("Click Test: ", d);
 		    	self.click(d);
 		    })
 		    .on("mouseover", function(d){
@@ -318,7 +315,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      	return d.target.relation;
 		      })
 		      .attr("inverse", function(d){
-		      	console.log("[Check Link Status]", d);
+		      	//console.log("[Check Link Status]", d);
 		      	return d.target.inverse;
 		      });
 			
@@ -359,9 +356,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 	 },//updateCanvas
      click: function(d) {
      	var self = this;
-     	console.log("[*********************************Node Clicked********************************]", self.diagramDepth, self.mainDepth);
-     	console.log("Click Data Test", d);
-     	console.log("Self Test", self);
+     	//console.log("[*********************************Node Clicked********************************]", self.diagramDepth, self.mainDepth);
+     	//console.log("Click Data Test", d);
+     	//console.log("Self Test", self);
      	
 		if (d.search == 1){		
 			if (d.children) {
@@ -371,7 +368,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);		
 			  self.w = (self.mainDepth) * 180 + 270;
-			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+			  //console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
 			  self.tree.size([self.h, self.w - 270 + ""]);
 			  self.userPath = [];
 			  self.trackPathParent(d.parent);
@@ -384,7 +381,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  self.mainDepth = 0;
 			  var getDepth = self.getTreeWidth(self.root);
 			  self.w = (self.mainDepth) * 180 + 270;
-			  console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+			  //console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
 			  $("svg").attr("width", self.w);
 			  self.tree.size([self.h, self.w - 270 + ""]);
 			  self.userPath = [];
@@ -401,26 +398,16 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				if (d.depth == self.diagramDepth){
 					var getDepth = self.getTreeWidth(self.root);
 					self.w = (self.diagramDepth + 1) * 180 + 270;
-					console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
+				//	console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
 					$("svg").attr("width", self.w);
 					self.tree.size([self.h, self.w - 270 + ""]);
 				}
-				
-				
-				
 				self.checkRepetitive(d.parent, d.name, d);
-				
-				
-			//}
-			//else {
-				//alert("This node has been explored, please try a different path.");
-			//}
-			
 		}
 		
 		//self.trackPathParent(d);
 		//self.trackPathChildren(d);
-		console.log("HIGHLIGHTPATH: ", self.userPath);
+		//console.log("HIGHLIGHTPATH: ", self.userPath);
 		
 			
 	  },
@@ -453,7 +440,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			if (treeRoot.children == null){
 				if (treeRoot.depth > self.mainDepth){
 					self.mainDepth = treeRoot.depth;
-					console.log("**********************************", self.mainDepth);
+					//console.log("**********************************", self.mainDepth);
 				}
 			}
 			else {
@@ -467,8 +454,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			
 			var allNodes = self.vis.selectAll("g.node");
 			var allLinks = self.vis.selectAll("path.link");
-			console.log("allNodes: ", allNodes);
-			console.log("allLinks: ", allLinks);
+			// console.log("allNodes: ", allNodes);
+			// console.log("allLinks: ", allLinks);
 			for (var i = 0; i < allNodes[0].length; i++){
 				if (allNodes[0][i].__data__.children != null){
 					allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
@@ -491,11 +478,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		emphasizeRecent: function(){
 			var self=this;
 			var allLinks = self.vis.selectAll("path.link");
-			console.log("self.userPath", self.userPath);
+			//console.log("self.userPath", self.userPath);
 			for (var i = 0; i < self.userPath.length-1; i++){
 				var linkSearch = self.userPath[i].name + self.userPath[i+1].name;
-				console.log("Link Search Test: ", linkSearch);
-				console.log($("#" + linkSearch + ""));
+				//console.log("Link Search Test: ", linkSearch);
+				//console.log($("#" + linkSearch + ""));
 				for (var j = 0; j < allLinks[0].length; j++){
 					if (allLinks[0][j].id == linkSearch) {
 						allLinks[0][j].style.stroke = "#ff6600";
@@ -505,7 +492,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		},
 		trackPathParent: function(data) {
 			var self = this;
-			console.log("[Track Path Parent]", data);
+			//console.log("[Track Path Parent]", data);
 			self.userPath.unshift(data);
 			
 			if (data.parent != null){
@@ -515,7 +502,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		},
 		checkRepetitive: function(data, name, node) {
 			var self = this;
-			console.log(data.name, name, node);
+			//console.log(data.name, name, node);
 			if (data.name == name){
 				alert("This node has been explored in this path, please try a different node.");
 			}
@@ -523,7 +510,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				if (data.parent != null){
 					self.checkRepetitive(data.parent, name, node);
 				}else{
-					console.log("############Called ADD Node##############");
+					//console.log("############Called ADD Node##############");
 					self.addNode(node.uri, node.name,node);
 				}
 			}
@@ -541,7 +528,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			//userHash.execution_time = 1220;
 			//userHash.novelty = 0.11111111;
 			//console.log("userPath", userPath);
-			console.log("User Path Test: ", self.userPath);
+			//console.log("User Path Test: ", self.userPath);
 			self.userHash.source = new Object();
 			self.userHash.source.name = self.userPath[0].name;
 			self.userHash.source.uri = self.userPath[0].uri;
@@ -563,9 +550,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				nodetype.uri = self.userPath[i].uri;
 				self.userHash.path.push(nodetype);
 			}
-			console.log(self.userHash);
+			//console.log(self.userHash);
 		}
     };
 
     return PathFinder;
-  });
+});
