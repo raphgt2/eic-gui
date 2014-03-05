@@ -153,18 +153,16 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				if (json.children.length == 0){
 					alert("No data available for ' " + name + " ', please try other nodes.");
 				}
-				else if (self.round == 1){
+				else if (self.round == 1){ // The Starting Node 
 					self.history = json;
 					self.appendMap[name] = json;
 					self.appendMap[name].name = name;
 					self.appendMap[name].search = 1;
 					self.appendMap[name].parent = null;
-					//self.appendMap[name].children = json.children;
 					console.log("====>AppendMap", self.appendMap);
 					for (var i = 0; i < json.children.length; i++){
 						json.children[i].search = 0;
 						json.children[i].children = null;
-						//json.children[i].parent = name;
 						self.appendMap[json.children[i].name] = json.children[i];
 					}
 					self.root = self.history;
@@ -173,7 +171,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				else {
 					
 					console.log("set up search", self.appendMap[name]);
-					//self.appendMap[name].search = 1;
 					data_prev.children = json.children; // Have repetitive nodes
 					var children = [];
 					for (var i = 0; i < json.children.length; i++){
@@ -184,16 +181,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							self.appendMap[json.children[i].name] = json.children[i];
 							children.push(json.children[i]);
 						}
-						// else {
-							// //var newObject = jQuery.extend(true, {}, oldObject);
-							// json.children[i] = $.extend(true, {}, self.appendMap[json.children[i].name]);
-							// json.children[i].children = [];
-						// }
-						// else {
-							// json.children.pop()
-						// }
-						
-						
 					}
 					//json.children = children;
 					console.log("====>AppendMap", self.appendMap);
@@ -329,6 +316,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      })
 		      .attr("relation", function(d){
 		      	return d.target.relation;
+		      })
+		      .attr("inverse", function(d){
+		      	console.log("[Check Link Status]", d);
+		      	return d.target.inverse;
 		      });
 			
 	
@@ -479,7 +470,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			console.log("allNodes: ", allNodes);
 			console.log("allLinks: ", allLinks);
 			for (var i = 0; i < allNodes[0].length; i++){
-				if (allNodes[0][i].__data__.search == 1){
+				if (allNodes[0][i].__data__.children != null){
 					allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
 					allNodes[0][i].childNodes[1].style.fill = "33ADFF";
 				}
