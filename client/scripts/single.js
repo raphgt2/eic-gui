@@ -39,7 +39,22 @@
   require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs'], function (PresentationController, PiecesUI, urls) {
 		$('#frame').show();
 		
-		
+		$(document).ready(function(){
+			$.ajax({
+                type: "GET",
+                url: urls.singlepath,
+                dataType: "jsonp",
+                error: function () {
+                  self.addGenerator(new ErrorSlideGenerator('No path between found.'));
+                  self.loader.stopWaiting();
+                },
+                success: function (path) {
+					var controller = new PresentationController(path, true, false);
+					var view = new PiecesUI(controller);
+					view.initControls();
+                }
+           });         
+		});
 					
         $("#play-button").click(function(){	
 			 $.ajax({
@@ -58,6 +73,7 @@
            });                
 		 });
   });
+  
   
   /*var controller = new PresentationController(),
         view = new PiecesUI(controller);
