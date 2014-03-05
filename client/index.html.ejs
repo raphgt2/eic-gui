@@ -3,11 +3,16 @@
   <head>
     <meta charset='utf-8'>
     <title>Everything Is Connected</title>
+    <% if (environment === 'development') { %>
+    <script>
+      fbAppId = '117119395112649';
+    </script>
+    <% } %>
     <script data-main="scripts/main" src="scripts/lib/require.js" async></script>
     <link rel="stylesheet" href="stylesheets/main" />
   </head>
   <body>
-<!--    <div id="frame">
+    <div id="frame">
       <div id="title_1" class="title">
         <div class="content">Everything</div>
         <div class="pieces">
@@ -24,11 +29,10 @@
         </div>
         <div class="content">Connected</div>
       </div>
+      
       <div id="subtitle">
         Watch the movie that connects <em>you</em> to anything or anyone in the world.
       </div>
-
-      
 
       <div id="steps">
         <div class="pieces">
@@ -62,42 +66,16 @@
             </div>
           </div>
         </div>
-      </div>-->
-	<div id="screen"></div>
-<div id="init"></div>      
-		
-	<div id="videoEditor" class="fullWidth fullHeight" style="display: none;"> 
-	<div class="row"><div id="slides-row"></div></div>
-	<div class="row"></div>
-	<div class="col-4">
-		<div id="edit"> 
-			<ul id="edit-list" class="nav nav-tabs">
-				<li><a href="#" id="edit-imgs">Images</a></li>
-				<li><a href="#" id="edit-vids">Videos</a></li>
-			</ul>
-			<div class="nodeElementBar">
-				<div id="imgs" style="display: inline;"></div>
-				<div id="vids" style="display: none;"></div>
-			</div>
-		</div>
-	</div>
-	<div class="col-7">
-		<div id="screen2" class="row"></div>
-		<div id="audioDescriptionWrap" class="row">
-			<textarea class="col-10" id="textDescription"></textarea>
-			<div class="col-2"><button id="editTestDescription" class="btn btn-primary">Edit</button>
-			<button id="cancelTestDescription" class="btn btn-warning">Cancel</button></div>
-		</div>
-	</div>
-	</div></div>
-</div>	
-
+      </div>
 <div id="play" class="title">
-    <div class="pieces"></div>
-    <div class="content">Go!</div>
-</div>
-  </body>
-<footer><button type="button" class="btn btn-primary" id="play-button">Play Movie</button>
-<button type="button" class="btn btn-info" id="play-slide">Play Slide</button></footer>
-</html>
+        <div class="pieces">
+        </div>
+        <div class="content">Go!</div>
+      </div>
+      
+    </div>
+    <div id="screen">
 
+    </div>
+  </body>
+</html>

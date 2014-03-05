@@ -37,18 +37,62 @@
   });
 
   require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor'], function (PresentationController, PresentationController2, PiecesUI, SlideEditor) {
-    var path = {'hash':'h-3690378823082678040','source':{'name':'Ray Bradbury','uri':'http://dbpedia.org/resource/Ray_Bradbury'},'destination':{'name':'Blue Mink','uri':'http://dbpedia.org/resource/Blue_Mink'},'path':[{'type':'node','uri':'http://dbpedia.org/resource/Ray_Bradbury'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/influencedBy'},{'type':'node','uri':'http://dbpedia.org/resource/George_Orwell'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/influencedBy'},{'type':'node','uri':'http://dbpedia.org/resource/James_Joyce'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/birthPlace'},{'type':'node','uri':'http://dbpedia.org/resource/Dublin'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/isPartOf'},{'type':'node','uri':'http://dbpedia.org/resource/Leinster'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/leaderName'},{'type':'node','uri':'http://dbpedia.org/resource/Fine_Gael'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/colour'},{'type':'node','uri':'http://dbpedia.org/resource/Blue'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/connotation'},{'type':'node','uri':'http://dbpedia.org/resource/Sky'},{'type':'link','inverse':true,'uri':'http://dbpedia.org/ontology/associatedBand'},{'type':'node','uri':'http://dbpedia.org/resource/Blue_Mink'}]};
-    //console.log(path);
-    var controller = new PresentationController2(path),
-        view = new PiecesUI(controller);
-        //controller.makeMovie();
-    //controller.init();
-    //view.init();
+    var path = {
+    "hash": "h-3690378823082678040",
+    "source": {
+        "name": "Hillary Rodham Clinton",
+        "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
+    },
+    "destination": {
+        "name": "War of 1812",
+        "uri": "http://dbpedia.org/resource/War_of_1812"
+    },
+    "path": [
+        {
+            "type": "node",
+            "name": "Hillary Rodham Clinton",
+            "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton",
+            'slide_description':[	{	
+				'type':'GoogleImageSlide',	
+				'data':{
+					'duration':'2000',	
+					'url':'http://www.shootuporputup.co.uk/wp-content/uploads/2011/07/number1.png'
+				}},{
+				'type':'YouTubeSlide',
+				'duration':'5000',
+				'data':{
+					'videoID':'bTvr_2v-0HI',
+					'start':'10000',
+					'end':'13000'
+				}},{	
+				'type':'GoogleImageSlide',	
+				'data':{
+					'duration':'3000',
+					'url':'http://cast.thirdage.com/files/originals/number%202.jpg'
+				}},]},
+        {
+            "type": "link",
+            "inverse": true,
+            "uri": "http://dbpedia.org/ontology/deputy"
+        },
+        {
+            "type": "node",
+            "name": "William Joseph Burns",
+            "uri": "http://dbpedia.org/resource/William_Joseph_Burns"
+        }
+    ]
+};
+
+//console.log(path);
+    var controller = new PresentationController2(path);
+    var view = new PiecesUI(controller);
     view.initControls();
     
     controller.once('slide_generation_finished', function(){
-		new SlideEditor(controller.generator, controller.path);
+		var player = new PresentationController(controller.path, true, true);
+		player.playMovie();
 	});
+
   });
 })(requirejs);
 

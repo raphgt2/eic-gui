@@ -18,6 +18,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       this.path = path;
       this.intro = intro;
       this.outro = outro;
+	  
+	  this.topicToTopic;
     }
 
     /* Member functions */
@@ -39,6 +41,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
                                  .append($slides);
 
         // Hide the main panel and show the slides panel
+		$('#screen').show();
         $('#screen').append($wrapper);
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
 
@@ -49,22 +52,25 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		this.startTopic=this.path.source;
 		this.endTopic=this.path.destination;
 		
-		//if (this.intro)
+		if (this.intro)
 			generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
-		generator.addGenerator(new TopicToTopicSlideGenerator(this.path));
+		this.topicToTopic = new TopicToTopicSlideGenerator(this.path)
+		generator.addGenerator(this.topicToTopic);
 		
-		//if (this.outro)
+		if (this.outro)
 			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic));
 
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-		// I know that the second generator in the array is the one with topic slides...    
-		if (generator.generators[1].ready){
-			logger.log(path);
+		if (this.topicToTopic.ready){
+			logger.log("New hash: " + this.path);
 			new SlidePresenter($slides, generator).start();
 		}
 		else{
-			generator.generators[1].once('topic slides ready', function(){logger.log(this.path); new SlidePresenter($slides, generator).start()});
+			this.topicToTopic.once('topic slides ready', function(){
+				logger.log("New hash: " + this.path);
+				new SlidePresenter($slides, generator).start();				
+			});
 		}
 
     }};

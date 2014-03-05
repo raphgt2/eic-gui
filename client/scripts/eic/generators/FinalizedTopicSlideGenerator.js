@@ -74,7 +74,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 							// add the image if it loads and we still need slides
 							slide.addImageSlide(image.src, description.data.duration);
 						});
-						image.src = description.data.uri;		
+						image.src = description.data.url;		
 						self.addGenerator(slide,true);
 						
 						break;
@@ -82,16 +82,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						slide = new YouTubeSlideGenerator(self.topic);
 						self.addGenerator(slide,true);
 						
-						//Check if we've gotten the youtube API yet, otherwise grab it and wait for the functions to be visible before trying to make the slide
-						if (!window.YT){
-							$.getScript("http://www.youtube.com/player_api", function () {
-								setTimeout(function(){
-									slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.end);
-								},3000);
-							});
-						}
-						else
-							slide.addVideoSlide(description.data.videoID, description.data.duration, description.data.start, description.data.stop);
+						slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
 						
 						break;
 					  /*case "GoogleMapSlide":

@@ -27,7 +27,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
         };
 
       this.topic = topic;
-      this.maxResults = maxResults || 4;
+      this.maxResults = maxResults || 8;
       this.slides = [];
       this.cnt = 0;
     }
@@ -48,9 +48,9 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
           $.ajax('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', {
             data: {
               q: this.topic.label,
-              imgsz: 'xxlarge',
+              imgsz: 'large',
               // search more images than needed, in case some of them don't load
-              rsz: Math.floor(this.maxResults * 1.5),
+              rsz: Math.floor(this.maxResults),
             },
             dataType: 'jsonp',
           })

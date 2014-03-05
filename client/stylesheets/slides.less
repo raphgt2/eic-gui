@@ -1,8 +1,9 @@
 /***** Settings *****/
-@width: 800px;
-@height: 600px;
+@width: 100%;
+@height: 100%;
 
 /***** Mixins *****/
+
 
 .transition (@transform, @origin) {
   -moz-transform-origin: @origin;
@@ -30,18 +31,23 @@
 /***** Rules *****/
 
 .slides {
-  width: @width;
+  /*width: @width;
   height: @height;
   /*border: 1px solid black;*/
   /*margin: 5em auto;*/
+ width: 100%;
+ height: 100%;
 }
 
 .slide {
-  width: @width;
+  /*width: @width;
   height: @height;
   overflow: hidden;
   position: absolute;
   /*background: white url(/images/slide-background.jpg);*/
+ width: 100%;
+ height: 100%;
+}
   
   .inner {
     width: 100%;
@@ -49,6 +55,7 @@
   }
   
   /***** Transitions *****/
+  /* causes the puzzle pieces or whatever to disappear (or at least appear to) before the actual images show up */
   &.transition-out {
     opacity : 0;
     -webkit-transition-property : opacity;
@@ -58,9 +65,9 @@
   /***** Slide types *****/
   &.titleSlide {
     color: #E20177;
-
+    
     .inner {
-      -webkit-transform: rotate(-7deg)
+      //-webkit-transform: rotate(-7deg)
     }
     h1 {
       padding: 1em 1em 2em 1em;
@@ -83,33 +90,6 @@
     video {
       width: 100%;
       height: 100%;
-    }
-  }
-  
-  &.date {
-    text-align: center;
-    font: 40px Georgia, serif;
-    
-    .calendar {
-      margin: 100px 0 0 250px;
-      width:300px;
-      height:400px;
-      background-color: rgba(255, 255, 255, .8);
-      border: 2px solid #e34420;
-    }
-    .month {
-      margin-top: 15px;
-      text-transform: uppercase;
-    }
-    .year {
-      font-size: 30px;
-    }
-    .day {
-      margin: -20px 0 20px;
-      font-size: 200px;
-    }
-    .weekday {
-      font-size: 50px;
     }
   }
 
@@ -135,24 +115,15 @@
     }
   }
   
-  &.error {
-    h1 {
-      padding: 1em 1em 2em 1em;
-      font-size: 2.5em;
-    }
-    a {
-      padding: 5em 1em 2em 1em;
-      font-size: 2.5em;
-    }
-  }
   
   /***** Transitions *****/
   &.image img, &.date .calendar {
     .transition(30s linear, 50% 50%);
   }
   
+  /* this section controls the zoom in on the image slides */
   .zoom {
-    transform: scale(2) rotate(10deg);
+    transform: scale(2);// rotate(10deg);
     .transition(30s linear, 50% 50%);
   }
 }

@@ -1,13 +1,3 @@
-/*
-* LODStory Main Javascript
-* Copyright 2014, LOD Story Team - University of Southern California - Information Sciences Institute
-* Licensed under 
-*/
-
-
-
-
-
 (function (requirejs) {
   "use strict";
 
@@ -15,6 +5,12 @@
     shim: {
       'lib/jquery': {
         exports: 'jQuery'
+      },
+      'lib/d3': {
+      	exports: 'd3'
+      },
+      'lib/jqyerUI': {
+      	deps: ['lib/jquery__ui']
       },
       'lib/jquery.ui.core': {
         deps: ['lib/jquery']
@@ -49,11 +45,12 @@
     },
   });
 
-        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor){
-                var jsonObject,view,controller;
+        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, PathFinder){
+            //var jsonObject,view,controller;
            // $.getJSON("../data_json/hash_object_test_1.json", function(data){
-                        
-                        jsonObject = {
+            var jsonObject = new Object;
+            
+            jsonObject = {
     "hash": "h-3690378823082678040",
     "source": {
         "name": "Hillary Rodham Clinton",
@@ -151,60 +148,33 @@
         }
     ]
 };
-                        controller = new PresentationController2(jsonObject);
-                        view = new PiecesUI(controller);
-                        //controller.init();
-                        console.log("Controller I ", controller);
-                        view.initControls();
-						console.log("Hash Object Output", jsonObject);
-            // var editing = new EditingNodes();
-            // console.log("Test Editing Nodes: ", editing);
-            // editing.EnableUIanimation();
-            // $("#lastStep").click(function(){
-                    // editing.grabMovieNav();
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            var path_finder = new PathFinder(jsonObject);
+            
+            
+            //console.log("Finish: ", $("#finish"));
+            // $("#finish").click(function(){
+            	// var controller = new PresentationController2(jsonObject);
+	            // var view = new PiecesUI(controller);
+	            // //controller.init();
+	            // console.log("Controller I ", controller);
+	            // view.initControls();
+				// console.log("Hash Object Output", jsonObject);
+		        // controller.once("slide_generation_finished", function(){
+					// console.log("Controllers", controller);
+					// console.log("Hash Object Output", jsonObject);
+					// var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
+		        // });
             // });
             
-            
-            // view.init();
-                        // console.log("Controller II", controller);
-                        // console.log("View", view);
-                        
-                        
-                controller.once("slide_generation_finished", function(){
-					console.log("Controllers", controller);
-					console.log("Hash Object Output", jsonObject);
-					var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
-					
-					
-					
-					
-						//editor.initElementCollection();
-						//editor.EnableUIAnimation();
-//	        	});
-
-                        
-                        
-                        
-                        //view = new PiecesUI(controller);
-                        // var controller = new PresentationController(jsonObject);
-                        // view = new PiecesUI(controller);
-                        // controller.makeMovie();
-                        // controller.init();
-                        // view.init();
-                        
-                        
-                 });
-//                 
-                // $("#generateVideoEditor").click(function(){
-                        // console.log("controller", controller);
-                        // console.log("Hash Object Output", jsonObject);
-                // });
-                        
-            //var controller = new PresentationController(jsonObject);
-              //  view = new PiecesUI(controller);
-                //controller.makeMovie();
-            //controller.init();
-            //view.init();;;;
         });
  
 })(requirejs);
