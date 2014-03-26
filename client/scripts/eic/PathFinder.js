@@ -17,9 +17,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				
 		/* Define Constants and Data */
 		this.URLRef = new Object;
-				this.URLRef['Bill Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FBill_Clinton";
-				this.URLRef['Hillary Rodham Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FHillary_Rodham_Clinton";
-				this.URLRef['Ray Bradbury'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FRay_Bradbury";
+				// this.URLRef['Bill Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FBill_Clinton";
+				// this.URLRef['Hillary Rodham Clinton'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FHillary_Rodham_Clinton";
+				// this.URLRef['Ray Bradbury'] = "http%3A%2F%2Fdbpedia.org%2Fresource%2FRay_Bradbury";
 		this.w = 180;
     	this.h = 580;
     	this.i = 0;
@@ -141,9 +141,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		//json.x0 = 800;
   		//json.y0 = 0;
   		
-  		$.getJSON( searchURI, function( data ) {
+  		// $.getJSON( searchURI, function( data ) {
+  			// json = data;
+  		// });
+  		$.ajax({
+  			url:searchURI,
+  			//contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+  			dataType: "json"
+  		}).done(function(data){
   			json = data;
   		});
+  		//$('#canvasWindow').html(JSON.stringify(json));
 			//console.log("json: ", json, nodeURI, name, "Length:", json.children.length);
 			console.log("Json: ", json);
 			if (json){
@@ -428,7 +436,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		linkMouseOver: function(source, target, relation) {
 			//console.log(source, "~", target);
 			$("#relation").empty();
-			var relationContent = '<div id="relationContent" class="close" >This is a relation between <b>' + source + '</b> and <b>' + target +'</b>: '+ relation +'.</div>';
+			var relationContent = '<div id="relationContent" class="close" >Relation: '+ relation +'</div>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){
 				$("#relation").empty();

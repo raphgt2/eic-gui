@@ -394,15 +394,17 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 				revert: true,
 				scroll: false,
 				over: function(event, ui){
-					//$("#movie-nav-bar").css("background", "yellow");
+					$("#movieNavBarWrap").css("border", "2px solid black");
 				},
 				out: function(event, ui){
+					$("#movieNavBarWrap").css("border", "1px solid gray");
 					//$("#movie-nav-bar").css("background", "grey");
 				},
 				receive: function(event, ui){
 					console.log("Receive!");
 					ui.item.removeClass("nodeElementBarContentWrap")
 						   .addClass("movieNavElementWrap");
+					$('#movie-nav-bar').css("padding", "3px");
 				},
 				update: function(event, ui){
 
@@ -415,6 +417,9 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	grabMovieNav: function(){
     		var movieNav = $("#movie-nav-bar .nodeElementBarContent");
+    		if (movieNav.length == 0){
+    			$('#movie-nav-bar').css("padding", "50px");
+    		}
     		console.log(movieNav);
     		var navlist = [movieNav.length];
     		 for (var i = 0; i<movieNav.length; i++){
