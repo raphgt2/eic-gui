@@ -417,15 +417,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	grabMovieNav: function(){
     		var movieNav = $("#movie-nav-bar .nodeElementBarContent");
-    		if (movieNav.length == 0){
-    			$('#movie-nav-bar').css("padding", "50px");
-    		}
-    		console.log(movieNav);
+    		console.log(movieNav[0]);
     		var navlist = [movieNav.length];
     		 for (var i = 0; i<movieNav.length; i++){
     			 navlist[i] = movieNav[i].src;
     		 }
     		console.log("Movie Nav: ", navlist);
+    		if (movieNav[0] == undefined){
+    			console.log("yes");
+    			$("#movie-nav-bar").css("padding", "50px");
+    		}
     		this._Play_Sequence = navlist;
     	}
     /////
