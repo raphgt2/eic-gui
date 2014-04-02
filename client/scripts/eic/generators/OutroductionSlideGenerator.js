@@ -53,22 +53,8 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
             slide = this.createBaseSlide('outro', $outro, this.duration);
         slide.once('started', function () {
           setTimeout(function () {
-            //$outro.append($('<span>').text(self.startTopic.first_name ? self.startTopic.first_name + ", " : self.startTopic.name));
-            setTimeout(function () {
-              //$outro.append($('<br>'));
-              //$outro.append((self.startTopic.first_name ? "you are " : "is ") + "connected to everything in this world,");
-              setTimeout(function () {
-                //$outro.append($('<br>'));
-                //$outro.append("including ");
-                //$outro.append($('<span>').text(self.hash_object.name));
-                //$outro.append("!");
-                setTimeout(function () {
-                  addNavigation($outro.parent());
-                  //addShares($outro.parent(), self);
-                }, 2000);
-              }, 1000);
-            }, 500);
-          }, 1000);
+           addNavigation($outro.parent());
+          }, 500);
         });
         slide.audioURL = this.audioURL;
 
@@ -80,11 +66,6 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
       createSpeech: function () {
         var self = this,
 			 tts = new TTSService();
-
-//        var text = "So as you can see, " +
-//                   (this.startTopic.first_name || this.startTopic.name) +
-//                   (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
-//                   "including " + this.hash_object.name + "!";
 
         var text = "  The end!"
 
@@ -114,6 +95,14 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     .addClass('navigation')
     .appendTo($container);
 
+     $('<span>')
+        .addClass('button')
+        .appendTo($nav)
+        .click(function () {
+          window.location = "http://lodstories.isi.edu/LODStories-1.0.0-SNAPSHOT/html/lodstories_demo.html";
+        })
+   .text('Start over');
+
     $('<span>')
     .addClass('button')
     .appendTo($nav)
@@ -121,15 +110,6 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
       window.location.reload();
     })
     .text('Back to editor');
-
-//    $('<span>')
-//    .addClass('button')
-//    .appendTo($nav)
-//    .click(function(){
-//
-//    })
-//    .text('Disconnect from Facebook');
-
   }
 
   function addShares($container, self) {
