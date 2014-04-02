@@ -345,7 +345,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      
 		//$("path").on("mouseover", function(){
 		$("path").mouseover(function(){	
-			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"), $(this).attr("relation"));
+			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"), $(this).attr("relation"), $(this).attr("inverse"));
 			$(this).mousemove(function(e){
 				var mouse = self.getMousePosition(e.pageX, e.pageY);
 			})
@@ -433,14 +433,49 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			// $("#name").append(nameContent);
 			// $("#catalog").append(catalogContent);
 		},
-		linkMouseOver: function(source, target, relation) {
+		linkMouseOver: function(source, target, relation, inverse) {
+			var self=this;
 			//console.log(source, "~", target);
 			$("#relation").empty();
-			var relationContent = '<div id="relationContent" class="close" >Relation: '+ relation +'</div>';
+			var relationContent = '<div id="relationContent" class="close" >';
+			relationContent += self.generateRelationshipSentence(source, target, relation, inverse);
+			relationContent += '</div>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){
 				$("#relation").empty();
 			});
+		},
+		generateRelationshipSentence: function(source, target, relation, inverse){
+			var subject, object, sentence;
+			if(inverse == 1){
+				subject = target;
+				object = source;
+			}else {
+				subject = source;
+				object = target;
+			}
+			console.log(relation);
+			switch(relation){
+				case ("influenced"):
+					sentence = subject + " " + relation + " " + object;
+					break;
+				case ("influencedBy"):
+					sentence = subject + " is influenced by " + object;
+					break;
+				case ("country"||"startPoint"):
+					sentence = subject + " is a " + relation + " of " + object;
+					break;
+				case ("leaderName"):
+					sentence = object + " is the leader of " + subject;
+					break;
+				case ("isPartOf"):
+					sentence = subject + " is a part of " + object;
+					break;
+				default: 
+					sentence = subject + "'s " + relation + " is " + object;	  
+			}
+			return sentence;
+			
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;
@@ -548,7 +583,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				if (self.userPath[i].relation != "none"){
 					var linktype = new Object;
 					linktype.type = "link";
-					linktype.inverse = true;
+					if (self.userPath[i].inverse == 1){
+						linktype.inverse = true;
+					}else {
+						linktype.inverse = false;
+					}
 					linktype.uri = self.userPath[i].relation;
 					self.userHash.path.push(linktype);
 				}

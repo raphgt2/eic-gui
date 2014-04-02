@@ -58,7 +58,8 @@ define(['lib/jquery',
 						})
 					},3000);   
                   });
-              summ.summarize(this.path);            
+              summ.summarize(this.path); 
+              logger.log('Summarizer Test 1', summ);           
               
               this.initedEnd = true;
             }
