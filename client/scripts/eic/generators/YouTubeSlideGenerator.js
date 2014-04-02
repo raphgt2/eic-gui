@@ -31,7 +31,7 @@ function ($, BaseSlideGenerator, Logger) {
 
     this.topic = topic;
     options = options || {};
-    this.maxVideoCount = options.maxVideoCount || 1;
+    this.maxVideoCount = options.maxVideoCount || 2;
     this.maxVideoDuration = options.maxVideoDuration || 5000;
     this.skipVideoDuration = options.skipVideoDuration || 10000;
     this.orderMethod = options.orderMethod || 'relevance';
@@ -53,9 +53,9 @@ function ($, BaseSlideGenerator, Logger) {
         return;
       
       var self = this;
-      /*$.getScript("http://www.youtube.com/player_api", function () {
+      $.getScript("http://www.youtube.com/player_api", function () {
         searchVideos(self, 0, self.maxVideoCount, 0);
-      });*/
+      });
       
       this.inited = true;
       this.status = "inited";
@@ -296,6 +296,7 @@ function ($, BaseSlideGenerator, Logger) {
     var resultCounter = startResults;
     $.ajax('https://gdata.youtube.com/feeds/api/videos?v=2&max-results=' + maxResult + '&orderby=' + self.orderMethod + '&alt=jsonc&q=' + self.topic.label + "&format=5")
      .success(function (response) {
+     logger.log("GOT SOME VIDS");
         var items, itemCount;
         if (response.data.items)
 			items = response.data.items;
