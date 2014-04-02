@@ -49,22 +49,22 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
           return;
 
         var self = this,
-            $outro = $('<h1>').text("As you can see, "),
+            $outro = $('<h1>').text("Fin."),
             slide = this.createBaseSlide('outro', $outro, this.duration);
         slide.once('started', function () {
           setTimeout(function () {
-            $outro.append($('<span>').text(self.startTopic.first_name ? self.startTopic.first_name + ", " : self.startTopic.name));
+            //$outro.append($('<span>').text(self.startTopic.first_name ? self.startTopic.first_name + ", " : self.startTopic.name));
             setTimeout(function () {
-              $outro.append($('<br>'));
-              $outro.append((self.startTopic.first_name ? "you are " : "is ") + "connected to everything in this world,");
+              //$outro.append($('<br>'));
+              //$outro.append((self.startTopic.first_name ? "you are " : "is ") + "connected to everything in this world,");
               setTimeout(function () {
-                $outro.append($('<br>'));
-                $outro.append("including ");
-                $outro.append($('<span>').text(self.hash_object.name));
-                $outro.append("!");
+                //$outro.append($('<br>'));
+                //$outro.append("including ");
+                //$outro.append($('<span>').text(self.hash_object.name));
+                //$outro.append("!");
                 setTimeout(function () {
                   addNavigation($outro.parent());
-                  addShares($outro.parent(), self);
+                  //addShares($outro.parent(), self);
                 }, 2000);
               }, 1000);
             }, 500);
@@ -81,11 +81,13 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
         var self = this,
 			 tts = new TTSService();
 
-        var text = "So as you can see, " +
-                   (this.startTopic.first_name || this.startTopic.name) +
-                   (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
-                   "including " + this.hash_object.name + "!";
-		
+//        var text = "So as you can see, " +
+//                   (this.startTopic.first_name || this.startTopic.name) +
+//                   (this.startTopic.first_name ? ", you are " : " is ") + "connected to everything in this world," +
+//                   "including " + this.hash_object.name + "!";
+
+        var text = "  The end!"
+
 		self.hash_object.audio_text=text;
         tts.getSpeech(text, 'en_GB', function (response) {
           self.audioURL = response.snd_url;
@@ -93,7 +95,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
           self.emit('newSlides');
         });
       },
-      
+
       resendSpeech: function(text) {
 		var self = this,
 			 tts = new TTSService();
@@ -118,7 +120,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     .click(function () {
       window.location.reload();
     })
-    .text('Try again!');
+    .text('Back to editor');
 
 //    $('<span>')
 //    .addClass('button')
