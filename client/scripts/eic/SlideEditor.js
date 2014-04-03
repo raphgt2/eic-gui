@@ -38,7 +38,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	this.audio_editor = new AudioEditor();
 
       
-      logger.log("Created slideEditor");
+      //logger.log("Created slideEditor");
       this.startEdit();
     }
 
@@ -408,8 +408,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 				},
 				update: function(event, ui){
 
-					console.log("Update!");
-					console.log("self", self);
+					//console.log("Update!");
+					//console.log("self", self);
 					self.grabMovieNav();
 				}
 			});
@@ -417,14 +417,14 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	grabMovieNav: function(){
     		var movieNav = $("#movie-nav-bar .nodeElementBarContent");
-    		console.log(movieNav[0]);
+    		//console.log(movieNav[0]);
     		var navlist = [movieNav.length];
     		 for (var i = 0; i<movieNav.length; i++){
     			 navlist[i] = movieNav[i].src;
     		 }
-    		console.log("Movie Nav: ", navlist);
+    		//console.log("Movie Nav: ", navlist);
     		if (movieNav[0] == undefined){
-    			console.log("yes");
+    			//console.log("yes");
     			$("#movie-nav-bar").css("padding", "50px");
     		}
     		this._Play_Sequence = navlist;
