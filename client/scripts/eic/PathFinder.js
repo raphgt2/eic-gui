@@ -450,9 +450,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			if(inverse == 1){
 				subject = target;
 				object = source;
+				//sentence = subject + " is the " + relation + " of " + object;
 			}else {
 				subject = source;
 				object = target;
+				//sentence = subject + "'s " + relation + " is " + object;
 			}
 			console.log(relation);
 			switch(relation){
