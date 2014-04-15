@@ -336,11 +336,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     		});
     		$('#play-button').click(function () {
 	      		logger.log("Play Button Click", self._hash);
-	          	console.log("Play Button Click Test II: ", self._hash);
-	          	$('#body').html('');
-	          	
-	          	$('#body').html("<div id='screen'> </div>");
-                 
+	          	//console.log("Play Button Click Test II: ", self._hash);
+	          	//$('#body').html('');
+	          	$('#screen').remove();
+	          	$('#editor').css('display', 'none');
+	          	$(document.body).append("<div id='screen'> </div>");
+
                 $('#screen').css({
 					display: 'none',
 					position: 'relative',

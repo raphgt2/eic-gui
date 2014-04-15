@@ -107,7 +107,9 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     .addClass('button')
     .appendTo($nav)
     .click(function () {
-      window.location.reload();
+     //window.location.reload();
+     $('#screen').remove();
+     $('#editor').show();
     })
     .text('Back to editor');
   }
