@@ -100,6 +100,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					     .attr("transform", "translate(40,0)");
 			
 			$("#finish").click(function(){
+				var progress = '<div class="progress progress-striped active canvas-alert"><div class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="100" aria-valuemin="1" aria-valuemax="100" style="width: 100%"><span class="sr-only">Generating Stories...</span></div></div>';
+				$("#stepNavigator").append(progress);
 				/*Shift Screen*/
 				self.generateHashObject();
 				$("#canvasWindow").css("display", "none");
@@ -113,6 +115,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 	            view.initControls();
 				console.log("Hash Object Output", self.userHash);
 		        controller.once("slide_generation_finished", function(){
+		        	$(".canvas-alert").remove();
 					//console.log("Controllers", controller);
 					//console.log("Hash Object Output", self.userHash);
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
@@ -137,13 +140,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 	// searchURI += name;
 	// searchURI += ".json";
 		//console.log(searchURI);
+		var progress = '<div class="progress progress-striped active canvas-alert"><div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="1" aria-valuemax="100" style="width: 100%"><span class="sr-only">Loading...</span></div></div>';
+		$("#canvasStepNavigator").append(progress);
 		d3.json(searchURI, function(json){
-		//json.x0 = 800;
-  		//json.y0 = 0;
-  		
-  		// $.getJSON( searchURI, function( data ) {
-  			// json = data;
-  		// });
   		$.ajax({
   			url:searchURI,
   			//contentType:"application/x-www-form-urlencoded; charset=UTF-8",
@@ -156,7 +155,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			console.log("Json: ", json);
 			if (json){
 				if (json.children.length == 0){
-					alert("No data available for ' " + name + " ', please try other nodes.");
+					console.log("HERE 1");
+					var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
+					$("#canvasStepNavigator").append(alert_msg);
+					$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+					setTimeout(function(){
+						$(".canvas-alert").remove();
+					},4000);
 				}
 				else if (self.round == 1){ // The Starting Node 
 					self.history = json;
@@ -201,11 +206,18 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				
 			}
 			else {
-				alert("No data available for ' " + name + " ', please try other nodes");
+				console.log("HERE 2");
+				var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
+					$("#canvasStepNavigator").append(alert_msg);
+					$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+					setTimeout(function(){
+						$(".canvas-alert").remove();
+					},4000);
 			}
 		});
 	 },//addNode
 	 updateCanvas: function(source){
+	 	$(".canvas-alert").remove();
 	 	//console.log("[===================Update Canvas===================]");
 	 	var self = this;
 	 	
@@ -458,11 +470,29 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			}
 			console.log(relation);
 			switch(relation){
+				case ("city"):
+					sentence = subject + " locates in the city of " + object;
+					break;
+				case ("deathPlace"):
+					sentence = subject + "'s death place is " + object;
+					break;
 				case ("influenced"):
-					sentence = subject + " " + relation + " " + object;
+					sentence = subject + " influenced " + object;
+					break;
+				case ("location"):
+					sentence = subject + " locates in " + object;
+					break;
+				case ("knownFor"):
+					sentence = subject + " is known for " + object;
+					break;
+				case ("training"):
+					sentence = object + " is trained by " + subject;
 					break;
 				case ("influencedBy"):
 					sentence = subject + " is influenced by " + object;
+					break;
+				case ("museum"):
+					sentence = subject + " is exhibited in " + object;
 					break;
 				case ("country"||"startPoint"):
 					sentence = subject + " is a " + relation + " of " + object;
@@ -549,7 +579,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var self = this;
 			//console.log(data.name, name, node);
 			if (data.name == name){
-				alert("This node has been explored in this path, please try a different node.");
+				var alert_msg = '<div class="alert alert-warning canvas-alert">This node has already been explored in this path, please try other nodes.</div>';
+					$("#canvasStepNavigator").append(alert_msg);
+					$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+					setTimeout(function(){
+						$(".canvas-alert").remove();
+					},4000);
 			}
 			else {
 				if (data.parent != null){
