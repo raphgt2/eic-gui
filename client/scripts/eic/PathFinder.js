@@ -486,7 +486,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					sentence = subject + " is known for " + object;
 					break;
 				case ("training"):
-					sentence = object + " is trained by " + subject;
+					sentence = subject + " is trained by/at " + object;
 					break;
 				case ("influencedBy"):
 					sentence = subject + " is influenced by " + object;
