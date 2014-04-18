@@ -78,6 +78,11 @@
 							"<object classid='clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921' codebase='http://download.videolan.org/pub/videolan/vlc/last/win32/axvlc.cab'></object>"
 				)}			
 			});
+			
+			tts.once('speechError',function(event,data){
+				$('#result').html("Something went wrong");
+			});
+			
 			tts.getSpeech(text, voice);
 		 });
 	 });
