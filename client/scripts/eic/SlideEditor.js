@@ -18,7 +18,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     function SlideEditor(generator, path, controller, hashObj) {
       this.curTopic = null;
       this.tempSlides = {};
-      this.topicToTopic = controller.topicToTopic;
+      //this.topicToTopic = controller.topicToTopic;
       this.hash_object = path;
       
       
@@ -142,7 +142,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 	  			this.audio_editor.setTopic(this.curTopic);
 
 	  			var slide = topics[i].next();
-	  			//this.$slides.children('.transition-out').remove();
         		// start the transition of other children
         		var children = this.$slides.children();
           	    children.remove();
@@ -159,10 +158,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
+      		    		$('#img-element-list-wrap').css('display', 'inline');
+      		    		$('#vid-element-list-wrap').css('display', 'none');
       					$('#imgs').children().remove();
-      					//var imgList = '<ul id="imgs" class="droptrue node-element-list">';
-		
-						
+
       					for(var i = 0; i < s.length; i++){
       						var isEdited = false;
       						for(var j = 0; j < editedSlides.length; j++){
@@ -178,24 +177,19 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       							$(imgs).click(function () {
       								self.setContent(this.id, i, 'img');
       							});
-      							// imgList += '<li id="img' + i + '" class="ui-state-default nodeElementBarContentWrap btn btn-default">';
-      							// imgList += imgs[0].outerHTML;
-      							// console.log("**********************imgs******************", imgs[0].outerHTML);
-      							// imgList += '</li>';
       							$('#imgs').append('<li id=img' + i + '></li>');
       							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
       							$('#img' + i + '').append(imgs[0]);
       							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
       					}
-      					//imgList += '</ul>';
-      					//$("#img-element-list-wrap").append(imgList);
       				}
       		    	if(val == 'vid'){
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
+                        $('#img-element-list-wrap').css('display', 'none');
+                        $('#vid-element-list-wrap').css('display', 'inline');
                         $('#vids').children().remove();
-                       // var vidList = '<ul id="vids" class="droptrue node-element-list">';
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
       						for(var j = 0; j < editedSlides.length; j++){
@@ -263,7 +257,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       },
       
       getTopictoTopic: function(){
-      	return this.topicToTopic;
+      	//return this.topicToTopic;
+      	return this._data_source;
       },
       
       getSlides: function(){
