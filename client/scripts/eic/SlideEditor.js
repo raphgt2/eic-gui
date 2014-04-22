@@ -18,7 +18,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     function SlideEditor(generator, path, controller, hashObj) {
       this.curTopic = null;
       this.tempSlides = {};
-      //this.topicToTopic = controller.topicToTopic;
+      this.topicToTopic = controller.topicToTopic;
       this.hash_object = path;
       
       
