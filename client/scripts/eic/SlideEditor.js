@@ -94,6 +94,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         		}
         	}
         	self.switchTopic(topics[1].topic.label, topics, topics[1]);
+        	$('#img-element-list-wrap').css('display', 'inline');
+            $('#vid-element-list-wrap').css('display', 'none');
           //}, 500);
           
           setTimeout(function() {
