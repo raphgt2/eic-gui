@@ -468,7 +468,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				object = target;
 				//sentence = subject + "'s " + relation + " is " + object;
 			}
-			var flag1 = 0, relation_lower="";
+			var flag1 = 0, relation_lower=" ";
 			for (var i = 0; i < relation.length; i++){
 				
 				if (/^[A-Z]/.test(relation[i])){
@@ -502,7 +502,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					sentence = subject + " is exhibited in " + object;
 					break;
 				case ("country"||"startPoint"):
-					sentence = subject + " is a " + relation_lower + " of " + object;
+					sentence = subject + " is a" + relation_lower + " of " + object;
 					break;
 				case ("leaderName"):
 					sentence = object + " is the leader of " + subject;
@@ -511,7 +511,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					sentence = subject + " is a part of " + object;
 					break;
 				default: 
-					sentence = subject + "'s " + relation_lower + " is " + object;	  
+					sentence = subject + "'s" + relation_lower + " is " + object;	  
 			}
 			return sentence;
 			
@@ -586,7 +586,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var self = this;
 			//console.log(data.name, name, node);
 			if (data.name == name){
-				var alert_msg = '<div class="alert alert-warning canvas-alert">This node has already been explored in this path, please try other nodes.</div>';
+				var alert_msg = '<div class="alert alert-warning canvas-alert">This node has already been explored in this path, please try other nodes. <b>If you want to include the repeated node in your story, please click it again</b></div>';
 					$("#canvasStepNavigator").append(alert_msg);
 					$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
 					setTimeout(function(){
@@ -594,7 +594,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					},4000);
 					self.userPath = [];
 			  		self.trackPathParent(data);
-			  		data._children = "end";
+			  		//data._children = new Object();
 				//data.children = [];
 			}
 			else {

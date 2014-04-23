@@ -282,11 +282,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	initElementCollection: function(){
     		var self = this;
     		console.log("Data_Source", this._data_source);
-    		for(var i = 1; i < this._data_source.length; i++){
-    			this._data_source[i].slide_order = [];
+    		for(var i = 1; i < this._data_source.generators.length; i++){
+    			//this._data_source[i].slide_order = [];
+    			this._data_source.generators[i].slide_order = [];
     			//this._data_source[i].prepare();
-    			var slides = this._data_source[i].getSlides();
-    			console.log(slides);
+    			var slides = this._data_source.generators[i].slides;
+    			logger.log(slides);
     			var img = slides.img;
     			var vid = slides.vid;
     			console.log("img", img);
@@ -302,8 +303,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     		
     	},
     	restoreCurrentNode: function(n){
+    		var self = this;
+    		console.log("Self Test", self);
     		console.log("RESTORE NODE");
-    		this._data_source[n-1].slide_order = this._Play_Sequence;
+    		this._data_source.generators[n-1].slide_order = this._Play_Sequence;
     		var slide_content = new Array;
     		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
@@ -322,7 +325,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     		console.log("PREPARE NODE");
     		//this.grabMovieNav();
     		this._curNode = this._path[2*(n-1)];
-    		this._Play_Sequence = this._data_source[n].slide_order;
+    		this._Play_Sequence = this._data_source.generators[n].slide_order;
     	},
     	EnableUIAnimation: function(){
     		var self = this;
