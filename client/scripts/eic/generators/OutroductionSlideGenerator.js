@@ -49,7 +49,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
           return;
 
         var self = this,
-            $outro = $('<h1>').text("Fin."),
+            $outro = $('<h1>').text("The End."),
             slide = this.createBaseSlide('outro', $outro, this.duration);
         slide.once('started', function () {
           setTimeout(function () {
@@ -117,46 +117,6 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
   function addShares($container, self) {
     var $buttons = $('<div>', {'class': 'share'});
     $container.append($('<h2>').text('Share:'), $buttons);
-
-    /** Add Facebook button */
-//    var $fblike = $('<div>').addClass("fb-like")
-//                            .attr('data-href', "OUR URL")
-//                            .attr('data-send', " false")
-//                            .attr('data-layout', "button_count")
-//                            .attr('data-width', "112")
-//                            .attr('data-show-faces', "true");
-//    $buttons.append($('<div>', { 'class': 'facebook' }).append($fblike));
-//    // Render the button (Facebook API is already loaded)
-//    window.FB.XFBML.parse();
-
-    /** Add Tweet button */
-    var tweetmessage = (self.startTopic.first_name ? 'I am ' : self.startTopic.name + ' is ') + 'connected to ' + self.hash_object.name + ' through #LinkedData! Find out how you are #connected at http://everythingisconnected.be. #iswc2012';
-
-    var $tweet = $('<a>')
-    .attr('href', 'https://twitter.com/share?text=' + tweetmessage)
-                         .attr('data-lang', "en")
-                         .addClass("twitter-share-button")
-                         .text("Tweet")
-                         .attr('url', "OUR URL");
-    $buttons.append($('<div>', {'class': 'twitter'}).append($tweet));
-    // Render the button
-    $.getScript("https://platform.twitter.com/widgets.js");
-
-    /** Add Google Plus button */
-    // Make sure the metadata is right
-//    $('html').attr('itemscope', "")
-//             .attr('itemtype', "http://schema.org/Demo");
-//    $('head').append($('<meta>').attr('itemprop', "name")
-//                                .attr('content', "Everything is connected"));
-//    $('head').append($('<meta>').attr('itemprop', "name")
-//                                .attr('content', "A demonstrator to show how everything is connected."));
-//
-//    var $gplus = $('<div>').addClass("g-plusone")
-//                           .attr('data-size', "medium")
-//                           .attr('data-href', "OUR URL");
-//    $buttons.append($('<div>', { 'class': 'googleplus' }).append($gplus));
-//    // Render the button
-//    $.getScript("https://apis.google.com/js/plusone.js");
   }
 
   return OutroductionSlideGenerator;
