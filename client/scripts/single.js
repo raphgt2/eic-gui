@@ -40,16 +40,19 @@
 		$('#frame').show();
 		
 		$(document).ready(function(){
+			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
 			$.ajax({
                 type: "GET",
                 url: urls.singlepath,
-                dataType: "jsonp",
-                error: function () {
+                dataType: "json",
+                error: function (error) {
                   self.addGenerator(new ErrorSlideGenerator('No path between found.'));
                   self.loader.stopWaiting();
                 },
                 success: function (path) {
-					var controller = new PresentationController(path, true, false);
+                	document.getElementById('subject').innerHTML = path.source.name;
+                	document.getElementById('object').innerHTML = path.destination.name;
+                	var controller = new PresentationController(path, false, false);
 					var view = new PiecesUI(controller);
 					view.initControls();
                 }
@@ -58,8 +61,18 @@
 
 					
         $("#play-button").click(function(){
-			$('#screenWrap').html("<div id='screen'> </div>");
-		
+			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
+			validate(5);
+			//answer[0] = 0; answer[1] = 0; answer[2] = 0; answer[3] = 0;
+			//var mongoClient = new MongoClient(new Server('localhost',27107,{'native_parser':true}));
+			//var db = mongoClient.db('itunes');
+			
+			//app.get('/start', function (req, res) {    
+			//    db.collection('collectionName').insert({req.data}, function (err, doc) {
+			           //rest of code 
+			//    });    
+			//});
+			
 			 $.ajax({
                 type: "GET",
                 url: urls.singlepath,
@@ -70,6 +83,8 @@
 						console.log(path);
 					}
 					else{
+						document.getElementById('subject').innerHTML = path.source.name;
+	                	document.getElementById('object').innerHTML = path.destination.name;
 						var controller = new PresentationController(path, false, false);
 						var view = new PiecesUI(controller);
 						view.initControls();
@@ -83,10 +98,5 @@
 		 });
   });
   
-  
-  /*var controller = new PresentationController(),
-        view = new PiecesUI(controller);
-    controller.init();
-    view.init();*/
 })(requirejs);
 
