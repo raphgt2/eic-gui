@@ -48,7 +48,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
           $.ajax('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', {
             data: {
               q: this.topic.label,
-              imgsz: 'large',
+              imgsz: 'xlarge',
               // search more images than needed, in case some of them don't load
               rsz: Math.floor(this.maxResults),
             },
