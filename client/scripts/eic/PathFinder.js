@@ -391,7 +391,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  //console.log("mainDepth: ", self.mainDepth, " , w: ", self.w);
 			  self.tree.size([self.h, self.w - 270 + ""]);
 			  self.userPath = [];
-			  self.trackPathParent(d.parent);
+			  self.trackPathParent(d);
 //			  this.update(d);
 			} 
 			else {
@@ -468,13 +468,20 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				object = target;
 				//sentence = subject + "'s " + relation + " is " + object;
 			}
-			console.log(relation);
+			var flag1 = 0, relation_lower="";
+			for (var i = 0; i < relation.length; i++){
+				
+				if (/^[A-Z]/.test(relation[i])){
+					relation_lower += " ";
+					relation_lower += relation[i].toLowerCase();
+				}else{
+					relation_lower += relation[i];
+				}
+			}
+			console.log(relation_lower);
 			switch(relation){
 				case ("city"):
 					sentence = subject + " locates in the city of " + object;
-					break;
-				case ("deathPlace"):
-					sentence = subject + "'s death place is " + object;
 					break;
 				case ("influenced"):
 					sentence = subject + " influenced " + object;
@@ -495,7 +502,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					sentence = subject + " is exhibited in " + object;
 					break;
 				case ("country"||"startPoint"):
-					sentence = subject + " is a " + relation + " of " + object;
+					sentence = subject + " is a " + relation_lower + " of " + object;
 					break;
 				case ("leaderName"):
 					sentence = object + " is the leader of " + subject;
@@ -504,7 +511,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					sentence = subject + " is a part of " + object;
 					break;
 				default: 
-					sentence = subject + "'s " + relation + " is " + object;	  
+					sentence = subject + "'s " + relation_lower + " is " + object;	  
 			}
 			return sentence;
 			
@@ -585,6 +592,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					setTimeout(function(){
 						$(".canvas-alert").remove();
 					},4000);
+					self.userPath = [];
+			  		self.trackPathParent(data);
+			  		data._children = "end";
+				//data.children = [];
 			}
 			else {
 				if (data.parent != null){
@@ -634,7 +645,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				nodetype.uri = self.userPath[i].uri;
 				self.userHash.path.push(nodetype);
 			}
-			//console.log(self.userHash);
+			console.log(self.userHash);
 		}
     };
 
