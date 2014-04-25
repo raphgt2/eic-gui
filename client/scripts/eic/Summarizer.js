@@ -3,8 +3,8 @@
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
-define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
-  "use strict";
+define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function ($, Logger, urls, TTSService) {
+  //"use strict";
   var logger = new Logger("Summarizer");
 
   var maxSentences = 1;
@@ -34,7 +34,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
       function formatResult(result, vertices) {			
         for (var i = 1; i < result.topics.length; i++) {
           var glue = '';
-          var sentence = result.links[i - 1][Math.round(Math.random())];
+          /*var sentence = result.links[i - 1][Math.round(Math.random())];
           switch (sentence.type) {
           case 'direct':
             glue = result.topics[i - 1].topic.label + sentence.value + result.topics[i].topic.label + '. ';
@@ -42,7 +42,9 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           case 'indirect':
             glue = result.topics[i].topic.label + sentence.value + result.topics[i - 1].topic.label + '. ';
             break;
-          }
+          }*/
+          glue = self.generateRelationshipSentence(result.topics[i - 1].topic.label, result.topics[i].topic.label, result.links[i - 1].value, result.links[i - 1].inverse);
+          
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
           result.topics[i].hash_object.defaultText = glue + result.topics[i].hash_object.defaultText;
           
@@ -69,7 +71,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
           logger.log('Extracting sentence for', edge.uri);
           logger.log('edge test', edge);
           //Split the string with caps
-          var parts = property.match(/([A-Z]?[^A-Z]*)/g).slice(0, -1);
+          /*var parts = property.match(/([A-Z]?[^A-Z]*)/g).slice(0, -1);
 
           if (parts[0] === 'has' || parts[0] === 'is') {
             parts.shift();
@@ -84,16 +86,20 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
               type: 'direct',
               value: edge.inverse ? '\'s the ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' of ' : '\'s ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' is '
             }
-          ];
+          ];*/
 
-          self.result.links[index] = sentence;
+          self.result.links[index] = 
+          {
+			  inverse: edge.inverse,
+			  value: property
+		  };
 
           if ((self.result.topics.length + self.result.links.length) === path.length) {
             $(self).trigger('generated', formatResult(self.result));
           }
 
           logger.log('Property', property);
-          logger.log('Generated sentence', index, ':', self.result.links[index][0].value);
+          //logger.log('Generated sentence', index, ':', self.result.links[index][0].value);
         }
 
         $(edges).each(retrieveTranscription);
@@ -213,7 +219,67 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs'], function ($, Logger, urls) {
 
       retrieveTranscriptions(path.filter(function (o) { return o.type === 'link'; }));
       retrieveAbstracts(path.filter(function (o) { return o.type === 'node';  }));
-    }
+    },
+    
+    generateRelationshipSentence: function(source, target, relation, inverse){
+			var subject, object, sentence;
+			if(inverse == 1){
+				subject = target;
+				object = source;
+				//sentence = subject + " is the " + relation + " of " + object;
+			}else {
+				subject = source;
+				object = target;
+				//sentence = subject + "'s " + relation + " is " + object;
+			}
+			var flag1 = 0, relation_lower=" ";
+			for (var i = 0; i < relation.length; i++){
+				
+				if (/^[A-Z]/.test(relation[i])){
+					relation_lower += " ";
+					relation_lower += relation[i].toLowerCase();
+				}else{
+					relation_lower += relation[i];
+				}
+			}
+			console.log(relation_lower);
+			switch(relation){
+				case ("city"):
+					sentence = subject + " locates in the city of " + object;
+					break;
+				case ("influenced"):
+					sentence = subject + " influenced " + object;
+					break;
+				case ("location"):
+					sentence = subject + " locates in " + object;
+					break;
+				case ("knownFor"):
+					sentence = subject + " is known for " + object;
+					break;
+				case ("training"):
+					sentence = subject + " is trained by/at " + object;
+					break;
+				case ("influencedBy"):
+					sentence = subject + " is influenced by " + object;
+					break;
+				case ("museum"):
+					sentence = subject + " is exhibited in " + object;
+					break;
+				case ("country"||"startPoint"):
+					sentence = subject + " is a" + relation_lower + " of " + object;
+					break;
+				case ("leaderName"):
+					sentence = object + " is the leader of " + subject;
+					break;
+				case ("isPartOf"):
+					sentence = subject + " is a part of " + object;
+					break;
+				default: 
+					sentence = subject + "'s" + relation_lower + " is " + object;	  
+			}
+			return sentence;
+			
+		},
   };
   return Summarizer;
 });

@@ -55,7 +55,7 @@
 			var selected = document.getElementById("Voices").selectedIndex;
 			var voice= selector.options[selected].value;
 			
-			$('#result').html('');		
+			$('#result').html('loading...');		
 		
 			var tts = new TTSService2();
 			var text = $('#text').val();

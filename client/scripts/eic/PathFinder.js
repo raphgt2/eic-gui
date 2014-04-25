@@ -5,8 +5,8 @@
 */
 
 
-define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor'],
-  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor) {
+define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor', 'eic/Summarizer'],
+  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer) {
     "use strict";
     var logger = new Logger("PathFinder");
   		
@@ -450,71 +450,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			//console.log(source, "~", target);
 			$("#relation").empty();
 			var relationContent = '<div id="relationContent" class="close" >';
-			relationContent += self.generateRelationshipSentence(source, target, relation, inverse);
+			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
 			relationContent += '</div>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){
 				$("#relation").empty();
 			});
-		},
-		generateRelationshipSentence: function(source, target, relation, inverse){
-			var subject, object, sentence;
-			if(inverse == 1){
-				subject = target;
-				object = source;
-				//sentence = subject + " is the " + relation + " of " + object;
-			}else {
-				subject = source;
-				object = target;
-				//sentence = subject + "'s " + relation + " is " + object;
-			}
-			var flag1 = 0, relation_lower=" ";
-			for (var i = 0; i < relation.length; i++){
-				
-				if (/^[A-Z]/.test(relation[i])){
-					relation_lower += " ";
-					relation_lower += relation[i].toLowerCase();
-				}else{
-					relation_lower += relation[i];
-				}
-			}
-			console.log(relation_lower);
-			switch(relation){
-				case ("city"):
-					sentence = subject + " locates in the city of " + object;
-					break;
-				case ("influenced"):
-					sentence = subject + " influenced " + object;
-					break;
-				case ("location"):
-					sentence = subject + " locates in " + object;
-					break;
-				case ("knownFor"):
-					sentence = subject + " is known for " + object;
-					break;
-				case ("training"):
-					sentence = subject + " is trained by/at " + object;
-					break;
-				case ("influencedBy"):
-					sentence = subject + " is influenced by " + object;
-					break;
-				case ("museum"):
-					sentence = subject + " is exhibited in " + object;
-					break;
-				case ("country"||"startPoint"):
-					sentence = subject + " is a" + relation_lower + " of " + object;
-					break;
-				case ("leaderName"):
-					sentence = object + " is the leader of " + subject;
-					break;
-				case ("isPartOf"):
-					sentence = subject + " is a part of " + object;
-					break;
-				default: 
-					sentence = subject + "'s" + relation_lower + " is " + object;	  
-			}
-			return sentence;
-			
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;

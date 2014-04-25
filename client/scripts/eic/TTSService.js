@@ -69,7 +69,10 @@ function ($, Logger, EventEmitter, urls) {
 				type: 'GET',
 				data: { req_text: text},
 				dataType: 'jsonp',
-				success: function (data) {	
+				success: function (data) {
+					
+					if (self.finished)
+						return;
 
 					if (data.res === 'OK') {
 						
@@ -129,6 +132,9 @@ function ($, Logger, EventEmitter, urls) {
 					}
 				},
 				error: function (error) {
+					if (self.finished)
+						return;
+						
 					if (self.attempt>=4){
 						if (!self.finished){
 							logger.log('Error receiving speech2', error);
@@ -136,10 +142,8 @@ function ($, Logger, EventEmitter, urls) {
 						}
 					}
 					else{
-						if (!self.finished){
-							logger.log('Error with speech2, new attempt: ' + self.attempt);
-							sendSpeech();
-						}
+						logger.log('Error with speech2, new attempt: ' + self.attempt);
+						sendSpeech();
 					}
 				}
 			});
