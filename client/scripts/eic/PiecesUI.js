@@ -140,7 +140,7 @@ define(['lib/jquery','lib/prefixfree.jquery'],
                        $('#imgs').css('display', 'none');
                        $('#img-element-list-wrap').css('display', 'none');
                        $('#vids').css('display', 'inline-block');
-                       $('#vid-element-list-wrap').css('display', 'inline-block');
+                       $('#vid-element-list-wrap').css('display', 'inline');
                        $('#edit-imgs').removeClass('btn-primary');
                        $('#edit-vids').addClass('btn-primary');
                });

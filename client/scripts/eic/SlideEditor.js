@@ -160,8 +160,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       		    	if(val == 'img' || val == 'map'){
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
-      		    		$('#img-element-list-wrap').css('display', 'inline');
-      		    		$('#vid-element-list-wrap').css('display', 'none');
       					$('#imgs').children().remove();
 
       					for(var i = 0; i < s.length; i++){
@@ -189,8 +187,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       		    	if(val == 'vid'){
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
-                        $('#img-element-list-wrap').css('display', 'none');
-                        $('#vid-element-list-wrap').css('display', 'inline');
                         $('#vids').children().remove();
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
