@@ -179,35 +179,39 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					self.updateCanvas(self.root);
 				}
 				else {
-					
+					self.userPath = [];
+					self.trackPathParent(data_prev);
 					//console.log("set up search", self.appendMap[name]);
-					data_prev.children = json.children; // Have repetitive nodes
+					//data_prev.children = json.children; // Have repetitive nodes
 					var children = [];
 					for (var i = 0; i < json.children.length; i++){
 						//console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
-						if (self.appendMap[json.children[i].name] == undefined){
+						//if (self.appendMap[json.children[i].name] == undefined){
 							json.children[i].search = 0;
 							json.children[i].children = null;
 							self.appendMap[json.children[i].name] = json.children[i];
 							var flag = 0;
-							for (var j = 0; j = self.userPath.length; j++){
+							console.log(json.children[i].name, self.userPath.length);
+							for (var j = 0; j < self.userPath.length; j++){
+								console.log(json.children[i].name, self.userPath[j].name)
 								if (json.children[i].name == self.userPath[j].name){
 									flag = 1;
 									break;
 								}
 							}
+							console.log("flag", flag);
 							if (flag != 1){
 								children.push(json.children[i]);
 							}
 							
-						}
+						//}
 					}
+					data_prev.children = children;
 					//json.children = children;
 					//console.log("====>AppendMap", self.appendMap);
 					self.root = self.history;
 					//console.log("############Called Track Path Parent##############");
-					self.userPath = [];
-					self.trackPathParent(data_prev);
+					
 					
 					self.updateCanvas(self.root);
 				}
