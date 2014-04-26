@@ -30,6 +30,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	this._Slide_Element_Collection = new Object();
     	this._Play_Sequence = [];
     	this._curNode = this._path[0];
+    	this._curIndex = 1;
     	this._hash = hashObj;
     	//var self = this;
     	
@@ -82,8 +83,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         		$button.click(function(){ 
         			$("#movie-nav-bar").html('');
         			self.switchTopic(this.id, topics, self.curTopic); 
-        			self.restoreCurrentNode($(this).attr("order"));
-	    			self.PrepareNode($(this).attr("order"));
+        			var index = $(this).attr("order");
+        			self.restoreCurrentNode(index);
+	    			self.PrepareNode(index);
+	    			self._curIndex = index;
         		});
         		$('#nodeNavBar').append($button);
         		if(!firstInit && topics[i] !== undefined){
@@ -301,8 +304,15 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	restoreCurrentNode: function(n){
     		var self = this;
     		console.log("Self Test", self);
-    		console.log("RESTORE NODE");
-    		this._data_source.generators[n-1].slide_order = this._Play_Sequence;
+    		console.log("RESTORE NODE", n);
+    		for (var i = 0; i < this._Play_Sequence.length; i++){
+    			if (this._Play_Sequence[i].indexOf("youtube") != -1){
+    				var vidID = this._Play_Sequence[i].substring(26,37);
+    				this._Play_Sequence[i] = vidID;
+    				console.log("vidID", vidID);
+    			}
+    		}
+    		this._data_source.generators[n].slide_order = this._Play_Sequence;
     		var slide_content = new Array;
     		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
@@ -331,9 +341,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     			console.log("Hash Object Test: ", self._hash);
     		});
     		$('#play-button').click(function () {
+    			
 	      		logger.log("Play Button Click", self._hash);
 	          	//console.log("Play Button Click Test II: ", self._hash);
 	          	//$('#body').html('');
+	          	self.restoreCurrentNode(self._curIndex);
 	          	$('#screen').remove();
 	          	$('#editor').css('display', 'none');
 	          	$(document.body).append("<div id='screen'> </div>");
