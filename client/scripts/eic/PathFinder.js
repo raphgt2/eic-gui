@@ -189,7 +189,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							json.children[i].search = 0;
 							json.children[i].children = null;
 							self.appendMap[json.children[i].name] = json.children[i];
-							children.push(json.children[i]);
+							var flag = 0;
+							for (var j = 0; j = self.userPath.length; j++){
+								if (json.children[i].name == self.userPath[j].name){
+									flag = 1;
+									break;
+								}
+							}
+							if (flag != 1){
+								children.push(json.children[i]);
+							}
+							
 						}
 					}
 					//json.children = children;
