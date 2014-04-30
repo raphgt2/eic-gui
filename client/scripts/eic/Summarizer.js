@@ -43,7 +43,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
             glue = result.topics[i].topic.label + sentence.value + result.topics[i - 1].topic.label + '. ';
             break;
           }*/
-          glue = self.generateRelationshipSentence(result.topics[i - 1].topic.label, result.topics[i].topic.label, result.links[i - 1].value, result.links[i - 1].inverse);
+          glue = self.generateRelationshipSentence(result.topics[i - 1].topic.label, result.topics[i].topic.label, result.links[i - 1].value, result.links[i - 1].inverse) + '. ';
           
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
           result.topics[i].hash_object.defaultText = glue + result.topics[i].hash_object.defaultText;
@@ -132,7 +132,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
               }
 
               function getDescription(item) {
-                var abstract = item.abstract || '';
+                var abstract = item.abstract || item.comment || '';
                 var sentences = abstract.match(tregex) || [];
                 var desc = sentences.slice(0, maxSentences).join(' ');
                 return desc;
