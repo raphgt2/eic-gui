@@ -250,14 +250,14 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
 				case ("influenced"):
 					sentence = subject + " influenced " + object;
 					break;
-				case ("location"):
+				case ("location" || "locatedInArea"):
 					sentence = subject + " locates in " + object;
 					break;
 				case ("knownFor"):
 					sentence = subject + " is known for " + object;
 					break;
 				case ("training"):
-					sentence = subject + " is trained by/at " + object;
+					sentence = subject + " is trained by " + object;
 					break;
 				case ("influencedBy"):
 					sentence = subject + " is influenced by " + object;
@@ -271,8 +271,29 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
 				case ("leaderName"):
 					sentence = object + " is the leader of " + subject;
 					break;
-				case ("isPartOf"):
-					sentence = subject + " is a part of " + object;
+				case ("education"):
+					sentence = subject + "'s education is at/with" + object;
+					break;
+				case ("residence"):
+					sentence = subject + " lives in " + object;
+					break;
+				case ("foundedBy"):
+					sentence = subject + " is founded by " + object;
+					break;
+				case ("ground"):
+					sentence = subject + " is at " + object;
+					break;
+				case ("sportCountry"):
+					sentence = object + " is the country where " + subject + " plays sports";
+					break;
+				case ("subsidiary"):
+					sentence = subject + "'s subsidiary is at " + object;
+					break;
+				case ("distributingLabel"):
+					sentence = subject + "'s label is distributed at " + object;
+					break;
+				case ("recordedIn"):
+					sentence = subject + " is recorded in " + object;
 					break;
 				default: 
 					sentence = subject + "'s" + relation_lower + " is " + object;	  
