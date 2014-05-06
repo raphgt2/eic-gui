@@ -158,9 +158,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         		var slides = topics[i].getSlides();
         		var editedSlides = topics[i].getEditedSlides();
         		
-        		
+        		var imgcnt = 0;
+        		var vidcnt = 0;
         		for(var val in slides){
       		    	if(val == 'img' || val == 'map'){
+      		    	    imgcnt++;
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
       					$('#imgs').children().remove();
@@ -188,6 +190,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       					}
       				}
       		    	if(val == 'vid'){
+      		    	    vidcnt++;
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
                         $('#vids').children().remove();
@@ -213,6 +216,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
                         }
                      }
       			}
+
+      			if(imgcnt == 0) $("#imgerr").css('display', 'inline');
+      			else $("#imgerr").css('display', 'none');
+
+      			if(vidcnt == 0) $("#viderr").css('display', 'inline');
+                else $("#viderr").css('display', 'none');
+
       			for(var i = 0; i < editedSlides.length; i++){
         			var theImg = editedSlides[i].$element.clone().find('img');
         			$('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
