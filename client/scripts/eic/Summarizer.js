@@ -69,7 +69,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
         function retrieveTranscription(index, edge) {
           var  property = edge.uri.substr(edge.uri.lastIndexOf('/') + 1);
           logger.log('Extracting sentence for', edge.uri);
-          logger.log('edge test', edge);
+          //logger.log('edge test', edge);
           //Split the string with caps
           /*var parts = property.match(/([A-Z]?[^A-Z]*)/g).slice(0, -1);
 
@@ -98,7 +98,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
             $(self).trigger('generated', formatResult(self.result));
           }
 
-          logger.log('Property', property);
+          //logger.log('Property', property);
           //logger.log('Generated sentence', index, ':', self.result.links[index][0].value);
         }
 
@@ -242,7 +242,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
 					relation_lower += relation[i];
 				}
 			}
-			console.log(relation_lower);
+			//console.log(relation_lower);
 			switch(relation){
 				case ("city"):
 					sentence = subject + " locates in the city of " + object;

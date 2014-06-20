@@ -39,7 +39,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	this.audio_editor = new AudioEditor();
 
       
-      //logger.log("Created slideEditor");
+      logger.log("Created slideEditor");
       this.startEdit();
     }
 
@@ -299,8 +299,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     			logger.log(slides);
     			var img = slides.img;
     			var vid = slides.vid;
-    			console.log("img", img);
-    			console.log("vid", vid);
+    			//console.log("img", img);
+    			//console.log("vid", vid);
     			for (var j = 0; j < img.length; j++){
     				//console.log(img[j].slides_info.data);
     				this._Slide_Element_Collection[img[j].slide_info.data.url]=img[j].slide_info;
@@ -370,7 +370,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 					'vertical-align': 'middle',
                 });
                 
-                $('#screen').show();               
+                //$('#screen').show();               
 	          	
 	          	var play = new PresentationController(self._hash, false, true);
 	          	console.log("PresentationController: ", play, play.path.path);

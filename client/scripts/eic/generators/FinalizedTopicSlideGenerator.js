@@ -51,16 +51,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		  if (this.hash_object.slide_description) {
 			  logger.log("slide description found", this.hash_object.slide_description);
 			  if (this.hash_object.slide_description.length == 0){
-				  //Create all generators depending on the type of the topic
+				  //Create all generators depending on the type of the topic; suppress inits b/c we're not doing a search for vids/images
 					switch (this.topic.type) {
 					case "http://dbpedia.org/ontology/PopulatedPlace":
-						this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-						this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
-						this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
+						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic), true);
+						this.addGenerator(new GoogleMapsSlideGenerator(this.topic), true);
 						break;
 					default:
-						this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-						this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic), true);
 						break;
 					}
 			  }			  
@@ -110,6 +110,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
           var tts = new TTSService();
           tts.once('speechReady', function (event, data) {
+			//Since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
+				if (self.audioURL!='')
+					return;
+					
             self.durationLeft = Math.floor(data.snd_time);
             //Add extra time because IE definitely needs a plugin, which takes time to embed
             if (navigator.userAgent.indexOf('MSIE') !=-1)
@@ -126,6 +130,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           
           //Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
 			tts.once('speechError', function(event, data){
+				//Since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
+				if (self.audioURL!='')
+					return;
+					
 				self.durationLeft = 5000;
 				self.hash_object.audio_time = self.durationLeft;
 				

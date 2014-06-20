@@ -15,9 +15,13 @@ function ($, BaseSlideGenerator, Logger) {
 **/
   var logger = new Logger("YouTubeSlideGenerator");
   var playerCount = 0;
+    
+  var scriptFlag = false;
+  
   
   //Try to grab the api once, and only once
   $.getScript("http://www.youtube.com/player_api", function () {
+	scriptFlag=true;
   });
 
   /** Generator of YouTube videos using the YouTube API
@@ -53,9 +57,15 @@ function ($, BaseSlideGenerator, Logger) {
         return;
       
       var self = this;
-      $.getScript("http://www.youtube.com/player_api", function () {
-        searchVideos(self, 0, self.maxVideoCount, 0);
-      });
+	  
+	  if (!scriptFlag){
+		  $.getScript("http://www.youtube.com/player_api", function () {
+			searchVideos(self, 0, self.maxVideoCount, 0);
+		  });
+	  }
+	  else{
+		searchVideos(self, 0, self.maxVideoCount, 0);
+	  }
       
       this.inited = true;
       this.status = "inited";
@@ -71,7 +81,7 @@ function ($, BaseSlideGenerator, Logger) {
       var self = this, player = self.player;
       
       // if we did not start preparations yet, and the player object is ready
-      if (self.status === "inited" && player && player.playVideo) {
+      if (self.status === "playerReady") {
         // start preparing by playing the video
         self.status = "preparing";
         player.playVideo();
@@ -90,7 +100,7 @@ function ($, BaseSlideGenerator, Logger) {
 		
 	var self = this, start, end, duration;
 	
-		if (!window.YT){
+		if (!scriptFlag){
 			$.getScript("http://www.youtube.com/player_api", function () {
 			
 			if (!Start && !Stop){
@@ -142,12 +152,15 @@ function ($, BaseSlideGenerator, Logger) {
 				videoId: videoID,
 				width: 800,
 				height: 600,
-				events: { onReady: function (event) { event.target.mute(); } }
+				events: { onReady: function (event) { event.target.mute(); self.status = 'playerReady';} }
 			  });
 			  
 			  // create a placeholder on the slide where the player will come
 			  var $placeholder = $('<div>'),
 				  slide = this.createBaseSlide('youtube', $placeholder, duration);
+				  
+			self.prepare();
+			
 			  // if the slide starts, move the player to the slide
 			  slide.once('started', function () {
 				// flag our state to make sure prepare doesn't pause the video
@@ -296,7 +309,6 @@ function ($, BaseSlideGenerator, Logger) {
     var resultCounter = startResults;
     $.ajax('https://gdata.youtube.com/feeds/api/videos?v=2&max-results=' + maxResult + '&orderby=' + self.orderMethod + '&alt=jsonc&q=' + self.topic.label + "&format=5")
      .success(function (response) {
-     logger.log("GOT SOME VIDS");
         var items, itemCount;
         if (response.data.items)
 			items = response.data.items;

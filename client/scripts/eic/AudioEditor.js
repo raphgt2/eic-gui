@@ -75,7 +75,10 @@ function($,Logger,SlidePresenter){
 		        }
 			}
 			else{
-				slide.once('newSlides', function(){
+				slide.on('newSlides', function(){
+					if (slide.audioURL=='')
+						return;
+						
 					if (plugintype=="Audio"){
 			             $('#playButtonGroup').html(
 			                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");

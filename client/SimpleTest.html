@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script data-main="scripts/main" src="scripts/lib/require.js" async></script>
+
+<link rel="stylesheet" href="stylesheets/bootstrap3.min.less" type="text/css" media="screen">
+<link rel="stylesheet" href="stylesheets/bootstrap-responsive.less" type="text/css" media="screen">
+    
+<!-- Customized Links -->
+<link rel="stylesheet" href="stylesheets/video_editor.css" type="text/css" media="screen">
+<link rel="stylesheet" href="stylesheets/cssSlides.css" type="text/css"/>
+<link rel="stylesheet" href="stylesheets/cssIndex.css" type="text/css"/>
+</head>
+<body>
+	<div id="body">
+<div id="videoEditor" class="fullWidth fullHeight">
+<div id="stepNavigator" class="stepNavigator">
+<button id="lastStep" type="button" class="floatLeft btn btn-default btn-sm redraw">Start Over</button>
+<button id="play-slide" type="button" class="floatRight btn btn-warning btn-sm" style="display: none;">Play Slide</button>
+<button id="play-button" type="button" class="floatRight btn btn-success btn-sm">Play Movie</button>
+</div>
+<div id="nodeNavBar" class="fullWidth height1 nodeNavBar">
+<!-- <ul class='nav nav-pills nav-justified'>
+<li class='active'><a href='#' class="nodeNavBarElem" id='node01'>NodeName#1</a></li>
+<li class=''><a href='#' class="nodeNavBarElem" id='node02'>NodeName#2</a></li>
+<li class=''><a href='#' class="nodeNavBarElem" id='node03'>NodeName#3</a></li>
+<li class=''><a href='#' class="nodeNavBarElem" id='node04'>NodeName#4</a></li>
+<li class=''><a href='#' class="nodeNavBarElem" id='node05'>NodeName#5</a></li>
+<li class=''><a href='#' class="nodeNavBarElem" id='node06'>NodeName#6</a></li>
+<li class=''><a href='#' class="nodeNavBarElem" id='node07'>NodeName#7</a></li>
+</ul> -->
+</div>
+
+<!-- <button id="generateVideoEditor" class="btn btn-primary">Video Editor</button> -->
+
+<div id="nodeElementOperation" class="nodeElementOperation">
+<!-- <div id="nodeElementEditing" class="nodeElementEditing">
+Node Element Editing
+</div> -->
+<div id="playButtonGroup" class="playButtonGroup">
+Play, Play All, Stop
+</div>
+<div id="moviePreview" class="moviePreview">
+<!-- Movie Preview -->
+<div id="frame"> </div>
+</div>
+<div id="audioDescriptionWrap" class="audioDescriptionWrap">
+<textarea class="textDescription" id="textDescription">
+</textarea>
+<div id="textDescriptionOperation" class="textDescriptionButtonGroup">
+<button id="editTestDescription" class="btn btn-primary btnOpt">Revert Text</button>
+</div>
+</div>
+</div>
+
+<div id="nodeElementBar" class="height2 nodeElementBar">
+<ul id="edit-list" class="nav nav-tabs">
+<li><a href="#" id="edit-imgs" class="btn-primary">Images</a></li>
+<li><a href="#" id="edit-vids">Videos</a></li>
+</ul>
+<div id="nodeElementContent" >
+<div class="element-list-wrap" id="img-element-list-wrap">
+<ul id="imgs" class="droptrue node-element-list">
+
+</ul>
+</div>
+<div class="element-list-wrap" id="vid-element-list-wrap">
+<ul id="vids" class="droptrue node-element-list">
+
+</ul>
+</div>
+</div>
+
+
+</div>
+
+<div id="slider-range-min" class="slideProgressBar"> </div>
+
+<div id="movieNavBarWrap" class="movieNavBarWrap">
+<ul id="movie-nav-bar" class="droptrue movie-nav-bar"> </ul>
+<!-- <div class="movieNavElementWrap btn btn-default">
+<img class="movieNavElement" src="../img/sample_video.jpg">
+</div>
+<div class="movieNavElementWrap btn btn-default">
+<img class="movieNavElement" src="../img/background.jpg">
+</div>
+<div class="movieNavElementWrap btn btn-default">
+<img class="movieNavElement" src="../img/sample_img.jpg">
+</div>
+<div class="movieNavElementWrap btn btn-default">
+<img class="movieNavElement" src="../img/stickyNotes.png">
+</div>
+<div class="movieNavElementWrap btn btn-default">
+<img class="movieNavElement" src="../img/sample_video.jpg">
+</div> -->
+</div>
+</div></div>
+</body>
+</html>
