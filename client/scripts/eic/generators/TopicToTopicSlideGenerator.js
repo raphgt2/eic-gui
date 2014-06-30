@@ -56,7 +56,7 @@ define(['lib/jquery',
 							self.ready=true;
 							self.emit('topic slides ready');									
 						})
-					},3000);   
+					},5000);   
                   });
               summ.summarize(this.path); 
               logger.log('Summarizer Test 1', summ);           

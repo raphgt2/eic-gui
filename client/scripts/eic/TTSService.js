@@ -14,7 +14,7 @@ function ($, Logger, EventEmitter, urls) {
 	if (navigator.userAgent.indexOf('MSIE') !=-1){
 		if (window.URL){
 			if (window.URL.createObjectURL)
-				urlType=1; //Since comparing strings is hard, let's use integers: 1=objectURL 2=normal URL 3=data:uri
+				urlType=1; //Since comparing strings is hard, let's use integers: 1=objectURL 2=normalURL 3=data:uri
 			else
 				urlType=2;
 		}
@@ -35,6 +35,7 @@ function ($, Logger, EventEmitter, urls) {
       EventEmitter.call(this);
       this.finished = false;
       this.attempt = 0;
+	  this.requests = [];
     }
 
     TTSService.prototype = {
@@ -45,6 +46,8 @@ function ($, Logger, EventEmitter, urls) {
         sendSpeech();
         
         function sendSpeech(){
+		
+			//Try to resend the request every 10 seconds, up to 4 times, in case a request gets lost or garbled
 			if (self.finished)
 			return;
 
@@ -56,18 +59,22 @@ function ($, Logger, EventEmitter, urls) {
 				self.emit('speechError', text);
 				return;
 			}
-
-			setTimeout(function(){	
+			
+			/** TODO: Find a way to cancel repetitive requests once one works so that we don't waste bandwidth...use timeout and/or abort? **/
+			/*setTimeout(function(){	
 				if (!self.finished){
 					self.attempt++;
 					sendSpeech(self.attempt);
 				}
-			},10000);
+			},15000);*/
 
 			$.ajax({
-				url: urls.festivalspeech,
+				beforeSend: function (xhr){
+					self.requests[self.attempt] = xhr;
+				},
+				url: urls.festivalspeech,	
 				type: 'GET',
-				data: { req_text: text},
+				data: { req_text: text, url_type: urlType, id: self.attempt},
 				dataType: 'jsonp',
 				success: function (data) {
 					
@@ -79,7 +86,7 @@ function ($, Logger, EventEmitter, urls) {
 						if (!data.text){
 							if (self.attempt>=4){
 								if (!self.finished){
-									logger.log('Error receiving speech1', data);
+									logger.log('Error receiving speech', data);
 									self.emit('speechError', data);
 								}
 							}
@@ -93,6 +100,23 @@ function ($, Logger, EventEmitter, urls) {
 						}
 						
 						self.finished = true;
+						
+						//Abort all other requests that may be processing in order to avoid wasting bandwidth by downloading the same thing multiple times
+						var i;
+						for (i=1; i<self.attempt; i++){
+							if (i==data.id)
+								continue;
+							
+							if (self.requests[i]){
+								logger.log("ABORTING FOR " + text);
+								try{
+									self.requests[i].abort();
+								}
+								catch(e){
+									logger.log("Tried to abort the finished request atttempt " + i + "?");
+								}
+							}
+						}
 					
 						if (urlType==3) //data:uri method
 							data.snd_url+=data.text;

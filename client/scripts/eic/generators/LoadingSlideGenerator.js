@@ -27,7 +27,7 @@ function ($, Logger, BaseSlideGenerator) {
 
       logger.log('Still waiting');
       var $title = $('<h1>').text("Loading your personal movie…"),
-          slide = this.createBaseSlide('title', $title, 500);
+          slide = this.createBaseSlide('title', $title, 1000);
 
       return slide;
     },

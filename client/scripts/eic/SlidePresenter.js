@@ -40,6 +40,11 @@ var audioContainer = new WAVPlayer();
       function loadNext() {
         // if slides are available, load them
         if (self.generator.hasNext()) {
+		
+			//Don't pointlessly remove and reinsert the loading slide...it may show double words
+			if (self.generator.waiting)
+				return;
+		
           logger.log('Loading new slide');
           nextSlide = self.generator.next();
  
@@ -71,7 +76,7 @@ var audioContainer = new WAVPlayer();
  
         // start next slide
         self.$container.prepend(nextSlide.$element);
-        logger.log(nextSlide);
+        //logger.log(nextSlide);
         nextSlide.start();
  
         // stop the previous slide

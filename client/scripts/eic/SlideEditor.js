@@ -354,7 +354,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     			
 	      		logger.log("Play Button Click", self._hash);
 	          	//console.log("Play Button Click Test II: ", self._hash);
-	          	//$('#body').html('');
+	          	$('#ytholder').html('');
 	          	self.restoreCurrentNode(self._curIndex);
 	          	$('#screen').remove();
 	          	$('#editor').css('display', 'none');

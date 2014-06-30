@@ -62,7 +62,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic));
 
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-		if (this.topicToTopic.ready){
+		/*if (this.topicToTopic.ready){
 			logger.log("New hash: " + this.path);
 			new SlidePresenter($slides, generator).start();
 		}
@@ -71,7 +71,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 				logger.log("New hash: " + this.path);
 				new SlidePresenter($slides, generator).start();				
 			});
-		}
+		}*/
+		
+		//Go straight to "playing" so that the loading slide shows
+		new SlidePresenter($slides, generator).start();
 
     }};
 

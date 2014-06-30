@@ -73,6 +73,28 @@ function($,Logger,SlidePresenter){
 		             $('#playButtonGroup').html(
 		                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
 		        }
+				
+				slide.on('newSlides', function(){
+					if (slide.audioURL=='')
+						return;
+						
+					if (plugintype=="Audio"){
+			             $('#playButtonGroup').html(
+			                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
+			        }
+			        else if (plugintype=="QuickTime"){
+			             $('#playButtonGroup').html(
+			                "<embed id='audioPlayer' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
+			        }
+			        else if (plugintype=="Windows Media"){
+			             $('#playButtonGroup').html(
+			                "<embed id='audioPlayer' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
+			        }
+			        else if (plugintype=="VLC"){
+			             $('#playButtonGroup').html(
+			                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
+			        }	
+				});
 			}
 			else{
 				slide.on('newSlides', function(){

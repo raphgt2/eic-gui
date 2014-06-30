@@ -50,7 +50,8 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/PiecesUI'],
 
           var slide = this.createBaseSlide('titleSlide', $title, this.duration);
 
-          var pieceWidth = ($('#moviePreview').width())*0.28;
+          //var pieceWidth = ($('#moviePreview').width())*0.28;
+		  var pieceWidth = 350;
           var labels = [
             this.topic.previous || '',
             this.topic.label
@@ -110,7 +111,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/PiecesUI'],
 
           var slide = this.createBaseSlide('titleSlide', $title, this.duration);
 
-          var pieceWidth = 350;
+          var pieceWidth = ($('#moviePreview').width())*0.28;
           var labels = [
             this.topic.previous || '',
             this.topic.label

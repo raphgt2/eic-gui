@@ -55,7 +55,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					switch (this.topic.type) {
 					case "http://dbpedia.org/ontology/PopulatedPlace":
 						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
-						this.addGenerator(new YouTubeSlideGenerator(this.topic), true);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic, true), true);
 						this.addGenerator(new GoogleMapsSlideGenerator(this.topic), true);
 						break;
 					default:
@@ -98,7 +98,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			switch (this.topic.type) {
 			case "http://dbpedia.org/ontology/PopulatedPlace":
 				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-				this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+				this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
 				this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
 				break;
 			default:
@@ -107,45 +107,54 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				break;
 			}
 		  }
+		
+			if (!self.hash_object.audioURL){
+				var tts = new ttsservice();
+				tts.once('speechready', function (event, data) {
+					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
+					if (self.audiourl!='')
+						return;
+						
+					self.durationleft = math.floor(data.snd_time);
+					//add extra time because ie definitely needs a plugin, which takes time to embed
+					if (navigator.useragent.indexof('msie') !=-1)
+						self.durationleft +=5000;
+						
+					self.hash_object.audio_time = self.durationleft;
+						
+					self.audioURL = data.snd_url;
+					logger.log('received speech for topic', self.topic.label);
+					self.ready=true;
+					// when speech is received, 'remind' the presenter that the slides are ready
+					self.emit('newslides');
+				});
 
-          var tts = new TTSService();
-          tts.once('speechReady', function (event, data) {
-			//Since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
-				if (self.audioURL!='')
-					return;
+				//fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
+				tts.once('speecherror', function(event, data){
+					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
+					if (self.audiourl!='')
+						return;
+						
+					self.durationleft = 10000;
+					self.hash_object.audio_time = self.durationleft;
 					
-            self.durationLeft = Math.floor(data.snd_time);
-            //Add extra time because IE definitely needs a plugin, which takes time to embed
-            if (navigator.userAgent.indexOf('MSIE') !=-1)
-				self.durationLeft +=5000;
-				
-			self.hash_object.audio_time = self.durationLeft;
-				
-            self.audioURL = data.snd_url;
-            logger.log('Received speech for topic', self.topic.label);
-            self.ready=true;
-            // When speech is received, 'remind' the presenter that the slides are ready
-            self.emit('newSlides');
-          });
-          
-          //Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
-			tts.once('speechError', function(event, data){
-				//Since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
-				if (self.audioURL!='')
-					return;
-					
-				self.durationLeft = 5000;
-				self.hash_object.audio_time = self.durationLeft;
-				
-				self.audioURL = null;
-				logger.log('Failed to receive speech for topic', self.topic.label);
+					self.audioURL = null;
+					logger.log('failed to receive speech for topic', self.topic.label);
+					self.ready=true;
+					// when speech is received, 'remind' the presenter that the slides are ready
+					self.emit('newslides');
+				});
+
+				logger.log('getting speech for topic', this.topic.label);
+				tts.getspeech(this.hash_object.audio_text, 'en_gb');
+			}
+			else{
+				self.durationLeft = self.hash_object.audio_time;
+				self.audioURL = self.hash_object.audioURL;
+				logger.log('audioURL found for topic', self.topic.label);
 				self.ready=true;
-				// When speech is received, 'remind' the presenter that the slides are ready
-				self.emit('newSlides');
-			});
-          
-          logger.log('Getting speech for topic', this.topic.label);
-          tts.getSpeech(this.hash_object.audio_text, 'en_GB');
+				self.emit('newslides');
+			}
 
           this.inited = true;
         },

@@ -50,7 +50,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           switch (this.topic.type) {
           case "http://dbpedia.org/ontology/PopulatedPlace":
             this.addCutomGenerator(new GoogleImageSlideGenerator(this.topic), false, "img");
-            this.addCustomGenerator(new YouTubeSlideGenerator(this.topic), false, "vid");
+            this.addCustomGenerator(new YouTubeSlideGenerator(this.topic, false), false, "vid");
             this.addCustomGenerator(new GoogleMapsSlideGenerator(this.topic), false, "img");
             break;
           default:
@@ -66,10 +66,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             //Add extra time because IE definitely needs a plugin, which takes time to embed
             if (navigator.userAgent.indexOf('MSIE') !=-1)
 				self.durationLeft +=5000;
-				
-			self.hash_object.audio_time = self.durationLeft;
-				
+						
             self.audioURL = data.snd_url;
+			
+			self.hash_object.audio_time = self.durationLeft;
+			self.hash_object.audioURL = self.audioURL;
+			
             logger.log('Received speech for topic', self.topic.label);
             self.ready=true;
             self.audio=true;
@@ -126,9 +128,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				if (navigator.userAgent.indexOf('MSIE') !=-1)
 					self.durationLeft +=5000;
 					
-				self.hash_object.audio_time = self.durationLeft;
-				
 				self.audioURL = data.snd_url;
+				
+				self.hash_object.audio_time = self.durationLeft;
+				self.hash_object.audioURL = self.audioURL;				
+				
 				logger.log('Received speech for topic', self.topic.label);
 				self.ready=true;
 				self.audio=true;
@@ -155,7 +159,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		},
         
         prepare: function () {
-          this.curSlide = new TitleSlideGenerator(this.topic).next();
+          this.curSlide = new TitleSlideGenerator(this.topic).demo();
           this.curSlide.audioURL = this.audioURL;
 
           // prepare other generators
