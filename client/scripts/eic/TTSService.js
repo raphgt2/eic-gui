@@ -53,7 +53,7 @@ function ($, Logger, EventEmitter, urls) {
 
 			self.attempt++;
 
-			if (self.attempt>=5){
+			if (self.attempt>=3){
 				self.finished = true;
 				logger.log('Error receiving speech (timed out)', text);
 				self.emit('speechError', text);
@@ -61,12 +61,12 @@ function ($, Logger, EventEmitter, urls) {
 			}
 			
 			/** TODO: Find a way to cancel repetitive requests once one works so that we don't waste bandwidth...use timeout and/or abort? **/
-			/*setTimeout(function(){	
+			setTimeout(function(){	
 				if (!self.finished){
 					self.attempt++;
 					sendSpeech(self.attempt);
 				}
-			},15000);*/
+			},15000);
 
 			$.ajax({
 				beforeSend: function (xhr){
@@ -84,7 +84,7 @@ function ($, Logger, EventEmitter, urls) {
 					if (data.res === 'OK') {
 						
 						if (!data.text){
-							if (self.attempt>=4){
+							if (self.attempt>=2){
 								if (!self.finished){
 									logger.log('Error receiving speech', data);
 									self.emit('speechError', data);
@@ -141,7 +141,7 @@ function ($, Logger, EventEmitter, urls) {
 								self.emit('speechError',data);
 							}
 						}
-						else if (self.attempt>=4){
+						else if (self.attempt>=2){
 							if (!self.finished){
 								logger.log('Error receiving speech1', data);
 								self.emit('speechError', data);
@@ -159,7 +159,7 @@ function ($, Logger, EventEmitter, urls) {
 					if (self.finished)
 						return;
 						
-					if (self.attempt>=4){
+					if (self.attempt>=2){
 						if (!self.finished){
 							logger.log('Error receiving speech2', error);
 							self.emit('speechError', error);

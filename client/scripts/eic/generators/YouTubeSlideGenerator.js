@@ -41,6 +41,9 @@ function ($, BaseSlideGenerator, Logger) {
     this.orderMethod = options.orderMethod || 'relevance';
     this.totalDuration = 0;
     this.slides = [];
+	this.ready = false;
+	this.prepCalled = false;
+	
   }
 
   $.extend(YouTubeSlideGenerator.prototype,
@@ -78,38 +81,69 @@ function ($, BaseSlideGenerator, Logger) {
     
     /** Prepare video by playing and pausing it, in order to prebuffer its contents. */
     prepare: function () {
-      var self = this, player = self.player;
+		var self = this, player = self.player;
+		var waiting=true;
+	
+		//avoid preloading the video twice
+		if (this.prepCalled){
+			logger.log("apparently prepared was already called");
+			checkIfBuffered();
+			return;
+		}	
+		else{
+			this.prepCalled = true;
+		}
+	
+		if (player && player.playVideo){
+			preload()
+		}
+		else{
+			self.once("playerReady", function(){
+				preload();
+				//Only allow for up to 10 seconds of stalling on the preload
+				setTimeout(function(){
+					waiting=false;
+				}, 10000)
+			});
+		}
       
-      // if we did not start preparations yet, and the player object is ready
-      if (player && player.playVideo) {
-        // start preparing by playing the video
-        self.status = "preparing";
-        player.playVideo();
-        
-        // as soon as the video plays, pause it (give it 0.2 seconds to actually register the fact that it had started playing?)...
-        player.addEventListener('onStateChange', function () {
-          // ...but only if we're still in preparation mode (and not playing for real)
-          if (self.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING)
-            setTimeout(function(){
-				if (self.status === "preparing")
-					player.pauseVideo();}, 200);
-        });
-      }
-	  else{
-		self.once('playerReady', function(){
-			if (self.status != "stopped"){
+	  
+		function preload(){			
+			// if we did not start preparations yet, and the player object is ready
+			if (player && player.playVideo) {
+				// start preparing by playing the video
+				self.status = "preparing";
 				player.playVideo();
+				
 				// as soon as the video plays, pause it (give it 0.2 seconds to actually register the fact that it had started playing?)...
 				player.addEventListener('onStateChange', function () {
-				  // ...but only if we're still in preparation mode (and not playing for real)
-				  if (self.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING)
-					setTimeout(function(){
-						if (self.status === "preparing")
-							player.pauseVideo();}, 200);
+					// ...but only if we're still in preparation mode (and not playing for real)
+					if (self.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
+						setTimeout(function(){
+							if (self.status === "preparing"){
+								player.pauseVideo();
+								checkIfBuffered();
+							}
+						}, 200);
+					}
 				});
 			}
-		});
-	  }
+			else{
+				setTimeout(function(){preload()},1000);
+			}
+		}
+	  
+		function checkIfBuffered(){
+			if (waiting && player.getVideoLoadedFraction() < player.end/player.getDuration()){
+				window.setTimeout(function(){checkIfBuffered()}, 1000);
+			}
+			else{
+				self.ready = true;
+				logger.log("finished waiting on youtube for " + self.topic.label);
+				self.emit("prepared");
+			}
+		}
+	  
     },
 
     /** Adds a new video slide. */
@@ -180,9 +214,9 @@ function ($, BaseSlideGenerator, Logger) {
 				events: { 
 					onReady: function (event) { 
 						event.target.mute(); 
+						player.end = end/1000;
 						self.emit('playerReady');
 						if (self.preload){
-							//player.cueVideoById(videoID, start/1000, 'large'); 
 							self.prepare();
 						}
 					}

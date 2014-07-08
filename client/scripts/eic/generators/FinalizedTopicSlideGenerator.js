@@ -24,11 +24,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.durationLeft = 0;
       this.audioURL ='';
       this.ready=false;
+	  this.slidesReady=false;
       
       //stuff
-      this.curSlide = -1;
       this.slides = [];
       this.firstSlide = new TitleSlideGenerator(this.topic);
+	  
+	  
     }
 
     $.extend(FinalizedTopicSlideGenerator.prototype,
@@ -60,7 +62,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						break;
 					default:
 						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
-						this.addGenerator(new YouTubeSlideGenerator(this.topic), true);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic, true), true);
 						break;
 					}
 			  }			  
@@ -79,7 +81,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						
 						break;
 					  case "YouTubeSlide":
-						slide = new YouTubeSlideGenerator(self.topic);
+						slide = new YouTubeSlideGenerator(self.topic, true);
 						self.addGenerator(slide,true);
 						
 						slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
@@ -103,13 +105,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				break;
 			default:
 				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-				this.addGenerator(new YouTubeSlideGenerator(this.topic), false);
+				this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
 				break;
 			}
 		  }
 		
 			if (!self.hash_object.audioURL){
-				var tts = new ttsservice();
+				var tts = new TTSService();
 				tts.once('speechready', function (event, data) {
 					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
 					if (self.audiourl!='')
@@ -124,9 +126,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						
 					self.audioURL = data.snd_url;
 					logger.log('received speech for topic', self.topic.label);
-					self.ready=true;
-					// when speech is received, 'remind' the presenter that the slides are ready
-					self.emit('newslides');
+					
+					//After audio is ready, check that media slides have finished preparing
+					self.waitforReady(0,function(){
+						self.ready=true;
+						self.emit('newSlides');									
+					})
 				});
 
 				//fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
@@ -140,24 +145,54 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					
 					self.audioURL = null;
 					logger.log('failed to receive speech for topic', self.topic.label);
-					self.ready=true;
-					// when speech is received, 'remind' the presenter that the slides are ready
-					self.emit('newslides');
+					
+					//After audio is ready, check that media slides have finished preparing
+					self.waitforReady(0,function(){
+						self.ready=true;
+						self.emit('newSlides');									
+					})
 				});
 
 				logger.log('getting speech for topic', this.topic.label);
-				tts.getspeech(this.hash_object.audio_text, 'en_gb');
+				tts.getSpeech(this.hash_object.audio_text, 'en_gb');
 			}
 			else{
 				self.durationLeft = self.hash_object.audio_time;
 				self.audioURL = self.hash_object.audioURL;
 				logger.log('audioURL found for topic', self.topic.label);
-				self.ready=true;
-				self.emit('newslides');
+					
+				//After audio is ready, check that media slides have finished preparing
+				self.waitforReady(0,function(){
+					self.ready=true;
+					self.emit('newSlides');									
+				})
 			}
 
           this.inited = true;
         },
+		
+		waitforReady: function(i,callback){
+			var self=this;
+			if (i>this.generators.length){
+				i++;
+				callback();
+				return;
+			}			
+			if (!this.generators[i])	{ //Check the slideGenerator exists
+				i++;
+				this.waitforReady(i,callback);
+			}
+			else if (this.generators[i].ready){
+				i++;
+				this.waitforReady(i,callback);
+			}
+			else{
+				this.generators[i].once('prepared', function(){
+					i++; 
+					self.waitforReady(i,callback);
+				});
+			}
+		},
         
         next: function () {
           var slide;
@@ -168,7 +203,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			slide.audioURL = this.audioURL;
 
             // prepare other generators
-            this.generators.forEach(function (g) { g.prepare(); });
+            //this.generators.forEach(function (g) { g.prepare(); });
 
             this.first = false;
 
@@ -277,11 +312,9 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		},
 		
 		prepare: function () {
-          //this.curSlide = this.firstSlide;
-          //this.curSlide.audioURL = this.audioURL;
 
           // prepare other generators
-          this.generators.forEach(function (g) { g.prepare(); });
+          //this.generators.forEach(function (g) { g.prepare(); });
 
           //add all the slides for each generator
           for(var val in this.generatorsHash){
@@ -294,30 +327,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           }
           	
           logger.log('Added slides on ', this.topic.label);
-        },
-        
-        currentSlide: function (){
-			if (this.curSlide>=0)
-				return this.slides[this.curSlide];
-			else
-				return this.firstSlide.demo();
-		},
-        
-        nextSlide: function () {
-        	this.curSlide++;
-        },
-        
-        getSlides: function() {
-        	return this.slides;
-        },
-        
-        setCurSlide: function (slide) {
-        	this.curSlide = slide;	
-        },
-        
-        getTest: function () {
-        	return this.testSlides;
-        }
+        }        
       });
     return FinalizedTopicSlideGenerator;
   });

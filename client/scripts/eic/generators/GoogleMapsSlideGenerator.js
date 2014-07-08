@@ -22,6 +22,7 @@ function ($, BaseSlideGenerator) {
       topic = { label: topic };
     
     this.topic = topic;
+	this.ready=true;
   }
 
   $.extend(GoogleMapsSlideGenerator.prototype,

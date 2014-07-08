@@ -45,7 +45,7 @@ var audioContainer = new WAVPlayer();
 			if (self.generator.waiting)
 				return;
 		
-          logger.log('Loading new slide');
+          //logger.log('Loading new slide');
           nextSlide = self.generator.next();
  
           // If the next has audio, but playback is still going on
@@ -64,7 +64,7 @@ var audioContainer = new WAVPlayer();
       }
  
       function showNext() {
-        logger.log('Showing next slide');
+        //logger.log('Showing next slide');
         // remove children that are still transitioning out
         self.$container.children('.transition-out').remove();
         // start the transition of other children

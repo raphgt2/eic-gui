@@ -30,6 +30,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
       this.maxResults = maxResults || 8;
       this.slides = [];
       this.cnt = 0;
+	  this.ready=true;
     }
 
     $.extend(GoogleImageSlideGenerator.prototype,

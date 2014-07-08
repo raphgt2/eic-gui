@@ -24,6 +24,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/PiecesUI'],
 
       this.topic = topic;
       this.duration = duration || defaultDuration;
+	  this.ready = false;
     }
 
     $.extend(TitleSlideGenerator.prototype,

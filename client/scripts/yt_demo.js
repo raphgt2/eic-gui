@@ -38,14 +38,30 @@
 
   require(['eic/generators/YouTubeSlideGenerator'], function (YouTubeSlideGenerator) {
 	var slide;
-	$('#Go').click(function() {
+	$('#Load').click(function() {
 		slide = new YouTubeSlideGenerator("Los angeles", true);						
 		slide.addVideoSlide("fCrD15VKgr0", 5000, 10000, 15000);
 	});
 	
 	$('#Play').click(function(){
-		var nextSlide = slide.next();
-		nextSlide.start();
+		var nextSlide;
+		if (!slide.ready){
+			console.log("Waiting on buffer");
+			slide.once("prepared", function(){
+				nextSlide = slide.next();
+				nextSlide.start();
+			});
+		}
+		else{
+			nextSlide = slide.next();
+			nextSlide.start();
+		}
+		
+	});
+	
+	$('#Check').click(function(){
+		$('#result').html('');
+		$('#result').html(slide.player.getVideoLoadedFraction());
 	});
   });	
 })(requirejs);
