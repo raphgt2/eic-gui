@@ -53,14 +53,14 @@
                 	document.getElementById('subject').innerHTML = path.source.name;
                 	document.getElementById('object').innerHTML = path.destination.name;
                 	var controller = new PresentationController(path, false, false);
-					var view = new PiecesUI(controller);
-					view.initControls();
+					controller.playMovie();
                 }
            });         
 		});
 
 					
         $("#play-button").click(function(){
+			$('#ytholder').html('');
 			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
 			validate(5);
 			//answer[0] = 0; answer[1] = 0; answer[2] = 0; answer[3] = 0;

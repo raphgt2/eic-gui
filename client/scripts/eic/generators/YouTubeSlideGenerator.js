@@ -238,6 +238,13 @@ function ($, BaseSlideGenerator, Logger) {
 							self.prepareVid(temp);
 						}
 					}
+					onError: function(event){
+						event.target.mute();
+						self.ready = true;
+						self.totalDuration = 0;
+						logger.log("Error loading video for topic", self.topic.label);
+						self.emit("prepared");					
+					}
 				}
 			});
 
@@ -255,12 +262,12 @@ function ($, BaseSlideGenerator, Logger) {
 				var offset = $placeholder.offset();
 
 				//Avoid playVideo errors by making sure the player is ready...
-				if (player.playVideo){
+				if (player && player.playVideo){
 					player.playVideo();
 				}
 				else{
 					self.once('playerReady', function(){
-						if (self.status == "started")
+						if (self.status == "started" && player.playVideo)
 							player.playVideo();
 					});
 				}
@@ -279,7 +286,7 @@ function ($, BaseSlideGenerator, Logger) {
 			slide.once('stopped', function () {
 				self.status = "stopped";
 				$container.fadeOut(function () {
-					if (scriptFlag)
+					if (player && player.stopVideo)
 						player.stopVideo();
 					
 					$container.remove();
@@ -294,7 +301,7 @@ function ($, BaseSlideGenerator, Logger) {
 					end: end,
 					duration: duration,  
 				},
-				playerID: playerId
+				playerID: playerId,
 			};
 
 			self.slides.push(slide);
