@@ -1,8 +1,8 @@
 /*!
- * EIC LoadingSlideGenerator
- * Copyright 2012, Multimedia Lab - Ghent University - iMinds
- * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
- */
+* EIC LoadingSlideGenerator
+* Copyright 2012, Multimedia Lab - Ghent University - iMinds
+* Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
+*/
 define(['lib/jquery', 'eic/Logger', 'eic/generators/BaseSlideGenerator'],
 function ($, Logger, BaseSlideGenerator) {
   "use strict";
@@ -27,7 +27,7 @@ function ($, Logger, BaseSlideGenerator) {
 
       //logger.log('Still waiting');
       var $title = $('<h1>').text("Loading your personal movie…"),
-          slide = this.createBaseSlide('title', $title, 1000);
+          slide = this.createBaseSlide('title', $title, 500);
 
       return slide;
     },

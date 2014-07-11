@@ -3,11 +3,11 @@
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
-define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
+define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/LoadingSlideGenerator',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/TopicToTopicSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator2', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/SlidePresenter', 'eic/TopicSelector', 'config/URLs'],
-  function ($, Logger, FacebookConnector,
+  function ($, Logger, FacebookConnector, LoadingSlideGenerator,
     IntroductionSlideGenerator, OutroductionSlideGenerator, TopicToTopicSlideGenerator,
     TopicToTopicSlideGenerator2, CompositeSlideGenerator,
     ErrorSlideGenerator, SlidePresenter, TopicSelector, urls) {
@@ -52,16 +52,20 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		this.startTopic=this.path.source;
 		this.endTopic=this.path.destination;
 		
+		var loader = new LoadingSlideGenerator()
+		generator.addGenerator(loader);
+		
 		if (this.intro)
 			generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
-		this.topicToTopic = new TopicToTopicSlideGenerator(this.path)
+		this.topicToTopic = new TopicToTopicSlideGenerator(this.path, loader)
 		generator.addGenerator(this.topicToTopic);
+		logger.log(this.topicToTopic);
 		
 		if (this.outro)
 			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic));
 
-		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
+		//To prevent any slide-skipping, don't go into playback mode until all slides are at least done (waiting on topic slide audio)   
 		/*if (this.topicToTopic.ready){
 			logger.log("New hash: " + this.path);
 			new SlidePresenter($slides, generator).start();

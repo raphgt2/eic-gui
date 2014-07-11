@@ -163,7 +163,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           this.curSlide.audioURL = this.audioURL;
 
           // prepare other generators
-          this.generators.forEach(function (g) { g.prepare(); });
+          //this.generators.forEach(function (g) { g.prepare(); });
 
           //add all the slides for each generator
           for(var val in this.generatorsHash){

@@ -47,6 +47,14 @@ function ($, Logger, EventEmitter, urls) {
         
         function sendSpeech(){
 		
+			if (text.length==0){
+				self.finished = true;
+				logger.log('Empty request', text);
+				self.emit('speechReady', text);
+				return;
+			}
+				
+		
 			//Try to resend the request every 10 seconds, up to 4 times, in case a request gets lost or garbled
 			if (self.finished)
 			return;
@@ -54,7 +62,6 @@ function ($, Logger, EventEmitter, urls) {
 			self.attempt++;
 
 			if (self.attempt>=3){
-				self.finished = true;
 				logger.log('Error receiving speech (timed out)', text);
 				self.emit('speechError', text);
 				return;

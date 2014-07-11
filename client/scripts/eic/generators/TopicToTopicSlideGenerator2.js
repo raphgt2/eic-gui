@@ -48,10 +48,13 @@ define(['lib/jquery',
                     
 			        setTimeout(function(){						
 						self.waitforReady(0,function(){
-							for (var i=0; i<self.generators.length; i++){
+							//for (var i=0; i<self.generators.length; i++){
 								//if (self.generators[i].topic)
 									//self.generators[i].updateHash();
-							}
+							//}
+							if (self.ready)
+								return;
+								
 							self.loader.stopWaiting();
 							self.ready=true;
 							self.emit('topic slides ready');									
@@ -59,7 +62,7 @@ define(['lib/jquery',
 					},3000);   
                   });
               summ.summarize(this.path);            
-              logger.log('Summarizer Test 2', summ);
+              //logger.log('Summarizer Test 2', summ);
               this.initedEnd = true;
             }
             

@@ -1,6 +1,3 @@
-/**
- * @author Dipa
- */
 define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
   'eic/generators/CompositeSlideGenerator', 'eic/generators/GoogleImageSlideGenerator',
   'eic/generators/GoogleMapsSlideGenerator', 'eic/generators/TitleSlideGenerator', 'eic/generators/YouTubeSlideGenerator'],
@@ -24,7 +21,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.durationLeft = 0;
       this.audioURL ='';
       this.ready=false;
-	  this.slidesReady=false;
       
       //stuff
       this.slides = [];
@@ -46,14 +42,30 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
         /** Initialize all child generators. */
         init: function () {
-          if (this.inited)
-            return;
+			if (this.inited)
+				return;
 		
-		var self  = this;
-		  if (this.hash_object.slide_description) {
-			  logger.log("slide description found", this.hash_object.slide_description);
-			  if (this.hash_object.slide_description.length == 0){
-				  //Create all generators depending on the type of the topic; suppress inits b/c we're not doing a search for vids/images
+			var self  = this;
+			if (!self.hash_object.slide_description) {
+				//Create all generators depending on the type of the topic
+				logger.log("no slide description found, going to default");
+
+				switch (this.topic.type) {
+				case "http://dbpedia.org/ontology/PopulatedPlace":
+					this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
+					this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
+					this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
+					break;
+				default:
+					this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
+					this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
+					break;
+				}
+			}
+			else{
+				logger.log("slide description found", this.hash_object.slide_description);
+				if (this.hash_object.slide_description.length == 0){
+					//Create all generators depending on the type of the topic; suppress inits b/c we're not doing a search for vids/images
 					switch (this.topic.type) {
 					case "http://dbpedia.org/ontology/PopulatedPlace":
 						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
@@ -65,49 +77,35 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						this.addGenerator(new YouTubeSlideGenerator(this.topic, true), true);
 						break;
 					}
-			  }			  
-			  this.hash_object.slide_description.forEach(function(description){
-				  var slide;
-				  switch(description.type){
-					  case "GoogleImageSlide":
-						slide = new GoogleImageSlideGenerator(self.topic);
-						var image = new Image();
-						$(image).load(function () {
-							// add the image if it loads and we still need slides
-							slide.addImageSlide(image.src, description.data.duration);
-						});
-						image.src = description.data.url;		
-						self.addGenerator(slide,true);
-						
-						break;
-					  case "YouTubeSlide":
-						slide = new YouTubeSlideGenerator(self.topic, true);
-						self.addGenerator(slide,true);
-						
-						slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
-						
-						break;
-					  /*case "GoogleMapSlide":
-						break;					*/
-				  }
-				  
-			  });
-		  }
-		  else{
-			//Create all generators depending on the type of the topic
-			logger.log("no slide description found, going to default");
+				}
+				else{			  
+					this.hash_object.slide_description.forEach(function(description){
+						var slide;
+						switch(description.type){
+							case "GoogleImageSlide":
+								slide = new GoogleImageSlideGenerator(self.topic);
+								var image = new Image();
+								$(image).load(function () {
+									// add the image if it loads and we still need slides
+									slide.addImageSlide(image.src, description.data.duration);
+								});
+								image.src = description.data.url;		
+								self.addGenerator(slide,true);
+
+								break;
+							case "YouTubeSlide":
+								slide = new YouTubeSlideGenerator(self.topic, true);
+								self.addGenerator(slide,true);
+
+								slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
+
+								break;
+							/*case "GoogleMapSlide":
+							break;					*/
+						}
+					});
+				}
 			
-			switch (this.topic.type) {
-			case "http://dbpedia.org/ontology/PopulatedPlace":
-				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-				this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
-				this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
-				break;
-			default:
-				this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-				this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
-				break;
-			}
 		  }
 		
 			if (!self.hash_object.audioURL){
@@ -127,11 +125,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					self.audioURL = data.snd_url;
 					logger.log('received speech for topic', self.topic.label);
 					
-					//After audio is ready, check that media slides have finished preparing
-					self.waitforReady(0,function(){
-						self.ready=true;
-						self.emit('newSlides');									
-					})
+					//After audio is ready, check that media slides have finished preparing. Also give 5 seconds for the slides to be added into the generator
+					setTimeout(function(){		
+						self.waitforReady(0,function(){
+							self.ready=true;
+							self.emit('newSlides');									
+						})
+					}, 3000);
 				});
 
 				//fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
@@ -146,11 +146,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					self.audioURL = null;
 					logger.log('failed to receive speech for topic', self.topic.label);
 					
-					//After audio is ready, check that media slides have finished preparing
-					self.waitforReady(0,function(){
-						self.ready=true;
-						self.emit('newSlides');									
-					})
+					//After audio is ready, check that media slides have finished preparing. Also give 3 seconds for the slides to be added into the generator
+					setTimeout(function(){		
+						self.waitforReady(0,function(){
+							self.ready=true;
+							self.emit('newSlides');									
+						})
+					}, 3000);
 				});
 
 				logger.log('getting speech for topic', this.topic.label);
@@ -161,11 +163,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				self.audioURL = self.hash_object.audioURL;
 				logger.log('audioURL found for topic', self.topic.label);
 					
-				//After audio is ready, check that media slides have finished preparing
-				self.waitforReady(0,function(){
-					self.ready=true;
-					self.emit('newSlides');									
-				})
+				//After audio is ready, check that media slides have finished preparing. Also give 3 seconds for the slides to be added into the generator
+				setTimeout(function(){		
+					self.waitforReady(0,function(){
+						self.ready=true;
+						self.emit('newSlides');									
+					})
+				}, 3000);
 			}
 
           this.inited = true;

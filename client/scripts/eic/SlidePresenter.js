@@ -1,30 +1,32 @@
 /*!
- * EIC SlidePresenter
- * Copyright 2012, Multimedia Lab - Ghent University - iMinds
- * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
- */
+* EIC SlidePresenter
+* Copyright 2012, Multimedia Lab - Ghent University - iMinds
+* Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
+*/
 define(['lib/jquery', 'eic/Logger', 'eic/WAVPlayer'], function ($, Logger, WAVPlayer) {
   "use strict";
   var logger = new Logger("SlidePresenter");
  
   // Init jPlayer
-/*  var $audioContainer = $('<div>').addClass('audio').appendTo($('body'));
-  $audioContainer.jPlayer({
-    errorAlerts: true,
-    swfPath: urls.jplayerSWF,
-    supplied: "mp3",
-    wmode: "window"
-  });
+/* var $audioContainer = $('<div>').addClass('audio').appendTo($('body'));
+$audioContainer.jPlayer({
+errorAlerts: true,
+swfPath: urls.jplayerSWF,
+supplied: "mp3",
+wmode: "window"
+});
 */
  
 var audioContainer = new WAVPlayer();
   /*
-   * CLEANUP
-   **/
+* CLEANUP
+**/
  
   function SlidePresenter(container, generator) {
     this.$container = $(container);
     this.generator = generator;
+	logger.log(generator.generators.length);
+	logger.log(generator);
   }
  
   SlidePresenter.prototype = {
@@ -40,11 +42,6 @@ var audioContainer = new WAVPlayer();
       function loadNext() {
         // if slides are available, load them
         if (self.generator.hasNext()) {
-		
-			//Don't pointlessly remove and reinsert the loading slide...it may show double words
-			if (self.generator.waiting)
-				return;
-		
           //logger.log('Loading new slide');
           nextSlide = self.generator.next();
  

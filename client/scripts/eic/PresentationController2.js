@@ -54,12 +54,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
 		
 		if (this.topicToTopic.ready){
-			logger.log("New hash: " + self.path);
+			logger.log("New hash: ", self.path);
 			self.emit('slide_generation_finished')
 		}
 		else{
 			this.topicToTopic.once('topic slides ready', function(){
-				logger.log("New hash: " + self.path); 
+				self.topicToTopic.removeAllListeners('topic slidesready');
+				logger.log("New hash: ", self.path); 
 				self.emit('slide_generation_finished');
 			});
 		}

@@ -37,31 +37,33 @@
   });
 
   require(['eic/generators/YouTubeSlideGenerator'], function (YouTubeSlideGenerator) {
-	var slide;
+	var generator, slide;
 	$('#Load').click(function() {
-		slide = new YouTubeSlideGenerator("Los angeles", true);						
-		slide.addVideoSlide("fCrD15VKgr0", 5000, 10000, 15000);
+		generator = new YouTubeSlideGenerator({label: "Picasso", uri: "blah"}, true);						
+		generator.addVideoSlide("fCrD15VKgr0", 5000, 10000, 15000);
+		generator.addVideoSlide("emkjVXE_2Do", 5000, 10000, 15000);
 	});
 	
 	$('#Play').click(function(){
-		var nextSlide;
-		if (!slide.ready){
+		if (slide)
+			slide.stop();
+	
+		if (!generator.ready){
 			console.log("Waiting on buffer");
-			slide.once("prepared", function(){
-				nextSlide = slide.next();
-				nextSlide.start();
+			generator.once("prepared", function(){
+				slide = generator.next();
+				slide.start();
 			});
 		}
 		else{
-			nextSlide = slide.next();
-			nextSlide.start();
+			slide = generator.next();
+			slide.start();
 		}
 		
 	});
 	
-	$('#Check').click(function(){
-		$('#result').html('');
-		$('#result').html(slide.player.getVideoLoadedFraction());
+	$('#Check').click(function(){;
+		$('#result').html(generator.player[0].getVideoLoadedFraction() + '_' + generator.player[1].getVideoLoadedFraction());
 	});
   });	
 })(requirejs);

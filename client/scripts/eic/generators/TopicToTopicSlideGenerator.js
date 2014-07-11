@@ -21,10 +21,11 @@ define(['lib/jquery',
 
     var defaultDuration = 1000;
 
-    function TopicToTopicSlideGenerator(path) {
+    function TopicToTopicSlideGenerator(path, loader) {
       CompositeSlideGenerator.call(this);
       this.ready=false;
       this.path=path;
+	  this.loader = loader;
     }
 
     $.extend(TopicToTopicSlideGenerator.prototype,
@@ -33,7 +34,6 @@ define(['lib/jquery',
         init: function () {
             if (!this.initedStart) {
               CompositeSlideGenerator.prototype.init.call(this);
-              this.addGenerator(this.loader = new LoadingSlideGenerator());
               this.initedStart = true;
             }
 
@@ -46,12 +46,16 @@ define(['lib/jquery',
                       self.addGenerator(new FinalizedTopicSlideGenerator(step.topic, step.hash_object));
                     });
                     
-			        setTimeout(function(){						
+			        setTimeout(function(){
 						self.waitforReady(0,function(){
+							//Needed to prepare slides according to either a hash or 'randomized' order...Also produces a finished hash in case we ever decide to revisit
 							for (var i=0; i<self.generators.length; i++){
 								if (self.generators[i].topic)
 									self.generators[i].updateHash();
 							}
+							if (self.ready)
+								return;
+								
 							self.loader.stopWaiting();
 							self.ready=true;
 							self.emit('topic slides ready');									
@@ -59,7 +63,7 @@ define(['lib/jquery',
 					},5000);   
                   });
               summ.summarize(this.path); 
-              logger.log('Summarizer Test 1', summ);           
+              //logger.log('Summarizer Test 1', summ);           
               
               this.initedEnd = true;
             }

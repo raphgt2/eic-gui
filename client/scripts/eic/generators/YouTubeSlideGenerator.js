@@ -42,8 +42,7 @@ function ($, BaseSlideGenerator, Logger) {
     this.totalDuration = 0;
     this.slides = [];
 	this.ready = false;
-	this.prepCalled = false;
-	
+	this.player = [];
   }
 
   $.extend(YouTubeSlideGenerator.prototype,
@@ -79,26 +78,30 @@ function ($, BaseSlideGenerator, Logger) {
       return this.slides.shift();
     },
     
-    /** Prepare video by playing and pausing it, in order to prebuffer its contents. */
-    prepare: function () {
-		var self = this, player = self.player;
+	prepare: function(){
+		var i;
+		for (i=0; i<this.player.length; i++){
+			this.prepareVid(i);
+		}
+	},
+	
+	/** Prepare video by playing and pausing it, in order to prebuffer its contents. */
+    prepareVid: function (index) {
+		var self = this, player = self.player[index];
 		var waiting=true;
 	
 		//avoid preloading the video twice
-		if (this.prepCalled){
-			logger.log("apparently prepared was already called");
+		if (player && player.getPlayerState && player.getPlayerState() != -1){
+			logger.log("vid has already started preparing");
 			checkIfBuffered();
 			return;
 		}	
-		else{
-			this.prepCalled = true;
-		}
 	
 		if (player && player.playVideo){
 			preload()
 		}
 		else{
-			self.once("playerReady", function(){
+			self.once("playerReady"+index, function(){
 				preload();
 				//Only allow for up to 10 seconds of stalling on the preload
 				setTimeout(function(){
@@ -138,9 +141,20 @@ function ($, BaseSlideGenerator, Logger) {
 				window.setTimeout(function(){checkIfBuffered()}, 1000);
 			}
 			else{
-				self.ready = true;
-				logger.log("finished waiting on youtube for " + self.topic.label);
-				self.emit("prepared");
+				player.ready = true;
+				
+				//Only emit if ALL players are loaded/timed out. Not the most efficient way to do things but usually only 1-2 players per generator
+				var i;
+				for (i=0; i<self.player.length; i++){
+					if (!player.ready)
+						break;
+					
+					if (i==self.player.length-1){
+						self.ready = true;
+						logger.log("finished waiting on youtube for " + self.topic.label);
+						self.emit("prepared");
+					}
+				}
 			}
 		}
 	  
@@ -148,6 +162,7 @@ function ($, BaseSlideGenerator, Logger) {
 
     /** Adds a new video slide. */
     addVideoSlide: function (videoID, Duration, Start, Stop) {
+	//console.log(this);
 		
 		var self = this, start, end, duration;
 		
@@ -198,14 +213,17 @@ function ($, BaseSlideGenerator, Logger) {
 				$container = $('<div>').append($('<div>').prop('id', playerId))
 									 .css({ width: 0, height: 0, overflow: 'hidden' });
 			$('#ytholder').append($container);
+			
 
 			// create the player in the container
-			var player = self.player = new window.YT.Player(playerId, {
+			var player=null, temp;
+			temp = self.player.push(player)-1;
+			self.player[temp] = player = new window.YT.Player(playerId, {
 				playerVars: {
 					autoplay: 0,
 					controls: 0,
 					start: (start / 1000),
-					end: (end / 1000),
+					end: (end / 1000)+1,	//Add an extra second so that the movie doesn't show the random recommended video collection upon reaching the 'end'
 					wmode: 'opaque'
 				},
 				videoId: videoID,
@@ -215,9 +233,9 @@ function ($, BaseSlideGenerator, Logger) {
 					onReady: function (event) { 
 						event.target.mute(); 
 						player.end = end/1000;
-						self.emit('playerReady');
+						self.emit("playerReady"+temp);
 						if (self.preload){
-							self.prepare();
+							self.prepareVid(temp);
 						}
 					}
 				}
@@ -276,6 +294,7 @@ function ($, BaseSlideGenerator, Logger) {
 					end: end,
 					duration: duration,  
 				},
+				playerID: playerId
 			};
 
 			self.slides.push(slide);

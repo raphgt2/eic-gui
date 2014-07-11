@@ -155,7 +155,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			console.log("Json: ", json);
 			if (json){
 				if (json.children.length == 0){
-					console.log("HERE 1");
+					//console.log("HERE 1");
 					var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
 					$("#canvasStepNavigator").append(alert_msg);
 					$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
@@ -191,15 +191,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							json.children[i].children = null;
 							self.appendMap[json.children[i].name] = json.children[i];
 							var flag = 0;
-							console.log(json.children[i].name, self.userPath.length);
+							//console.log(json.children[i].name, self.userPath.length);
 							for (var j = 0; j < self.userPath.length; j++){
-								console.log(json.children[i].name, self.userPath[j].name)
+								//console.log(json.children[i].name, self.userPath[j].name)
 								if (json.children[i].name == self.userPath[j].name){
 									flag = 1;
 									break;
 								}
 							}
-							console.log("flag", flag);
+							//console.log("flag", flag);
 							if (flag != 1){
 								children.push(json.children[i]);
 							}
