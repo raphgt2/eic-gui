@@ -110,17 +110,17 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		
 			if (!self.hash_object.audioURL){
 				var tts = new TTSService();
-				tts.once('speechready', function (event, data) {
+				tts.once('speechReady', function (event, data) {
 					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
-					if (self.audiourl!='')
+					if (self.audioURL!='')
 						return;
 						
-					self.durationleft = math.floor(data.snd_time);
+					self.durationLeft = Math.floor(data.snd_time);
 					//add extra time because ie definitely needs a plugin, which takes time to embed
 					if (navigator.useragent.indexof('msie') !=-1)
-						self.durationleft +=5000;
+						self.durationLeft +=5000;
 						
-					self.hash_object.audio_time = self.durationleft;
+					self.hash_object.audio_time = self.durationLeft;
 						
 					self.audioURL = data.snd_url;
 					logger.log('received speech for topic', self.topic.label);
@@ -135,13 +135,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				});
 
 				//fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
-				tts.once('speecherror', function(event, data){
+				tts.once('speechError', function(event, data){
 					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
-					if (self.audiourl!='')
+					if (self.audioURL!='')
 						return;
 						
-					self.durationleft = 10000;
-					self.hash_object.audio_time = self.durationleft;
+					self.durationLeft = 10000;
+					//self.hash_object.audio_time = self.durationleft;
 					
 					self.audioURL = null;
 					logger.log('failed to receive speech for topic', self.topic.label);
@@ -149,6 +149,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					//After audio is ready, check that media slides have finished preparing. Also give 3 seconds for the slides to be added into the generator
 					setTimeout(function(){		
 						self.waitforReady(0,function(){
+							logger.log("Topic " + self.topic.label + " has a duration of " + self.durationLeft + " milliseconds");
 							self.ready=true;
 							self.emit('newSlides');									
 						})
