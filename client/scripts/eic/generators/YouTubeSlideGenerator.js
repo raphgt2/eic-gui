@@ -99,6 +99,10 @@ function ($, BaseSlideGenerator, Logger) {
 	
 		if (player && player.playVideo){
 			preload()
+			//Only allow for up to 10 seconds of stalling on the preload
+			setTimeout(function(){
+				waiting=false;
+			}, 10000)
 		}
 		else{
 			self.once("playerReady"+index, function(){
@@ -237,7 +241,7 @@ function ($, BaseSlideGenerator, Logger) {
 						if (self.preload){
 							self.prepareVid(temp);
 						}
-					}
+					},
 					onError: function(event){
 						event.target.mute();
 						self.ready = true;
