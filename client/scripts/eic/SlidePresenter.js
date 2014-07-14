@@ -25,8 +25,6 @@ var audioContainer = new WAVPlayer();
   function SlidePresenter(container, generator) {
     this.$container = $(container);
     this.generator = generator;
-	logger.log(generator.generators.length);
-	logger.log(generator);
   }
  
   SlidePresenter.prototype = {
