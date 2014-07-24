@@ -50,7 +50,7 @@ function ($, Logger, EventEmitter, urls) {
 			if (text.length==0){
 				self.finished = true;
 				logger.log('Empty request', text);
-				self.emit('speechReady', text);
+				self.emit('speechError', text);
 				return;
 			}
 				

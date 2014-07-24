@@ -91,7 +91,7 @@ function ($, BaseSlideGenerator, Logger) {
 		var waiting=true;
 	
 		//avoid preloading the video twice
-		if (player && player.getPlayerState && player.getPlayerState() != -1){
+		if (player.state && player.state != "unstarted"){
 			logger.log("vid has already started preparing");
 			checkIfBuffered();
 			return;
@@ -145,12 +145,12 @@ function ($, BaseSlideGenerator, Logger) {
 				window.setTimeout(function(){checkIfBuffered()}, 1000);
 			}
 			else{
-				player.ready = true;
+				player.state = "loaded";
 				
 				//Only emit if ALL players are loaded/timed out. Not the most efficient way to do things but usually only 1-2 players per generator
 				var i;
 				for (i=0; i<self.player.length; i++){
-					if (!player.ready)
+					if (player.state!="loaded")
 						break;
 					
 					if (i==self.player.length-1){
@@ -244,13 +244,15 @@ function ($, BaseSlideGenerator, Logger) {
 					},
 					onError: function(event){
 						event.target.mute();
-						self.ready = true;
+						self.state = "loaded";
 						self.totalDuration = 0;
 						logger.log("Error loading video for topic", self.topic.label);
 						self.emit("prepared");					
 					}
 				}
 			});
+			
+			player.state = "unstarted";
 
 			// create a placeholder on the slide where the player will come
 			var $placeholder = $('<div>'),
@@ -328,8 +330,19 @@ function ($, BaseSlideGenerator, Logger) {
 			items = response.data.items;
 		else
 			items = 0;
-			
-        itemCount = Math.min(items.length, self.maxVideoCount);
+		
+		
+		if (items !=0)
+			itemCount = Math.min(items.length, self.maxVideoCount);
+		else
+			itemCount = 0;
+		
+		if (itemCount == 0){
+			self.ready = true;
+			logger.log("no youtube videos for " + self.topic.label);
+			self.emit("prepared");
+		}
+		
         for (var i = 0; i < itemCount; i++)
           self.addVideoSlide(items[i].id, items[i].duration * 1000);
       });

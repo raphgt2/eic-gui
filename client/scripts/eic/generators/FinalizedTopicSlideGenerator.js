@@ -117,7 +117,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						
 					self.durationLeft = Math.floor(data.snd_time);
 					//add extra time because ie definitely needs a plugin, which takes time to embed
-					if (navigator.useragent.indexof('msie') !=-1)
+					if (navigator.userAgent.indexOf('MSIE') !=-1)
 						self.durationLeft +=5000;
 						
 					self.hash_object.audio_time = self.durationLeft;
