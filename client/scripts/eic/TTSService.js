@@ -128,7 +128,7 @@ function ($, Logger, EventEmitter, urls) {
 						if (urlType==3) //data:uri method
 							data.snd_url+=data.text;
 						else if (urlType == 1){ //createObjectURL method...only available for new browsers
-                            var blob = new Blob([base64DecToArr(data.text)], {type: "audio/wav"});
+                            var blob = new Blob([base64DecToArr(data.text)], {type: "audio/mpeg"});
                             data.snd_url = window.URL.createObjectURL(blob);
                         }
                         else //Slow url method...just for IE 9 and under

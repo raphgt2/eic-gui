@@ -36,8 +36,16 @@
     },
   });
 
-  require(['eic/TTSService2'], function (TTSService2) {
+  require(['eic/TTSService', 'lib/jplayer.min', 'config/URLs'], function (TTSService, JPlayer, urls) {
 	  var plugintype;
+	  
+	  var $audioContainer = $('<div>').addClass('audio').appendTo($('body'));	
+	  $audioContainer.jPlayer({
+		errorAlerts: true,
+		swfPath: urls.jplayerSWF,
+		supplied: "mp3",
+		wmode: "window"
+	});	
 	  	
 	if (Audio){
         if (document.createElement('audio').canPlayType("audio/wav"))
@@ -51,39 +59,20 @@
 				
         
         $('#send').click(function() {
-			var selector = document.getElementById("Voices");
-			var selected = document.getElementById("Voices").selectedIndex;
-			var voice= selector.options[selected].value;
 			
 			$('#result').html('loading...');		
 		
-			var tts = new TTSService2();
+			var tts = new TTSService();
 			var text = $('#text').val();
 			tts.once('speechReady',function(event,data){
-				if (plugintype=="Audio"){
-					 $('#result').html(
-						"<audio src='"+data.snd_url+"' controls='true'/>");
-				}
-				else if (plugintype=="QuickTime"){
-					 $('#result').html(
-						"<embed src=\"" + data.snd_url + "\" width='500' height='500' enablejavascript='true' autoplay='false' loop='false'>");
-				}
-				else if (plugintype=="Windows Media"){
-					 $('#result').html(
-						"<embed src=\"" + data.snd_url + "\" width='500' height='500' Enabled='false' AutoStart='false'>");
-				}
-				else if (plugintype=="VLC"){
-					 $('#result').html(
-						"<embed type='application/x-vlc-plugin' pluginspage='http://www.videolan.org'width='500' height='500' target='"+snd_url+"' controls='false' autoplay='false' loop='false'/>" + 
-							"<object classid='clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921' codebase='http://download.videolan.org/pub/videolan/vlc/last/win32/axvlc.cab'></object>"
-				)}			
+				$audioContainer.jPlayer("setMedia", {mp3: data.snd_url}).jPlayer("play");
 			});
 			
 			tts.once('speechError',function(event,data){
 				$('#result').html("Something went wrong");
 			});
 			
-			tts.getSpeech(text, voice);
+			tts.getSpeech(text);
 		 });
 	 });
 		

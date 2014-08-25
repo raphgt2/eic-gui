@@ -3,7 +3,7 @@ function($,Logger,SlidePresenter){
 	var logger = new Logger("AudioEditor");
 	var plugintype;
 	
-	if (Audio){
+	/*if (Audio){
         if (document.createElement('audio').canPlayType("audio/wav"))
             plugintype="Audio";
         else
@@ -11,6 +11,16 @@ function($,Logger,SlidePresenter){
     }
     else{
         plugintype=Plugin.getPluginsForMimeType("audio/wav");
+    }*/
+    
+    if (Audio){
+        if (document.createElement('audio').canPlayType("audio/mpeg"))
+            plugintype="Audio";
+        else
+            plugintype=Plugin.getPluginsForMimeType("audio/mpeg");
+    }
+    else{
+        plugintype=Plugin.getPluginsForMimeType("audio/mpeg");
     }
 	
 	function AudioEditor(){
