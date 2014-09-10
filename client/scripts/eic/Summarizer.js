@@ -7,8 +7,6 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
   //"use strict";
   var logger = new Logger("Summarizer");
 
-  var maxSentences = 1;
-
   /*
    * CLEANUP
    **/
@@ -132,8 +130,19 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
               }
 
               function getDescription(item) {
-                var abstract = item.abstract || item.comment || '';
+			    var maxSentences = 1;
+                var abstract = item.abstract || '';
                 var sentences = abstract.match(tregex) || [];
+				var word;
+				
+				
+				for (var i=0; i<sentences.length; i++){
+					word = sentences[i].split(" ");
+					if (word[word.length-1].length<3)
+						  maxSentences += 1;
+					else
+						break;
+				}
                 var desc = sentences.slice(0, maxSentences).join(' ');
                 return desc;
               }
@@ -184,8 +193,19 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
               }
 
               function getDescription(item) {
+			    var maxSentences = 1;
                 var abstract = item.abstract || '';
                 var sentences = abstract.match(tregex) || [];
+				var word;
+				
+				
+				for (var i=0; i<sentences.length; i++){
+					word = sentences[i].split(" ");
+					if (word[word.length-1].length<3)
+						  maxSentences += 1;
+					else
+						break;
+				}
                 var desc = sentences.slice(0, maxSentences).join(' ');
                 return desc;
               }
@@ -201,15 +221,17 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
                   label: getLabel(item)
                 },
                 hash_object: vertice
-
+                //defaultText : desc,
+                //text: vertice.audio_text,
+                //slide_description: vertice.slide_description
               };
 
               if ((self.result.topics.length + self.result.links.length) === path.length) {
                 $(self).trigger('generated', formatResult(self.result, vertices));
               }
-			  /*logger.log('created', self.result.topics[index]);
+			  logger.log('created', self.result.topics[index]);
               logger.log('Resource', vertice);
-              logger.log('Extracted text', desc);*/
+              logger.log('Extracted text', desc);
             }
 
             $(vertices).each(retrieveAbstract);
