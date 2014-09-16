@@ -5,8 +5,8 @@
 */
 
 
-define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor', 'eic/Summarizer'],
-  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer) {
+define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor', 'eic/Summarizer', 'config/URLs'],
+  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer, urls) {
     "use strict";
     var logger = new Logger("PathFinder");
   		
@@ -133,20 +133,21 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       addNode: function(nodeURI, name, data_prev){
       	//console.log("[===================Add New Node===================]");
       	var self = this;
-      	var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
+      	/*var searchURI = "/LODStories-1.0.0-SNAPSHOT/rankServlet?uri=";
 			searchURI += nodeURI;
-			searchURI += '&num=7';
+			searchURI += '&num=7';*/
 			// var searchURI = "../data_json/";
 	// searchURI += name;
 	// searchURI += ".json";
 		//console.log(searchURI);
 		var progress = '<div class="progress progress-striped active canvas-alert"><div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="1" aria-valuemax="100" style="width: 100%"><span class="sr-only">Loading...</span></div></div>';
 		$("#canvasStepNavigator").append(progress);
-		d3.json(searchURI, function(json){
+/*		d3.json(searchURI, function(json){
   		$.ajax({
   			url:searchURI,
   			//contentType:"application/x-www-form-urlencoded; charset=UTF-8",
-  			dataType: "json"
+  			dataType: 'jsonp',
+			data: {uri: nodeURI, num: 7}
   		}).done(function(data){
   			json = data;
   		});
@@ -229,6 +230,94 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					},4000);
 			}
 		});
+*/
+
+
+  		$.ajax({
+  			url: urls.ranking,
+  			//contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+  			dataType: 'jsonp',
+			data: {uri: nodeURI, num: 7},
+			success: function(json){
+				console.log("Json: ", json);
+				if (json){
+					if (json.children.length == 0){
+						//console.log("HERE 1");
+						var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
+						$("#canvasStepNavigator").append(alert_msg);
+						$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+						setTimeout(function(){
+							$(".canvas-alert").remove();
+						},4000);
+					}
+					else if (self.round == 1){ // The Starting Node 
+						self.history = json;
+						self.appendMap[name] = json;
+						self.appendMap[name].name = name;
+						self.appendMap[name].search = 1;
+						self.appendMap[name].parent = null;
+						//console.log("====>AppendMap", self.appendMap);
+						for (var i = 0; i < json.children.length; i++){
+							json.children[i].search = 0;
+							json.children[i].children = null;
+							self.appendMap[json.children[i].name] = json.children[i];
+						}
+						self.root = self.history;
+						self.updateCanvas(self.root);
+					}
+					else {
+						self.userPath = [];
+						self.trackPathParent(data_prev);
+						//console.log("set up search", self.appendMap[name]);
+						//data_prev.children = json.children; // Have repetitive nodes
+						var children = [];
+						for (var i = 0; i < json.children.length; i++){
+							//console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
+							//if (self.appendMap[json.children[i].name] == undefined){
+								json.children[i].search = 0;
+								json.children[i].children = null;
+								self.appendMap[json.children[i].name] = json.children[i];
+								var flag = 0;
+								//console.log(json.children[i].name, self.userPath.length);
+								for (var j = 0; j < self.userPath.length; j++){
+									//console.log(json.children[i].name, self.userPath[j].name)
+									if (json.children[i].name == self.userPath[j].name){
+										flag = 1;
+										break;
+									}
+								}
+								//console.log("flag", flag);
+								if (flag != 1){
+									children.push(json.children[i]);
+								}
+								
+							//}
+						}
+						data_prev.children = children;
+						//json.children = children;
+						//console.log("====>AppendMap", self.appendMap);
+						self.root = self.history;
+						//console.log("############Called Track Path Parent##############");
+						
+						
+						self.updateCanvas(self.root);
+					}
+					console.log("[Path Finder Test]", self);
+				////	root = jQuery.extend(true, {}, history);
+					
+				}
+				else {
+					console.log("HERE 2");
+					var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
+						$("#canvasStepNavigator").append(alert_msg);
+						$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+						setTimeout(function(){
+							$(".canvas-alert").remove();
+						},4000);
+				}
+			}
+  		})
+		
 	 },//addNode
 	 updateCanvas: function(source){
 	 	$(".canvas-alert").remove();

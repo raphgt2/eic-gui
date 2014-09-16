@@ -108,12 +108,12 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
         var uri = vertices.map(function (vertice) { return vertice.uri; });
         $.ajax({
           url: urls.abstracts,
-          dataType: 'json',
+          dataType: 'jsonp',
           data: {
             uri: uri.join(',')
           },
           success: function (abstracts) {
-            if (abstracts.length === 0)
+            if (!abstracts.length || abstracts.length === 0)
 				logger.log('No abstracts found');
 
             function retrieveAbstract(index, vertice) {
