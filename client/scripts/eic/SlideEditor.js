@@ -62,11 +62,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         $('#moviePreview').append($wrapper);
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
         
-          var self = this;
-          
-          //give time for the initialization to finish
-          //setTimeout(function () {
-          	//adding the grid
+			var self = this;
         	var topics = [];
         	
           	for(var i = 0; i < self.topicToTopic.generators.length; i++){
@@ -268,7 +264,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       },
       
       getTopictoTopic: function(){
-      	//return this.topicToTopic;
       	return this._data_source;
       },
       
@@ -292,17 +287,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     		var self = this;
     		console.log("Data_Source", this._data_source);
     		for(var i = 1; i < this._data_source.generators.length; i++){
-    			//this._data_source[i].slide_order = [];
     			this._data_source.generators[i].slide_order = [];
-    			//this._data_source[i].prepare();
     			var slides = this._data_source.generators[i].slides;
     			logger.log(slides);
     			var img = slides.img;
     			var vid = slides.vid;
-    			//console.log("img", img);
-    			//console.log("vid", vid);
     			for (var j = 0; j < img.length; j++){
-    				//console.log(img[j].slides_info.data);
     				this._Slide_Element_Collection[img[j].slide_info.data.url]=img[j].slide_info;
     			}
     			for (var k = 0; k < vid.length; k++){
@@ -339,7 +329,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");
-    		//this.grabMovieNav();
     		this._curNode = this._path[2*(n-1)];
     		this._Play_Sequence = this._data_source.generators[n].slide_order;
     	},
@@ -353,7 +342,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     		$('#play-button').click(function () {
     			
 	      		logger.log("Play Button Click", self._hash);
-	          	//console.log("Play Button Click Test II: ", self._hash);
+
 	          	$('#ytholder').html('');
 	          	self.restoreCurrentNode(self._curIndex);
 	          	$('#screen').remove();
@@ -398,12 +387,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 		      	ui.item.removeClass("movieNavElementWrap")
 					   .addClass("nodeElementBarContentWrap");
 		      }
-		      // drag: function(event, ui){
-		      	// ui.helper.css({
-		      		// "width":$(this).css("width"),
-		      		// "height":$(this).css("height")
-		      	// });
-		      // }
 		    });
 
 		    $("#movie-nav-bar").sortable({
@@ -417,7 +400,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 				},
 				out: function(event, ui){
 					$("#movieNavBarWrap").css("border", "1px solid gray");
-					//$("#movie-nav-bar").css("background", "grey");
 				},
 				receive: function(event, ui){
 					console.log("Receive!");
@@ -426,9 +408,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 					$('#movie-nav-bar').css("padding", "3px");
 				},
 				update: function(event, ui){
-
-					//console.log("Update!");
-					//console.log("self", self);
 					self.grabMovieNav();
 				}
 			});
@@ -436,19 +415,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	grabMovieNav: function(){
     		var movieNav = $("#movie-nav-bar .nodeElementBarContent");
-    		//console.log(movieNav[0]);
     		var navlist = [movieNav.length];
     		 for (var i = 0; i<movieNav.length; i++){
     			 navlist[i] = movieNav[i].src;
     		 }
-    		//console.log("Movie Nav: ", navlist);
-    		if (movieNav[0] == undefined){
-    			//console.log("yes");
+
+    		if (movieNav[0] == undefined){;
     			$("#movie-nav-bar").css("padding", "50px");
     		}
     		this._Play_Sequence = navlist;
     	}
-    /////
       
     };
 
