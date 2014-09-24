@@ -4,11 +4,11 @@
 * Licensed under 
 */
 
-define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
+define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController','lib/jquery__ui'],
-  function ($, Logger, AudioEditor,
+  function ($, Logger, EventEmitter, AudioEditor,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
     ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController,jquery__ui) {
@@ -16,10 +16,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     var logger = new Logger("SlideEditor");
   		
     function SlideEditor(generator, path, controller, hashObj) {
-      this.curTopic = null;
-      this.tempSlides = {};
-      this.topicToTopic = controller.topicToTopic;
-      this.hash_object = path;
+		EventEmitter.call(this);
+		
+		this.curTopic = null;
+		this.tempSlides = {};
+		this.topicToTopic = controller.topicToTopic;
+		this.hash_object = path;
       
       
       
@@ -36,11 +38,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	
     	var self = this;
     	
+		this.players = [];
     	this.audio_editor = new AudioEditor();
 
       
-      logger.log("Created slideEditor");
-      this.startEdit();
+		logger.log("Created slideEditor");
+		this.startEdit();
     }
 
     /* Member functions */
@@ -340,30 +343,56 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     			console.log("Hash Object Test: ", self._hash);
     		});
     		$('#play-button').click(function () {
+				
+				//Hide the editor so that it's not possible to click the play button multiple times...
+				$('#editor').css('display', 'none');
     			
-	      		logger.log("Play Button Click", self._hash);
+				self.restoreCurrentNode(self._curIndex);
 
-	          	$('#ytholder').html('');
-	          	self.restoreCurrentNode(self._curIndex);
-	          	$('#screen').remove();
-	          	$('#editor').css('display', 'none');
-	          	$(document.body).append("<div id='screen'> </div>");
-
-                $('#screen').css({
-					display: 'none',
-					position: 'relative',
-					margin: 'auto',
-					overflow: 'hidden',
-					height: 600,
-					width: 800,
-					'vertical-align': 'middle',
-                });
-                
-                //$('#screen').show();               
-	          	
-	          	var play = new PresentationController(self._hash, false, true);
-	          	console.log("PresentationController: ", play, play.path.path);
-				play.playMovie();
+				//Give a second for the last node's edits to process before checking the hash
+				setTimeout(function(){
+					self.evaluateHash();
+				},1000);
+				
+				if (self.evaluated){
+					logger.log("Evaluated hash", self._hash);						
+					$('#screen').remove();
+					$('#editor').css('display', 'none');
+					$(document.body).append("<div id='screen'> </div>");
+					$('#screen').css({
+						display: 'none',
+						position: 'relative',
+						margin: 'auto',
+						overflow: 'hidden',
+						height: 600,
+						width: 800,
+						'vertical-align': 'middle',
+					});               
+					self.cleanYTHolder();
+					var play = new PresentationController(self._hash, false, true);
+					console.log("PresentationController: ", play, play.path.path);
+					play.playMovie();
+				}
+				else{
+					self.once('hash evaluated', function(){
+						logger.log("Evaluated hash", self._hash);					
+						$('#screen').remove();
+						$(document.body).append("<div id='screen'> </div>");
+						$('#screen').css({
+							display: 'none',
+							position: 'relative',
+							margin: 'auto',
+							overflow: 'hidden',
+							height: 600,
+							width: 800,
+							'vertical-align': 'middle',
+						});            
+						self.cleanYTHolder();
+						var play = new PresentationController(self._hash, false, true);
+						console.log("PresentationController: ", play, play.path.path);
+						play.playMovie();
+					});
+				}
 	      	});
 
 	      	$('#play-slide').click(function () {
@@ -424,7 +453,51 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     			$("#movie-nav-bar").css("padding", "50px");
     		}
     		this._Play_Sequence = navlist;
-    	}
+    	},
+		//Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
+		evaluateHash: function (){
+		logger.log("evaluating hash");
+			var path = this._hash.path, i,j;
+			for (i=0; i<path.length; i++){
+				if (!path[i].slide_description)
+					continue;
+		
+				var parts = 0;
+				for (j=0; j<path[i].slide_description.length; j++){
+					if (path[i].slide_description[j].type == "YouTubeSlide")
+						parts+=3
+					else
+						parts+=1;
+				}
+				console.log("Audio_time:"+path[i].audio_time+", Parts:"+parts);
+				
+				for (j=0; j<path[i].slide_description.length; j++){
+					if (path[i].slide_description[j].type == "YouTubeSlide"){
+						path[i].slide_description[j].data.duration = Math.floor((path[i].audio_time*3)/parts);
+						if (path[i].slide_description[j].player)
+							this.players.push(path[i].slide_description[j].player.id);
+					}
+					else
+						path[i].slide_description[j].data.duration = Math.floor(path[i].audio_time/parts);					
+				}
+			}
+			//Make sure NOT to start cleaning the ytholder or starting the presentation controller until the entire hash has been looped through				
+			this.evaluated = true;
+			logger.log("finished evaluation");
+			this.emit('hash evaluated');
+		},
+		cleanYTHolder: function(){
+			var i;
+			
+			//add a class to the players we wanna save
+			for (i=0; i<this.players.length; i++){
+				$('#container_'+this.players[i]).addClass('save');
+			}
+			
+			//Now remove the extraneous players
+			$('#ytholder').children().not('.save').remove();
+		}
+		
       
     };
 

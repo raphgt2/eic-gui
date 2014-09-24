@@ -64,7 +64,7 @@
 			},
 			{
 				"type": "link",
-				"inverse": true,
+				"inverse": false,
 				"uri": "http://dbpedia.org/ontology/deputy"
 			},
 			{
@@ -74,7 +74,7 @@
 			},
 			{
 				"type": "link",
-				"inverse": true,
+				"inverse": false,
 				"uri": "http://dbpedia.org/ontology/birthPlace"
 			},
 			{
