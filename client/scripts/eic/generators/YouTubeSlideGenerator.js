@@ -70,7 +70,6 @@ function ($, BaseSlideGenerator, Logger) {
 	  }
       
       this.inited = true;
-      this.status = "inited";
     },
 
     /** Advances to the next slide. */
@@ -91,8 +90,11 @@ function ($, BaseSlideGenerator, Logger) {
 		var waiting=true;
 	
 		//avoid preloading the video twice
-		if (player.state && player.state != "unstarted"){
-			logger.log("vid has already started preparing");
+		if (player.status && player.status != "unstarted"){
+			//logger.log("vid has already started preparing");
+			setTimeout(function(){
+				waiting=false;
+			}, 10000)
 			checkIfBuffered();
 			return;
 		}	
@@ -118,16 +120,18 @@ function ($, BaseSlideGenerator, Logger) {
 		function preload(){			
 			// if we did not start preparations yet, and the player object is ready
 			if (player && player.playVideo) {
-				// start preparing by playing the video
-				self.status = "preparing";
+				// start preparing by playing the video, but only update the status started if we haven't already started.
+				if (player.status != "started")
+					player.status = "preparing";
+					
 				player.playVideo();
 				
 				// as soon as the video plays, pause it (give it 0.2 seconds to actually register the fact that it had started playing?)...
 				player.addEventListener('onStateChange', function () {
 					// ...but only if we're still in preparation mode (and not playing for real)
-					if (self.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
+					if (player.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
 						setTimeout(function(){
-							if (self.status === "preparing"){
+							if (player.status == "preparing"){
 								player.pauseVideo();
 								checkIfBuffered();
 							}
@@ -145,17 +149,17 @@ function ($, BaseSlideGenerator, Logger) {
 				window.setTimeout(function(){checkIfBuffered()}, 1000);
 			}
 			else{
-				player.state = "loaded";
+				player.status = "loaded";
 				
 				//Only emit if ALL players are loaded/timed out. Not the most efficient way to do things but usually only 1-2 players per generator
 				var i;
 				for (i=0; i<self.player.length; i++){
-					if (player.state!="loaded")
+					if (player.status!="loaded")
 						break;
 					
 					if (i==self.player.length-1){
 						self.ready = true;
-						logger.log("finished waiting on youtube for " + self.topic.label);
+						//logger.log("finished waiting on youtube for " + self.topic.label);
 						self.emit("prepared");
 					}
 				}
@@ -168,7 +172,7 @@ function ($, BaseSlideGenerator, Logger) {
     addVideoSlide: function (videoID, duration, slide_info) {
 	//console.log(this);
 		
-		var self = this, start, end, duration;
+		var self = this, start, duration;
 		
 		if (!scriptFlag){
 			$.getScript("http://www.youtube.com/player_api", function () {
@@ -204,22 +208,24 @@ function ($, BaseSlideGenerator, Logger) {
 				self.player[temp] = player;
 				
 				
-				//Player has probably already loaded, but just in case, add the event listeners
-				player.addEventListener('onReady', function () {
-					event.target.mute(); 
-					player.end = (start + duration)/1000;
-					player.playerId = playerId;
-					self.emit("playerReady"+temp);
-				});
-				
-				//Player has probably already loaded, but just in case, add the event listeners
-				player.addEventListener('onError', function () {
-					event.target.mute();
-					self.ready = true;
-					self.totalDuration = 0;
-					logger.log("Error loading video for topic", self.topic.label);
-					self.emit("prepared");					
-				});
+				//Player has probably already loaded, but we check whether or not it has an "end" property to be sure. If not loaded, then add listeners
+				if (!player.end){
+					player.addEventListener('onReady', function () {
+						event.target.mute(); 
+						player.end = (start + duration)/1000;
+						player.playerId = playerId;
+						self.emit("playerReady"+temp);
+					});
+					
+					//Player has probably already loaded, but just in case, add the event listeners
+					player.addEventListener('onError', function () {
+						event.target.mute();
+						self.ready = true;
+						self.totalDuration = 0;
+						logger.log("Error loading video for topic", self.topic.label);
+						self.emit("prepared");					
+					});
+				}
 				
 				self.prepareVid(temp);
 				
@@ -253,7 +259,7 @@ function ($, BaseSlideGenerator, Logger) {
 							player.end = (start + duration)/1000;
 							player.playerId = playerId;
 							self.emit("playerReady"+temp);
-							logger.log("Emiting playerReady for " + playerId + ", "+temp);
+							//logger.log("Emiting playerReady for " + playerId + ", "+temp);
 						},
 						onError: function(event){
 							event.target.mute();
@@ -263,11 +269,13 @@ function ($, BaseSlideGenerator, Logger) {
 							self.emit("prepared");					
 						}
 					}
-				});			
+				});
+
+				self.prepareVid(temp);				
 			}
 
 
-			player.state = "unstarted";
+			player.status = "unstarted";
 
 			// create a placeholder on the slide where the player will come
 			var $placeholder = $('<div>'),
@@ -364,7 +372,7 @@ function ($, BaseSlideGenerator, Logger) {
 		}
 		
         for (var i = 0; i < itemCount; i++)
-          self.addVideoSlide(items[i].id, items[i].duration * 1000);
+          self.addVideoSlide(items[i].id, self.maxVideoDuration);
       });
   }
 
