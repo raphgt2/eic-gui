@@ -97,7 +97,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 								slide = new YouTubeSlideGenerator(self.topic, true);
 								self.addGenerator(slide,true);
 
-								slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
+								slide.addVideoSlide(description.data.videoID, (description.data.duration), description);
 
 								break;
 							/*case "GoogleMapSlide":

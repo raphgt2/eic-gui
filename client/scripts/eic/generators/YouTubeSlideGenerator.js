@@ -165,7 +165,7 @@ function ($, BaseSlideGenerator, Logger) {
     },
 
     /** Adds a new video slide. */
-    addVideoSlide: function (videoID, Duration, Start, Stop) {
+    addVideoSlide: function (videoID, duration, slide_info) {
 	//console.log(this);
 		
 		var self = this, start, end, duration;
@@ -180,7 +180,7 @@ function ($, BaseSlideGenerator, Logger) {
 		}
 		
 		function addSlide(){
-			if (!Start && !Stop){
+			/*if (!Start && !Stop){
 				start = self.skipVideoDuration,
 				end = self.skipVideoDuration + self.maxVideoDuration;
 				if (Duration <= self.maxVideoDuration + self.skipVideoDuration)
@@ -202,8 +202,13 @@ function ($, BaseSlideGenerator, Logger) {
 			else{
 				start = Start;
 				end = Stop;
-			}
-			duration = end - start;
+			}*/
+			
+			if (slide_info)
+				start = slide_info.data.start
+			else
+				start = self.skipVideoDuration;			
+			
 
 			//Just a random error handler to prevent stalling on videos
 			if (!duration)
@@ -211,8 +216,9 @@ function ($, BaseSlideGenerator, Logger) {
 
 			self.totalDuration += duration;
 			
+			
 
-			// create a container that will hide the player
+/*			// create a container that will hide the player
 			var playerId = 'ytplayer' + (++playerCount),
 				$container = $('<div>').append($('<div>').prop('id', playerId))
 									 .css({ width: 0, height: 0, overflow: 'hidden' });
@@ -251,7 +257,82 @@ function ($, BaseSlideGenerator, Logger) {
 					}
 				}
 			});
+*/			
+			var player=null, temp, playerId, $container;
 			
+			/** TODO What happens if someone's already played the video using "play slide" (unimplemented). Will we rewind? Or reload from the editor? **/
+			if (slide_info && slide_info.player){
+				logger.log ("Player object found. Reusing it");
+				player = slide_info.player;
+				playerId = slide_info.player.playerId;
+				$container = $('#container_'+playerId);
+				temp = self.player.push(player)-1;
+				self.player[temp] = player;
+				
+				
+				//Player has probably already loaded, but just in case, add the event listeners
+				player.addEventListener('onReady', function () {
+					event.target.mute(); 
+					player.end = (start + duration)/1000;
+					player.id = playerId;
+					self.emit("playerReady"+temp);
+				});
+				
+				//Player has probably already loaded, but just in case, add the event listeners
+				player.addEventListener('onError', function () {
+					event.target.mute();
+					self.ready = true;
+					self.totalDuration = 0;
+					logger.log("Error loading video for topic", self.topic.label);
+					self.emit("prepared");					
+				});
+				
+				self.prepareVid(temp);
+				
+			}
+			else{
+				// create a container that will hide the player
+				playerId = 'ytplayer' + (++playerCount),
+				$container = $('<div>');
+				$container.prop('id', 'container_'+playerId);
+				$container.append($('<div>').prop('id', playerId))
+										 .css({ width: 0, height: 0, overflow: 'hidden' });
+				$('#ytholder').append($container);
+				
+
+				// create the player in the container			
+				temp = self.player.push(player)-1;
+				self.player[temp] = player = new window.YT.Player(playerId, {
+					playerVars: {
+						autoplay: 0,
+						controls: 0,
+						start: (start / 1000),
+						//end: (end / 1000),	//End time is variable
+						wmode: 'opaque'
+					},
+					videoId: videoID,
+					width: 800,
+					height: 600,
+					events: { 
+						onReady: function (event) { 
+							event.target.mute(); 
+							player.end = (start + duration)/1000;
+							player.id = playerId;
+							self.emit("playerReady"+temp);
+							logger.log("Emiting playerReady for " + playerId + ", "+temp);
+						},
+						onError: function(event){
+							event.target.mute();
+							self.ready = true;
+							self.totalDuration = 0;
+							logger.log("Error loading video for topic", self.topic.label);
+							self.emit("prepared");					
+						}
+					}
+				});			
+			}
+
+
 			player.state = "unstarted";
 
 			// create a placeholder on the slide where the player will come
@@ -299,16 +380,21 @@ function ($, BaseSlideGenerator, Logger) {
 				});
 			});
 
-			slide.slide_info = {
-				type: "YouTubeSlide",
-				data: {
-					videoID: videoID,
-					start: start,
-					end: end,
-					duration: duration,  
-				},
-				playerID: playerId,
-			};
+			
+			if (slide_info){
+				slide.slide_info = slide_info;
+			}
+			else{
+				slide.slide_info = {
+					type: "YouTubeSlide",
+					data: {
+						videoID: videoID,
+						start: start,
+						duration: duration,  
+					},
+				};
+			}
+			slide.slide_info.player = player;
 
 			self.slides.push(slide);
 			self.emit('newSlides');
