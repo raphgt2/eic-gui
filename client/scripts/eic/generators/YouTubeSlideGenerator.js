@@ -19,7 +19,7 @@ function ($, BaseSlideGenerator, Logger) {
   var scriptFlag = false;
   
   //Try to grab the api once, and only once
-  $.getScript("http://www.youtube.com/player_api", function () {
+  $.getScript("https://www.youtube.com/player_api", function () {
 	scriptFlag=true;
   });
 
@@ -61,7 +61,7 @@ function ($, BaseSlideGenerator, Logger) {
       var self = this;	
 	  
 	  if (!scriptFlag){
-		$.getScript("http://www.youtube.com/player_api", function () {
+		$.getScript("https://www.youtube.com/player_api", function () {
 			searchVideos(self, 0, self.maxVideoCount, 0);
 		});
 	  }
@@ -175,7 +175,7 @@ function ($, BaseSlideGenerator, Logger) {
 		var self = this, start, duration;
 		
 		if (!scriptFlag){
-			$.getScript("http://www.youtube.com/player_api", function () {
+			$.getScript("https://www.youtube.com/player_api", function () {
 				addSlide();
 			});
 		}
@@ -318,7 +318,7 @@ function ($, BaseSlideGenerator, Logger) {
 					if (player && player.stopVideo)
 						player.stopVideo();
 					
-					$container.remove();
+					//$container.remove();
 				});
 			});
 
