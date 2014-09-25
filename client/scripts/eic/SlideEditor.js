@@ -469,13 +469,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 					else
 						parts+=1;
 				}
-				console.log("Audio_time:"+path[i].audio_time+", Parts:"+parts);
+				//console.log("Audio_time:"+path[i].audio_time+", Parts:"+parts);
 				
 				for (j=0; j<path[i].slide_description.length; j++){
 					if (path[i].slide_description[j].type == "YouTubeSlide"){
 						path[i].slide_description[j].data.duration = Math.floor((path[i].audio_time*3)/parts);
 						if (path[i].slide_description[j].player)
-							this.players.push(path[i].slide_description[j].player.id);
+							this.players.push(path[i].slide_description[j].player.playerId);
 					}
 					else
 						path[i].slide_description[j].data.duration = Math.floor(path[i].audio_time/parts);					

@@ -142,7 +142,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			
 			//Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
 			tts.once('speechError', function(event, data){
-				self.durationLeft = 5000;
+				self.durationLeft = 10000;
 				self.hash_object.audio_time = self.durationLeft;
 				
 				self.audioURL = null;

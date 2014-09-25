@@ -179,31 +179,7 @@ function ($, BaseSlideGenerator, Logger) {
 			addSlide();
 		}
 		
-		function addSlide(){
-			/*if (!Start && !Stop){
-				start = self.skipVideoDuration,
-				end = self.skipVideoDuration + self.maxVideoDuration;
-				if (Duration <= self.maxVideoDuration + self.skipVideoDuration)
-					end = Duration;
-				if (Duration < self.maxVideoDuration + self.skipVideoDuration && duration >= self.maxVideoDuration)
-					start = 0;
-			}
-			else if (!Start){
-				end = Stop;
-				if ((Stop-Duration)<=0)
-					start = 0;
-				else
-					start = Stop-Duration;
-			}
-			else if (!Stop){
-				start = Start;
-				end = Start+Duration;
-			}
-			else{
-				start = Start;
-				end = Stop;
-			}*/
-			
+		function addSlide(){			
 			if (slide_info)
 				start = slide_info.data.start
 			else
@@ -215,49 +191,7 @@ function ($, BaseSlideGenerator, Logger) {
 				duration = 5000;
 
 			self.totalDuration += duration;
-			
-			
-
-/*			// create a container that will hide the player
-			var playerId = 'ytplayer' + (++playerCount),
-				$container = $('<div>').append($('<div>').prop('id', playerId))
-									 .css({ width: 0, height: 0, overflow: 'hidden' });
-			$('#ytholder').append($container);
-			
-
-			// create the player in the container
-			var player=null, temp;
-			temp = self.player.push(player)-1;
-			self.player[temp] = player = new window.YT.Player(playerId, {
-				playerVars: {
-					autoplay: 0,
-					controls: 0,
-					start: (start / 1000),
-					end: (end / 1000)+1,	//Add an extra second so that the movie doesn't show the random recommended video collection upon reaching the 'end'
-					wmode: 'opaque'
-				},
-				videoId: videoID,
-				width: $("#screen").width(),
-				height: $("#screen").height(),
-				events: { 
-					onReady: function (event) { 
-						event.target.mute(); 
-						player.end = end/1000;
-						self.emit("playerReady"+temp);
-						if (self.preload){
-							self.prepareVid(temp);
-						}
-					},
-					onError: function(event){
-						event.target.mute();
-						self.state = "loaded";
-						self.totalDuration = 0;
-						logger.log("Error loading video for topic", self.topic.label);
-						self.emit("prepared");					
-					}
-				}
-			});
-*/			
+						
 			var player=null, temp, playerId, $container;
 			
 			/** TODO What happens if someone's already played the video using "play slide" (unimplemented). Will we rewind? Or reload from the editor? **/
@@ -274,7 +208,7 @@ function ($, BaseSlideGenerator, Logger) {
 				player.addEventListener('onReady', function () {
 					event.target.mute(); 
 					player.end = (start + duration)/1000;
-					player.id = playerId;
+					player.playerId = playerId;
 					self.emit("playerReady"+temp);
 				});
 				
@@ -317,7 +251,7 @@ function ($, BaseSlideGenerator, Logger) {
 						onReady: function (event) { 
 							event.target.mute(); 
 							player.end = (start + duration)/1000;
-							player.id = playerId;
+							player.playerId = playerId;
 							self.emit("playerReady"+temp);
 							logger.log("Emiting playerReady for " + playerId + ", "+temp);
 						},
@@ -343,7 +277,7 @@ function ($, BaseSlideGenerator, Logger) {
 			// if the slide starts, move the player to the slide
 			slide.once('started', function () {
 				// flag our state to make sure prepare doesn't pause the video
-				self.status = 'started';
+				player.status = 'started';
 
 				// make video visible
 				var offset = $placeholder.offset();
@@ -354,7 +288,7 @@ function ($, BaseSlideGenerator, Logger) {
 				}
 				else{
 					self.once('playerReady', function(){
-						if (self.status == "started" && player.playVideo)
+						if (player.status == "started" && player.playVideo)
 							player.playVideo();
 					});
 				}
@@ -371,7 +305,7 @@ function ($, BaseSlideGenerator, Logger) {
 				});
 			});
 			slide.once('stopped', function () {
-				self.status = "stopped";
+				player.status = "stopped";
 				$container.fadeOut(function () {
 					if (player && player.stopVideo)
 						player.stopVideo();

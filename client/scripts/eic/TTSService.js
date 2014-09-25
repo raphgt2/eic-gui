@@ -83,6 +83,7 @@ function ($, Logger, EventEmitter, urls) {
 				type: 'GET',
 				data: { req_text: text, url_type: urlType, id: self.attempt},
 				dataType: 'jsonp',
+				timeout: 30000,
 				success: function (data) {
 					
 					if (self.finished)
