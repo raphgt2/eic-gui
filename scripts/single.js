@@ -59,7 +59,7 @@
 		});
 
 					
-        $("#play-button").click(function(){
+        $("#playButton").click(function(){
 			$('#ytholder').html('');
 			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
 			validate(5);

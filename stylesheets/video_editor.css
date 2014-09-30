@@ -67,7 +67,7 @@ h5{
 	top: 48%
 	left: 48%;
 }
-.stepNavigator{
+.step-navigator {
 	width: inherit;
 	height: 33px;
 }
@@ -75,7 +75,7 @@ h5{
 	height: 100%;
 	width: 200px;
 }
-.nodeNavBar {
+.topic-navigator {
 	height:8%;
 	position: absolute;
 	top: 6%;
@@ -142,7 +142,7 @@ h5{
 
 /*End of Node Element Bar*/
 /*Movie Nav Bar*/
-.movieNavBarWrap {
+.img-video-selection-wrap {
 	width: 98%;
 	height: 17%;
 	position: absolute;
@@ -181,7 +181,7 @@ h5{
 
 /*End of Movie Nav Bar*/
 
-.nodeElementOperation {
+.preview-box {
 	width: 68%;
 	height: 69%;
 	position: absolute;
