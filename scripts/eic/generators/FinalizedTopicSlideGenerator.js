@@ -97,7 +97,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 								slide = new YouTubeSlideGenerator(self.topic, true);
 								self.addGenerator(slide,true);
 
-								slide.addVideoSlide(description.data.videoID, (description.data.end-description.data.start), description.data.start, description.data.end);
+								slide.addVideoSlide(description.data.videoID, (description.data.duration), description);
 
 								break;
 							/*case "GoogleMapSlide":
@@ -143,7 +143,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					self.durationLeft = 10000;
 					//self.hash_object.audio_time = self.durationleft;
 					
-					self.audioURL = null;
+					self.audioURL = '';
 					logger.log('failed to receive speech for topic', self.topic.label);
 					
 					//After audio is ready, check that media slides have finished preparing. Also give 3 seconds for the slides to be added into the generator
@@ -257,7 +257,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			
 			//Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
 			tts.once('speechError', function(event, data){
-				self.durationLeft = 5000;
+				self.durationLeft = 10000;
 				self.hash_object.audio_time = self.durationLeft;
 				
 				self.audioURL = null;

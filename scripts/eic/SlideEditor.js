@@ -4,11 +4,11 @@
 * Licensed under 
 */
 
-define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
+define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
   'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController','lib/jquery__ui'],
-  function ($, Logger, AudioEditor,
+  function ($, Logger, EventEmitter, AudioEditor,
     IntroductionSlideGenerator, OutroductionSlideGenerator,
     TopicToTopicSlideGenerator, CompositeSlideGenerator,
     ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController,jquery__ui) {
@@ -16,10 +16,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     var logger = new Logger("SlideEditor");
   		
     function SlideEditor(generator, path, controller, hashObj) {
-      this.curTopic = null;
-      this.tempSlides = {};
-      this.topicToTopic = controller.topicToTopic;
-      this.hash_object = path;
+		EventEmitter.call(this);
+		
+		this.curTopic = null;
+		this.tempSlides = {};
+		this.topicToTopic = controller.topicToTopic;
+		this.hash_object = path;
       
       
       
@@ -36,11 +38,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	
     	var self = this;
     	
+		this.players = [];
     	this.audio_editor = new AudioEditor();
 
       
-      logger.log("Created slideEditor");
-      this.startEdit();
+		logger.log("Created slideEditor");
+		this.startEdit();
     }
 
     /* Member functions */
@@ -62,11 +65,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
         $('#moviePreview').append($wrapper);
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
         
-          var self = this;
-          
-          //give time for the initialization to finish
-          //setTimeout(function () {
-          	//adding the grid
+			var self = this;
         	var topics = [];
         	
           	for(var i = 0; i < self.topicToTopic.generators.length; i++){
@@ -268,7 +267,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
       },
       
       getTopictoTopic: function(){
-      	//return this.topicToTopic;
       	return this._data_source;
       },
       
@@ -292,17 +290,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     		var self = this;
     		console.log("Data_Source", this._data_source);
     		for(var i = 1; i < this._data_source.generators.length; i++){
-    			//this._data_source[i].slide_order = [];
     			this._data_source.generators[i].slide_order = [];
-    			//this._data_source[i].prepare();
     			var slides = this._data_source.generators[i].slides;
     			logger.log(slides);
     			var img = slides.img;
     			var vid = slides.vid;
-    			//console.log("img", img);
-    			//console.log("vid", vid);
     			for (var j = 0; j < img.length; j++){
-    				//console.log(img[j].slides_info.data);
     				this._Slide_Element_Collection[img[j].slide_info.data.url]=img[j].slide_info;
     			}
     			for (var k = 0; k < vid.length; k++){
@@ -313,21 +306,20 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	restoreCurrentNode: function(n){
     		var self = this;
-    		console.log("Self Test", self);
+    		//console.log("Self Test", self);
     		console.log("RESTORE NODE", n);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
     			if (this._Play_Sequence[i].indexOf("youtube") != -1){
     				var vidID = this._Play_Sequence[i].substring(26,37);
     				this._Play_Sequence[i] = vidID;
-    				console.log("vidID", vidID);
+    				//console.log("vidID", vidID);
     			}
     		}
     		this._data_source.generators[n].slide_order = this._Play_Sequence;
     		var slide_content = new Array;
     		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
-    			console.log(i, this._Play_Sequence[i]);
-    			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
+       			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
     		}
     		console.log("slide_content", slide_content);
     		if (slide_content[0] != undefined){
@@ -339,7 +331,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");
-    		//this.grabMovieNav();
     		this._curNode = this._path[2*(n-1)];
     		this._Play_Sequence = this._data_source.generators[n].slide_order;
     	},
@@ -351,30 +342,56 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     			console.log("Hash Object Test: ", self._hash);
     		});
     		$('#play-button').click(function () {
+				
+				//Hide the editor so that it's not possible to click the play button multiple times...
+				$('#editor').css('display', 'none');
     			
-	      		logger.log("Play Button Click", self._hash);
-	          	//console.log("Play Button Click Test II: ", self._hash);
-	          	$('#ytholder').html('');
-	          	self.restoreCurrentNode(self._curIndex);
-	          	$('#screen').remove();
-	          	$('#editor').css('display', 'none');
-	          	$(document.body).append("<div id='screen'> </div>");
+				self.restoreCurrentNode(self._curIndex);
 
-                $('#screen').css({
-					display: 'none',
-					position: 'relative',
-					margin: 'auto',
-					overflow: 'hidden',
-					height: 600,
-					width: 800,
-					'vertical-align': 'middle',
-                });
-                
-                //$('#screen').show();               
-	          	
-	          	var play = new PresentationController(self._hash, false, true);
-	          	console.log("PresentationController: ", play, play.path.path);
-				play.playMovie();
+				//Give a second for the last node's edits to process before checking the hash
+				setTimeout(function(){
+					self.evaluateHash();
+				},1000);
+				
+				if (self.evaluated){
+					logger.log("Evaluated hash", self._hash);						
+					$('#screen').remove();
+					$('#editor').css('display', 'none');
+					$(document.body).append("<div id='screen'> </div>");
+					$('#screen').css({
+						display: 'none',
+						position: 'relative',
+						margin: 'auto',
+						overflow: 'hidden',
+						height: 600,
+						width: 800,
+						'vertical-align': 'middle',
+					});               
+					self.cleanYTHolder();
+					var play = new PresentationController(self._hash, false, true);
+					console.log("PresentationController: ", play, play.path.path);
+					play.playMovie();
+				}
+				else{
+					self.once('hash evaluated', function(){
+						logger.log("Evaluated hash", self._hash);					
+						$('#screen').remove();
+						$(document.body).append("<div id='screen'> </div>");
+						$('#screen').css({
+							display: 'none',
+							position: 'relative',
+							margin: 'auto',
+							overflow: 'hidden',
+							height: 600,
+							width: 800,
+							'vertical-align': 'middle',
+						});            
+						self.cleanYTHolder();
+						var play = new PresentationController(self._hash, false, true);
+						console.log("PresentationController: ", play, play.path.path);
+						play.playMovie();
+					});
+				}
 	      	});
 
 	      	$('#play-slide').click(function () {
@@ -398,12 +415,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 		      	ui.item.removeClass("movieNavElementWrap")
 					   .addClass("nodeElementBarContentWrap");
 		      }
-		      // drag: function(event, ui){
-		      	// ui.helper.css({
-		      		// "width":$(this).css("width"),
-		      		// "height":$(this).css("height")
-		      	// });
-		      // }
 		    });
 
 		    $("#movie-nav-bar").sortable({
@@ -417,7 +428,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 				},
 				out: function(event, ui){
 					$("#movieNavBarWrap").css("border", "1px solid gray");
-					//$("#movie-nav-bar").css("background", "grey");
 				},
 				receive: function(event, ui){
 					console.log("Receive!");
@@ -426,9 +436,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
 					$('#movie-nav-bar').css("padding", "3px");
 				},
 				update: function(event, ui){
-
-					//console.log("Update!");
-					//console.log("self", self);
 					self.grabMovieNav();
 				}
 			});
@@ -436,19 +443,60 @@ define(['lib/jquery', 'eic/Logger', 'eic/AudioEditor',
     	},
     	grabMovieNav: function(){
     		var movieNav = $("#movie-nav-bar .nodeElementBarContent");
-    		//console.log(movieNav[0]);
     		var navlist = [movieNav.length];
     		 for (var i = 0; i<movieNav.length; i++){
     			 navlist[i] = movieNav[i].src;
     		 }
-    		//console.log("Movie Nav: ", navlist);
-    		if (movieNav[0] == undefined){
-    			//console.log("yes");
+
+    		if (movieNav[0] == undefined){;
     			$("#movie-nav-bar").css("padding", "50px");
     		}
     		this._Play_Sequence = navlist;
-    	}
-    /////
+    	},
+		//Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
+		evaluateHash: function (){
+		logger.log("evaluating hash");
+			var path = this._hash.path, i,j;
+			for (i=0; i<path.length; i++){
+				if (!path[i].slide_description)
+					continue;
+		
+				var parts = 0;
+				for (j=0; j<path[i].slide_description.length; j++){
+					if (path[i].slide_description[j].type == "YouTubeSlide")
+						parts+=3
+					else
+						parts+=1;
+				}
+				//console.log("Audio_time:"+path[i].audio_time+", Parts:"+parts);
+				
+				for (j=0; j<path[i].slide_description.length; j++){
+					if (path[i].slide_description[j].type == "YouTubeSlide"){
+						path[i].slide_description[j].data.duration = Math.floor((path[i].audio_time*3)/parts);
+						if (path[i].slide_description[j].player)
+							this.players.push(path[i].slide_description[j].player.playerId);
+					}
+					else
+						path[i].slide_description[j].data.duration = Math.floor(path[i].audio_time/parts);					
+				}
+			}
+			//Make sure NOT to start cleaning the ytholder or starting the presentation controller until the entire hash has been looped through				
+			this.evaluated = true;
+			logger.log("finished evaluation");
+			this.emit('hash evaluated');
+		},
+		cleanYTHolder: function(){
+			var i;
+			
+			//add a class to the players we wanna save
+			for (i=0; i<this.players.length; i++){
+				$('#container_'+this.players[i]).addClass('save');
+			}
+			
+			//Now remove the extraneous players
+			$('#ytholder').children().not('.save').remove();
+		}
+		
       
     };
 

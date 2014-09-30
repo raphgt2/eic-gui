@@ -19,7 +19,7 @@ function ($, BaseSlideGenerator, Logger) {
   var scriptFlag = false;
   
   //Try to grab the api once, and only once
-  $.getScript("http://www.youtube.com/player_api", function () {
+  $.getScript("https://www.youtube.com/player_api", function () {
 	scriptFlag=true;
   });
 
@@ -61,7 +61,7 @@ function ($, BaseSlideGenerator, Logger) {
       var self = this;	
 	  
 	  if (!scriptFlag){
-		$.getScript("http://www.youtube.com/player_api", function () {
+		$.getScript("https://www.youtube.com/player_api", function () {
 			searchVideos(self, 0, self.maxVideoCount, 0);
 		});
 	  }
@@ -70,7 +70,6 @@ function ($, BaseSlideGenerator, Logger) {
 	  }
       
       this.inited = true;
-      this.status = "inited";
     },
 
     /** Advances to the next slide. */
@@ -91,8 +90,11 @@ function ($, BaseSlideGenerator, Logger) {
 		var waiting=true;
 	
 		//avoid preloading the video twice
-		if (player.state && player.state != "unstarted"){
-			logger.log("vid has already started preparing");
+		if (player.status && player.status != "unstarted"){
+			//logger.log("vid has already started preparing");
+			setTimeout(function(){
+				waiting=false;
+			}, 10000)
 			checkIfBuffered();
 			return;
 		}	
@@ -118,16 +120,18 @@ function ($, BaseSlideGenerator, Logger) {
 		function preload(){			
 			// if we did not start preparations yet, and the player object is ready
 			if (player && player.playVideo) {
-				// start preparing by playing the video
-				self.status = "preparing";
+				// start preparing by playing the video, but only update the status started if we haven't already started.
+				if (player.status != "started")
+					player.status = "preparing";
+					
 				player.playVideo();
 				
 				// as soon as the video plays, pause it (give it 0.2 seconds to actually register the fact that it had started playing?)...
 				player.addEventListener('onStateChange', function () {
 					// ...but only if we're still in preparation mode (and not playing for real)
-					if (self.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
+					if (player.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
 						setTimeout(function(){
-							if (self.status === "preparing"){
+							if (player.status == "preparing"){
 								player.pauseVideo();
 								checkIfBuffered();
 							}
@@ -145,12 +149,12 @@ function ($, BaseSlideGenerator, Logger) {
 				window.setTimeout(function(){checkIfBuffered()}, 1000);
 			}
 			else{
-				player.state = "loaded";
+				player.status = "loaded";
 				
 				//Only emit if ALL players are loaded/timed out. Not the most efficient way to do things but usually only 1-2 players per generator
 				var i;
 				for (i=0; i<self.player.length; i++){
-					if (player.state!="loaded")
+					if (player.status!="loaded")
 						break;
 					
 					if (i==self.player.length-1){
@@ -165,13 +169,13 @@ function ($, BaseSlideGenerator, Logger) {
     },
 
     /** Adds a new video slide. */
-    addVideoSlide: function (videoID, Duration, Start, Stop) {
+    addVideoSlide: function (videoID, duration, slide_info) {
 	//console.log(this);
 		
-		var self = this, start, end, duration;
+		var self = this, start, duration;
 		
 		if (!scriptFlag){
-			$.getScript("http://www.youtube.com/player_api", function () {
+			$.getScript("https://www.youtube.com/player_api", function () {
 				addSlide();
 			});
 		}
@@ -179,80 +183,99 @@ function ($, BaseSlideGenerator, Logger) {
 			addSlide();
 		}
 		
-		function addSlide(){
-			if (!Start && !Stop){
-				start = self.skipVideoDuration,
-				end = self.skipVideoDuration + self.maxVideoDuration;
-				if (Duration <= self.maxVideoDuration + self.skipVideoDuration)
-					end = Duration;
-				if (Duration < self.maxVideoDuration + self.skipVideoDuration && duration >= self.maxVideoDuration)
-					start = 0;
-			}
-			else if (!Start){
-				end = Stop;
-				if ((Stop-Duration)<=0)
-					start = 0;
-				else
-					start = Stop-Duration;
-			}
-			else if (!Stop){
-				start = Start;
-				end = Start+Duration;
-			}
-			else{
-				start = Start;
-				end = Stop;
-			}
-			duration = end - start;
+		function addSlide(){			
+			if (slide_info)
+				start = slide_info.data.start
+			else
+				start = self.skipVideoDuration;			
+			
 
 			//Just a random error handler to prevent stalling on videos
 			if (!duration)
 				duration = 5000;
 
 			self.totalDuration += duration;
+						
+			var player=null, temp, playerId, $container;
 			
-
-			// create a container that will hide the player
-			var playerId = 'ytplayer' + (++playerCount),
-				$container = $('<div>').append($('<div>').prop('id', playerId))
-									 .css({ width: 0, height: 0, overflow: 'hidden' });
-			$('#ytholder').append($container);
-			
-
-			// create the player in the container
-			var player=null, temp;
-			temp = self.player.push(player)-1;
-			self.player[temp] = player = new window.YT.Player(playerId, {
-				playerVars: {
-					autoplay: 0,
-					controls: 0,
-					start: (start / 1000),
-					end: (end / 1000)+1,	//Add an extra second so that the movie doesn't show the random recommended video collection upon reaching the 'end'
-					wmode: 'opaque'
-				},
-				videoId: videoID,
-				width: 800,
-				height: 600,
-				events: { 
-					onReady: function (event) { 
+			/** TODO What happens if someone's already played the video using "play slide" (unimplemented). Will we rewind? Or reload from the editor? **/
+			if (slide_info && slide_info.player){
+				//logger.log ("Player object found. Reusing it");
+				player = slide_info.player;
+				playerId = slide_info.player.playerId;
+				$container = $('#container_'+playerId);
+				temp = self.player.push(player)-1;
+				self.player[temp] = player;
+				
+				
+				//Player has probably already loaded, but we check whether or not it has an "end" property to be sure. If not loaded, then add listeners
+				if (!player.end){
+					player.addEventListener('onReady', function () {
 						event.target.mute(); 
-						player.end = end/1000;
+						player.end = (start + duration)/1000;
+						player.playerId = playerId;
 						self.emit("playerReady"+temp);
-						if (self.preload){
-							self.prepareVid(temp);
-						}
-					},
-					onError: function(event){
+					});
+					
+					//Player has probably already loaded, but just in case, add the event listeners
+					player.addEventListener('onError', function () {
 						event.target.mute();
-						self.state = "loaded";
+						self.ready = true;
 						self.totalDuration = 0;
 						logger.log("Error loading video for topic", self.topic.label);
 						self.emit("prepared");					
-					}
+					});
 				}
-			});
-			
-			player.state = "unstarted";
+				
+				self.prepareVid(temp);
+				
+			}
+			else{
+				// create a container that will hide the player
+				playerId = 'ytplayer' + (++playerCount),
+				$container = $('<div>');
+				$container.prop('id', 'container_'+playerId);
+				$container.append($('<div>').prop('id', playerId))
+										 .css({ width: 0, height: 0, overflow: 'hidden' });
+				$('#ytholder').append($container);
+				
+
+				// create the player in the container			
+				temp = self.player.push(player)-1;
+				self.player[temp] = player = new window.YT.Player(playerId, {
+					playerVars: {
+						autoplay: 0,
+						controls: 0,
+						start: (start / 1000),
+						//end: (end / 1000),	//End time is variable
+						wmode: 'opaque'
+					},
+					videoId: videoID,
+					width: 800,
+					height: 600,
+					events: { 
+						onReady: function (event) { 
+							event.target.mute(); 
+							player.end = (start + duration)/1000;
+							player.playerId = playerId;
+							self.emit("playerReady"+temp);
+							//logger.log("Emiting playerReady for " + playerId + ", "+temp);
+						},
+						onError: function(event){
+							event.target.mute();
+							self.ready = true;
+							self.totalDuration = 0;
+							logger.log("Error loading video for topic", self.topic.label);
+							self.emit("prepared");					
+						}
+					}
+				});
+
+				self.prepareVid(temp);				
+			}
+
+
+			player.status = "unstarted";
 
 			// create a placeholder on the slide where the player will come
 			var $placeholder = $('<div>'),
@@ -262,7 +285,7 @@ function ($, BaseSlideGenerator, Logger) {
 			// if the slide starts, move the player to the slide
 			slide.once('started', function () {
 				// flag our state to make sure prepare doesn't pause the video
-				self.status = 'started';
+				player.status = 'started';
 
 				// make video visible
 				var offset = $placeholder.offset();
@@ -273,7 +296,7 @@ function ($, BaseSlideGenerator, Logger) {
 				}
 				else{
 					self.once('playerReady', function(){
-						if (self.status == "started" && player.playVideo)
+						if (player.status == "started" && player.playVideo)
 							player.playVideo();
 					});
 				}
@@ -290,25 +313,30 @@ function ($, BaseSlideGenerator, Logger) {
 				});
 			});
 			slide.once('stopped', function () {
-				self.status = "stopped";
+				player.status = "stopped";
 				$container.fadeOut(function () {
 					if (player && player.stopVideo)
 						player.stopVideo();
 					
-					$container.remove();
+					//$container.remove();
 				});
 			});
 
-			slide.slide_info = {
-				type: "YouTubeSlide",
-				data: {
-					videoID: videoID,
-					start: start,
-					end: end,
-					duration: duration,  
-				},
-				playerID: playerId,
-			};
+			
+			if (slide_info){
+				slide.slide_info = slide_info;
+			}
+			else{
+				slide.slide_info = {
+					type: "YouTubeSlide",
+					data: {
+						videoID: videoID,
+						start: start,
+						duration: duration,  
+					},
+				};
+			}
+			slide.slide_info.player = player;
 
 			self.slides.push(slide);
 			self.emit('newSlides');
@@ -344,7 +372,7 @@ function ($, BaseSlideGenerator, Logger) {
 		}
 		
         for (var i = 0; i < itemCount; i++)
-          self.addVideoSlide(items[i].id, items[i].duration * 1000);
+          self.addVideoSlide(items[i].id, self.maxVideoDuration);
       });
   }
 

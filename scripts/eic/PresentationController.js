@@ -31,9 +31,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 
       // Starts the movie about the connection between the user and the topic.
       playMovie: function () {
-        //if (!this.startTopic) throw "No start topic selected.";
-        //if (!this.endTopic) throw "No end topic selected.";
-        //if (!this.intro) throw "The introduction was not initialized";
 
         // Create the slides panel
         var $slides = $('<div>').addClass('slides'),
