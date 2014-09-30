@@ -159,7 +159,7 @@ function ($, BaseSlideGenerator, Logger) {
 					
 					if (i==self.player.length-1){
 						self.ready = true;
-						//logger.log("finished waiting on youtube for " + self.topic.label);
+						logger.log("finished waiting on youtube for " + self.topic.label);
 						self.emit("prepared");
 					}
 				}
@@ -200,7 +200,7 @@ function ($, BaseSlideGenerator, Logger) {
 			
 			/** TODO What happens if someone's already played the video using "play slide" (unimplemented). Will we rewind? Or reload from the editor? **/
 			if (slide_info && slide_info.player){
-				logger.log ("Player object found. Reusing it");
+				//logger.log ("Player object found. Reusing it");
 				player = slide_info.player;
 				playerId = slide_info.player.playerId;
 				$container = $('#container_'+playerId);

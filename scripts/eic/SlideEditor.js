@@ -306,21 +306,20 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     	},
     	restoreCurrentNode: function(n){
     		var self = this;
-    		console.log("Self Test", self);
+    		//console.log("Self Test", self);
     		console.log("RESTORE NODE", n);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
     			if (this._Play_Sequence[i].indexOf("youtube") != -1){
     				var vidID = this._Play_Sequence[i].substring(26,37);
     				this._Play_Sequence[i] = vidID;
-    				console.log("vidID", vidID);
+    				//console.log("vidID", vidID);
     			}
     		}
     		this._data_source.generators[n].slide_order = this._Play_Sequence;
     		var slide_content = new Array;
     		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
-    			console.log(i, this._Play_Sequence[i]);
-    			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
+       			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
     		}
     		console.log("slide_content", slide_content);
     		if (slide_content[0] != undefined){
