@@ -251,8 +251,8 @@ function ($, BaseSlideGenerator, Logger) {
 						wmode: 'opaque'
 					},
 					videoId: videoID,
-					width: 800,
-					height: 600,
+					width: $("#screen").width(),
+					height: $("#screen").height(),
 					events: { 
 						onReady: function (event) { 
 							event.target.mute(); 
