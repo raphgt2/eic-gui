@@ -157,7 +157,30 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			tts.getSpeech(text, 'en_GB');	
 			this.hash_object.audio_text=text;
 		},
-        
+        updateHash: function(){
+			var combinedInfo = [];
+			var slide_count=0;
+			var duration=this.durationLeft;
+					
+			for (var i = 0; i < this.generators.length; i++){
+				slide_count+=this.generators[i].slides.length;
+			}
+			
+			if (!this.hash_object.slide_description){
+				// randomly pick a generator and select its next slide
+				var generator;			
+				for (var i=0; i<slide_count; i++){
+					do {
+						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
+					} while (!generator.hasNext())
+					combinedInfo.push(generator.next().slide_info);
+				}
+			}
+
+			this.hash_object.slide_description = combinedInfo;
+			this.hash_object.slide_descritpion.temp = true;			//Create a flag indicating that this slide_description isn't real
+
+		},
         prepare: function () {
           this.curSlide = new TitleSlideGenerator(this.topic).demo();
           this.curSlide.audioURL = this.audioURL;

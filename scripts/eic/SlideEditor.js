@@ -5,12 +5,10 @@
 */
 
 define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
-  'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator',
-  'eic/generators/TopicToTopicSlideGenerator', 'eic/generators/CompositeSlideGenerator',
+  'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController','lib/jquery__ui'],
   function ($, Logger, EventEmitter, AudioEditor,
-    IntroductionSlideGenerator, OutroductionSlideGenerator,
-    TopicToTopicSlideGenerator, CompositeSlideGenerator,
+    IntroductionSlideGenerator, OutroductionSlideGenerator, CompositeSlideGenerator,
     ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController,jquery__ui) {
     "use strict";
     var logger = new Logger("SlideEditor");
@@ -20,13 +18,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 		
 		this.curTopic = null;
 		this.tempSlides = {};
-		this.topicToTopic = controller.topicToTopic;
+		this.topics = controller.topicToTopic.generators;
 		this.hash_object = path;
       
       
       
       //EDITING NODES//
-		this._data_source = controller.topicToTopic;
 			
     	this._path = hashObj.path;
     	this._Slide_Element_Collection = new Object();
@@ -66,36 +63,34 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
         
 			var self = this;
-        	var topics = [];
         	
-          	for(var i = 0; i < self.topicToTopic.generators.length; i++){
-           		topics.push(self.topicToTopic.generators[i]);
-           		self.topicToTopic.generators[i].prepare();
+          	for(var i = 0; i < self.topics.length; i++){
+           		self.topics[i].prepare();
         	}
         	
         	var firstInit = false;
-        	for(var i = 1; i < topics.length; i++){
+        	for(var i = 1; i < self.topics.length; i++){
         		var $button = $('<button>').attr("class", "btn btn-sm btn-info nodeNavBtn")
-        	    	.attr("id", topics[i].topic.label)
+        	    	.attr("id", self.topics[i].topic.label)
         	    	.attr("order", i)
-        	    	.html(topics[i].topic.label);
+        	    	.html(self.topics[i].topic.label);
         		$button.click(function(){ 
         			$("#movie-nav-bar").html('');
-        			self.switchTopic(this.id, topics, self.curTopic); 
+        			self.switchTopic(this.id, self.curTopic); 
         			var index = $(this).attr("order");
         			self.restoreCurrentNode(index);
 	    			self.PrepareNode(index);
 	    			self._curIndex = index;
         		});
         		$('#nodeNavBar').append($button);
-        		if(!firstInit && topics[i] !== undefined){
-        			self.curTopic = topics[i];
-        			var slide = topics[i].next();
+        		if(!firstInit && self.topics[i] !== undefined){
+        			self.curTopic = self.topics[i];
+        			var slide = self.topics[i].next();
         			firstInit = true;
         			self.$slides.append(slide.$element);
         		}
         	}
-        	self.switchTopic(topics[1].topic.label, topics, topics[1]);
+        	self.switchTopic(self.topics[1].topic.label, self.topics[1]);
         	$('#img-element-list-wrap').css('display', 'inline');
             $('#vid-element-list-wrap').css('display', 'none');
           //}, 500);
@@ -107,7 +102,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
           }, 10);
       },
       
-      switchTopic: function(id, topics, prevTopic){
+      switchTopic: function(id, prevTopic){
       	//set the previous slide's chosen topics
       	var prevSlides = prevTopic.getSlides();
       	for(var val in prevSlides){
@@ -139,13 +134,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
   		}
   		
   		//
-	  	for(var i = 1; i < topics.length; i++){
-	  		if(topics[i] !== undefined && topics[i].topic.label == id){
+	  	for(var i = 1; i < this.topics.length; i++){
+	  		if(this.topics[i] !== undefined && this.topics[i].topic.label == id){
 
-	  			this.curTopic = topics[i];
+	  			this.curTopic = this.topics[i];
 	  			this.audio_editor.setTopic(this.curTopic);
 
-	  			var slide = topics[i].next();
+	  			var slide = this.topics[i].next();
         		// start the transition of other children
         		var children = this.$slides.children();
           	    children.remove();
@@ -154,8 +149,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         		var self = this;
         		
         		//add appropriate slides to edit box
-        		var slides = topics[i].getSlides();
-        		var editedSlides = topics[i].getEditedSlides();
+        		var slides = self.topics[i].getSlides();
+        		var editedSlides = self.topics[i].getEditedSlides();
         		
         		var imgcnt = 0;
         		var vidcnt = 0;
@@ -266,10 +261,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         }
       },
       
-      getTopictoTopic: function(){
-      	return this._data_source;
-      },
-      
       getSlides: function(){
       	return this.$slides;
       },
@@ -288,10 +279,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
       },
     	initElementCollection: function(){
     		var self = this;
-    		console.log("Data_Source", this._data_source);
-    		for(var i = 1; i < this._data_source.generators.length; i++){
-    			this._data_source.generators[i].slide_order = [];
-    			var slides = this._data_source.generators[i].slides;
+    		console.log("Data_Source", this.topics);
+    		for(var i = 1; i < this.topics.length; i++){
+    			this.topics[i].slide_order = [];
+    			var slides = this.topics[i].slides;
     			logger.log(slides);
     			var img = slides.img;
     			var vid = slides.vid;
@@ -315,7 +306,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     				//console.log("vidID", vidID);
     			}
     		}
-    		this._data_source.generators[n].slide_order = this._Play_Sequence;
+    		this.topics[n].slide_order = this._Play_Sequence;
     		var slide_content = new Array;
     		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
@@ -332,7 +323,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");
     		this._curNode = this._path[2*(n-1)];
-    		this._Play_Sequence = this._data_source.generators[n].slide_order;
+    		this._Play_Sequence = this.topics[n].slide_order;
     	},
     	EnableUIAnimation: function(){
     		var self = this;
@@ -454,6 +445,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		this._Play_Sequence = navlist;
     	},
 		//Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
+		//Create a pseudo-slide_description for default vids so that we don't waste time trying to load new ones
 		evaluateHash: function (){
 		logger.log("evaluating hash");
 			var path = this._hash.path, i,j;
@@ -468,7 +460,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 					else
 						parts+=1;
 				}
-				//console.log("Audio_time:"+path[i].audio_time+", Parts:"+parts);
 				
 				for (j=0; j<path[i].slide_description.length; j++){
 					if (path[i].slide_description[j].type == "YouTubeSlide"){
