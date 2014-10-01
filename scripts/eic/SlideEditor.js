@@ -87,7 +87,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 	    			self.PrepareNode(index);
 	    			self._curIndex = index;
         		});
-        		$('#topic-navigator').append($button);
+        		$('#nodeNavBar').append($button);
         		if(!firstInit && topics[i] !== undefined){
         			self.curTopic = topics[i];
         			var slide = topics[i].next();
@@ -176,13 +176,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
       						}
       						if(!isEdited){
       							var imgs = s[i].$element.clone().find('img'); //get just the image link
-      							imgs.attr('id', val + 's' + i);
+      							imgs.attr('id', val + 's' + i)
+      								.attr('class', 'nodeElementBarContent');
       							$(imgs).click(function () {
       								self.setContent(this.id, i, 'img');
       							});
       							$('#imgs').append('<li id=img' + i + '></li>');
-      							$('#img' + i + '').addClass('ui-state-default img-video-wrap btn btn-default');
+      							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
       							$('#img' + i + '').append(imgs[0]);
+      							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
       					}
       				}
@@ -202,8 +204,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
       						if(!isEdited){
                           		var vids = s[i].slide_info.data.videoID;
                          		$('#vids').append('<li id=vid' + i + '></li>');
-                         		$('#vid' + i + '').addClass('ui-state-default img-video-wrap btn btn-default');
+                         		$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
                          		$('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
+                         		$('#vids' + i + '').addClass('nodeElementBarContent');
                          		$('#vids' + i).click(function () {
                          		    var id = "vids" + i;
                          			self.setContent(id, i, 'vid');
@@ -303,6 +306,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     	},
     	restoreCurrentNode: function(n){
     		var self = this;
+    		//console.log("Self Test", self);
+    		console.log("RESTORE NODE", n);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
     			if (this._Play_Sequence[i].indexOf("youtube") != -1){
     				var vidID = this._Play_Sequence[i].substring(26,37);
@@ -312,6 +317,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		}
     		this._data_source.generators[n].slide_order = this._Play_Sequence;
     		var slide_content = new Array;
+    		console.log("THIS", this);
     		for (var i = 0; i < this._Play_Sequence.length; i++){
        			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
     		}
@@ -324,6 +330,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		console.log("Updated Hash", this._hash);
     	},
     	PrepareNode: function(n){
+    		console.log("PREPARE NODE");
     		this._curNode = this._path[2*(n-1)];
     		this._Play_Sequence = this._data_source.generators[n].slide_order;
     	},
@@ -334,7 +341,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		$('#lastStep').click(function(){
     			console.log("Hash Object Test: ", self._hash);
     		});
-    		$('#playButton').click(function () {
+    		$('#play-button').click(function () {
 				
 				//Hide the editor so that it's not possible to click the play button multiple times...
 				$('#editor').css('display', 'none');
@@ -406,7 +413,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 		      scroll: false,
 		      receive: function(event, ui){
 		      	ui.item.removeClass("movieNavElementWrap")
-					   .addClass("img-video-wrap");
+					   .addClass("nodeElementBarContentWrap");
 		      }
 		    });
 
@@ -417,13 +424,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 				revert: true,
 				scroll: false,
 				over: function(event, ui){
-					$("#img-video-selection-wrap").css("border", "2px solid black");
+					$("#movieNavBarWrap").css("border", "2px solid black");
 				},
 				out: function(event, ui){
-					$("#img-video-selection-wrap").css("border", "1px solid gray");
+					$("#movieNavBarWrap").css("border", "1px solid gray");
 				},
 				receive: function(event, ui){
-					ui.item.removeClass("img-video-wrap")
+					console.log("Receive!");
+					ui.item.removeClass("nodeElementBarContentWrap")
 						   .addClass("movieNavElementWrap");
 					$('#movie-nav-bar').css("padding", "3px");
 				},
@@ -460,6 +468,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 					else
 						parts+=1;
 				}
+				//console.log("Audio_time:"+path[i].audio_time+", Parts:"+parts);
 				
 				for (j=0; j<path[i].slide_description.length; j++){
 					if (path[i].slide_description[j].type == "YouTubeSlide"){
