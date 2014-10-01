@@ -319,7 +319,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		prepare: function () {
 
           // prepare other generators
-          //this.generators.forEach(function (g) { g.prepare(); });
+          this.generators.forEach(function (g) { g.prepare(); });
 
           //add all the slides for each generator
           for(var val in this.generatorsHash){

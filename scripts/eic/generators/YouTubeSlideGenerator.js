@@ -171,8 +171,27 @@ function ($, BaseSlideGenerator, Logger) {
     /** Adds a new video slide. */
     addVideoSlide: function (videoID, duration, slide_info) {
 	//console.log(this);
-		
+
 		var self = this, start, duration;
+		
+		// create a placeholder on the slide where the player will come
+		var $placeholder = $('<div>'),
+			slide = this.createBaseSlide('youtube', $placeholder, duration);
+		
+		if (slide_info){
+			slide.slide_info = slide_info;
+		}
+		else{
+			slide.slide_info = {
+				type: "YouTubeSlide",
+				data: {
+					videoID: videoID,
+					start: start,
+					duration: duration,  
+				},
+			};
+		}
+		
 		
 		if (!scriptFlag){
 			$.getScript("https://www.youtube.com/player_api", function () {
@@ -188,6 +207,7 @@ function ($, BaseSlideGenerator, Logger) {
 				start = slide_info.data.start
 			else
 				start = self.skipVideoDuration;			
+			
 			
 
 			//Just a random error handler to prevent stalling on videos
@@ -207,26 +227,7 @@ function ($, BaseSlideGenerator, Logger) {
 				temp = self.player.push(player)-1;
 				self.player[temp] = player;
 				
-				
-				//Player has probably already loaded, but we check whether or not it has an "end" property to be sure. If not loaded, then add listeners
-				if (!player.end){
-					player.addEventListener('onReady', function () {
-						event.target.mute(); 
-						player.end = (start + duration)/1000;
-						player.playerId = playerId;
-						self.emit("playerReady"+temp);
-					});
-					
-					//Player has probably already loaded, but just in case, add the event listeners
-					player.addEventListener('onError', function () {
-						event.target.mute();
-						self.ready = true;
-						self.totalDuration = 0;
-						logger.log("Error loading video for topic", self.topic.label);
-						self.emit("prepared");					
-					});
-				}
-				
+								
 				self.prepareVid(temp);
 				
 			}
@@ -258,8 +259,8 @@ function ($, BaseSlideGenerator, Logger) {
 							event.target.mute(); 
 							player.end = (start + duration)/1000;
 							player.playerId = playerId;
+							slide.slide_info.player = player;
 							self.emit("playerReady"+temp);
-							//logger.log("Emiting playerReady for " + playerId + ", "+temp);
 						},
 						onError: function(event){
 							event.target.mute();
@@ -273,14 +274,6 @@ function ($, BaseSlideGenerator, Logger) {
 
 				self.prepareVid(temp);				
 			}
-
-
-			player.status = "unstarted";
-
-			// create a placeholder on the slide where the player will come
-			var $placeholder = $('<div>'),
-			  slide = self.createBaseSlide('youtube', $placeholder, duration);
-			 
 
 			// if the slide starts, move the player to the slide
 			slide.once('started', function () {
@@ -323,21 +316,6 @@ function ($, BaseSlideGenerator, Logger) {
 			});
 
 			
-			if (slide_info){
-				slide.slide_info = slide_info;
-			}
-			else{
-				slide.slide_info = {
-					type: "YouTubeSlide",
-					data: {
-						videoID: videoID,
-						start: start,
-						duration: duration,  
-					},
-				};
-			}
-			slide.slide_info.player = player;
-
 			self.slides.push(slide);
 			self.emit('newSlides');
 		}	
