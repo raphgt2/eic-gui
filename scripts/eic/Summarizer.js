@@ -114,8 +114,8 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
           },
 		  timeout: 30000,
           success: function (abstracts) {
-            if (!abstracts.length || abstracts.length === 0)
-				logger.log('No abstracts found');
+            //if (!abstracts.length || abstracts.length === 0)
+			//	logger.log('No abstracts found');
 
             function retrieveAbstract(index, vertice) {
               var uri = vertice.uri || '';
