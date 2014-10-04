@@ -43,7 +43,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
 
         // Add introduction, body, and outroduction generators
-        //logger.log("Creating slides from", this.startTopic.label, "to", this.endTopic.label);
         var generator = new CompositeSlideGenerator();
         
 		this.startTopic=this.path.source;
@@ -62,45 +61,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 		if (this.outro)
 			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic));
 
-		//To prevent any slide-skipping, don't go into playback mode until all slides are at least done (waiting on topic slide audio)   
-		/*if (this.topicToTopic.ready){
-			logger.log("New hash: " + this.path);
-			new SlidePresenter($slides, generator).start();
-		}
-		else{
-			this.topicToTopic.once('topic slides ready', function(){
-				logger.log("New hash: " + this.path);
-				new SlidePresenter($slides, generator).start();				
-			});
-		}*/
-		
 		//Go straight to "playing" so that the loading slide shows
 		new SlidePresenter($slides, generator).start();
 
     }};
 
-
-    /* Properties */
-
-    // The startTopic property also initializes the introduction,
-    // so the movie can be buffered earlier and thus start faster.
-    /*Object.defineProperty(PresentationController.prototype, "startTopic", {
-      get: function () { return this._startTopic; },
-      set: function (startTopic) {
-        logger.log("Start topic set to", startTopic.label);
-        this._startTopic = startTopic;
-        delete this.intro;
-
-        // If the topic is an error, show the error slide
-        if (startTopic instanceof Error)
-          this.intro = new ErrorSlideGenerator(startTopic);
-        // Otherwise, create an actual introduction slide
-        else
-          this.intro = new IntroductionSlideGenerator(startTopic, this.profile);
-        // Initialize the intro right away, avoiding delay when starting the movie
-        this.intro.init();
-      }
-    });
-	*/
     return PresentationController;
   });

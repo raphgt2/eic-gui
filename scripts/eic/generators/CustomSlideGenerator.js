@@ -158,27 +158,32 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			this.hash_object.audio_text=text;
 		},
         updateHash: function(){
-			var combinedInfo = [];
 			var slide_count=0;
-			var duration=this.durationLeft;
+			var generator, slide;
 					
 			for (var i = 0; i < this.generators.length; i++){
 				slide_count+=this.generators[i].slides.length;
 			}
 			
 			if (!this.hash_object.slide_description){
-				// randomly pick a generator and select its next slide
-				var generator;			
+				// randomly pick a generator and select its next slide			
 				for (var i=0; i<slide_count; i++){
 					do {
 						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
 					} while (!generator.hasNext())
-					combinedInfo.push(generator.next().slide_info);
+					slide= generator.next();
+					this.hash_object.slide_description = [];
+					this.hash_object.slide_description.push(slide.slide_info);
 				}
 			}
-
-			this.hash_object.slide_description = combinedInfo;
-			this.hash_object.slide_descritpion.temp = true;			//Create a flag indicating that this slide_description isn't real
+			else{
+				for (var i=0; i< this.generators.length; i++){
+					while (this.generators[i].hasNext()){
+						slide = this.generators[i].next();
+						this.hash_object.slide_description.push(slide.slide_info);
+					}
+				}				
+			}
 
 		},
         prepare: function () {

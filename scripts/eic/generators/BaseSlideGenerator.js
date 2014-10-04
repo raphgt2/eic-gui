@@ -44,6 +44,9 @@ function ($, EventEmitter) {
 
       return slide;
     },
+	
+	/** Update the hash object, if any */
+	updateHash: function(){ }
   };
 
   return BaseSlideGenerator;

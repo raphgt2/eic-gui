@@ -65,6 +65,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			else{
 				logger.log("slide description found", this.hash_object.slide_description);
 				if (this.hash_object.slide_description.length == 0){
+					logger.log ("Empty slide description. Creating new generators anyway");
 					//Create all generators depending on the type of the topic; suppress inits b/c we're not doing a search for vids/images
 					switch (this.topic.type) {
 					case "http://dbpedia.org/ontology/PopulatedPlace":
@@ -273,53 +274,41 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 		},
 		
 		updateHash: function(){
-			var combinedInfo = [];
 			var slide_count=0;
-			var duration=this.durationLeft;
+			var generator, slide;
 					
 			for (var i = 0; i < this.generators.length; i++){
 				slide_count+=this.generators[i].slides.length;
 			}
 			
 			if (!this.hash_object.slide_description){
-				// randomly pick a generator and select its next slide
-				var generator;			
+				// randomly pick a generator and select its next slide			
 				for (var i=0; i<slide_count; i++){
 					do {
 						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
 					} while (!generator.hasNext())
-					this.slides.push(generator.next());
+					slide= generator.next();
+					logger.log(slide);
+					this.slides.push(slide);
+					this.hash_object.slide_description.push(slide.slide_info);
 				}
 			}
 			else{
 				for (var i=0; i< this.generators.length; i++){
-					while (this.generators[i].hasNext())
-						this.slides.push(this.generators[i].next());
+					while (this.generators[i].hasNext()){
+						slide = this.generators[i].next()
+						logger.log(slide)
+						this.slides.push(slide);
+						this.hash_object.slide_description.push(slide.slide_info);
+					}
 				}				
 			}
-
-			for (var i=0; i<slide_count; i++){
-				try{
-					combinedInfo.push(this.slides[i].slide_info);
-					if (i==slide_count-1)
-						this.slides[i].slide_info.data.duration = duration;
-					else
-						duration-=this.slides[i].slide_info.data.duration;
-						
-
-				}
-				catch(e){
-					logger.log(i, ' ', slide_count);
-				}
-			}
-			this.hash_object.slide_description = combinedInfo;
-
 		},
 		
 		prepare: function () {
 
           // prepare other generators
-          this.generators.forEach(function (g) { g.prepare(); });
+          //this.generators.forEach(function (g) { g.prepare(); });
 
           //add all the slides for each generator
           for(var val in this.generatorsHash){

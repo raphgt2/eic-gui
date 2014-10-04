@@ -307,6 +307,7 @@ function ($, BaseSlideGenerator, Logger) {
 			});
 			slide.once('stopped', function () {
 				player.status = "stopped";
+				logger.log ("stopped");
 				$container.fadeOut(function () {
 					if (player && player.stopVideo)
 						player.stopVideo();

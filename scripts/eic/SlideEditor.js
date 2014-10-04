@@ -449,26 +449,30 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 		evaluateHash: function (){
 		logger.log("evaluating hash");
 			var path = this._hash.path, i,j;
+			var topics = this.topics;
 			for (i=0; i<path.length; i++){
-				if (!path[i].slide_description)
-					continue;
-		
-				var parts = 0;
-				for (j=0; j<path[i].slide_description.length; j++){
-					if (path[i].slide_description[j].type == "YouTubeSlide")
-						parts+=3
-					else
-						parts+=1;
+				if (!path[i].slide_description){
+					logger.log(topics[i+1]);
+					topics[i+1].updateHash();
 				}
-				
-				for (j=0; j<path[i].slide_description.length; j++){
-					if (path[i].slide_description[j].type == "YouTubeSlide"){
-						path[i].slide_description[j].data.duration = Math.floor((path[i].audio_time*3)/parts);
-						if (path[i].slide_description[j].player)
-							this.players.push(path[i].slide_description[j].player.playerId);
+				else{
+					var parts = 0;
+					for (j=0; j<path[i].slide_description.length; j++){
+						if (path[i].slide_description[j].type == "YouTubeSlide")
+							parts+=3
+						else
+							parts+=1;
 					}
-					else
-						path[i].slide_description[j].data.duration = Math.floor(path[i].audio_time/parts);					
+					
+					for (j=0; j<path[i].slide_description.length; j++){
+						if (path[i].slide_description[j].type == "YouTubeSlide"){
+							path[i].slide_description[j].data.duration = Math.floor((path[i].audio_time*3)/parts);
+							if (path[i].slide_description[j].player)
+								this.players.push(path[i].slide_description[j].player.playerId);
+						}
+						else
+							path[i].slide_description[j].data.duration = Math.floor(path[i].audio_time/parts);					
+					}
 				}
 			}
 			//Make sure NOT to start cleaning the ytholder or starting the presentation controller until the entire hash has been looped through				
