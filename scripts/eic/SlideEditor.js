@@ -314,6 +314,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		console.log("slide_content", slide_content);
     		if (slide_content[0] != undefined){
     			this._curNode.slide_description = slide_content;
+				this._curNode.temp = false;		//Indicate that the slide description is an actual thing
     		}
     	},
     	PrepareNode: function(n){
@@ -450,7 +451,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 				if (!topics[i].hash_object.slide_description){
 					topics[i].updateHash();
 				}
-				else{
+				//Only do proper time updates if the slide_description was real
+				else if (!topics[i].hash_object.temp){
 					var parts = 0;
 					for (j=0; j<topics[i].hash_object.slide_description.length; j++){
 						if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide")
