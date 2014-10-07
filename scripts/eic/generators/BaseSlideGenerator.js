@@ -48,7 +48,7 @@ function ($, EventEmitter) {
 	/** Update the hash object, if any */
 	updateHash: function(){ },
 	
-	resetGenerators: function() {}
+	reset: function() {}
   };
 
   return BaseSlideGenerator;

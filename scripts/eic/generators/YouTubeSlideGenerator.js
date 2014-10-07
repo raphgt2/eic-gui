@@ -78,7 +78,7 @@ function ($, BaseSlideGenerator, Logger) {
       return this.slides.shift();
     },
 	
-	resetGenerators: function() {
+	reset: function() {
 		for (var i=0; i< this.slidesCopy.length; i++){
 			this.slides[i] = this.slidesCopy[i];		//Is this okay?
 		}

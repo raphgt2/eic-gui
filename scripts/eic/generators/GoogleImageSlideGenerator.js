@@ -77,7 +77,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
         },
 		
 		/** Since next() shifts the array until it's empty, let's have a reset function to repopulate it with the original contents) */
-		resetGenerators: function() {
+		reset: function() {
 			for (var i=0; i< this.slidesCopy.length; i++){
 				this.slides[i] = this.slidesCopy[i];		//Is this okay?
 			}

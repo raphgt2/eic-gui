@@ -169,12 +169,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			if (!this.hash_object.slide_description){
 				this.hash_object.slide_description = [];
 				// randomly pick a generator and select its next slide					
-				for (var i=0; i<slide_count; i++){
+				for (var i=0; i<slide_count && this.durationLeft >0 ; i++){
 					do {
 						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
 					} while (!generator.hasNext())
 					slide= generator.next();				
 					this.hash_object.slide_description.push(slide.slide_info);
+					this.durationLeft -= slide.slide_info.data.duration;
 				}
 				this.hash_object.temp = true;
 			}
@@ -188,9 +189,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			}
 			
 		},
-		resetGenerators: function() {
+		reset: function() {
+			this.durationLeft = this.hash_object.audio_time;
 			for (var i=0; i < this.generators.length; i++){
-				this.generators[i].resetGenerators();
+				this.generators[i].reset();
 			}
 		},
         prepare: function () {
