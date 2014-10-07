@@ -282,8 +282,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		console.log("Data_Source", this.topics);
     		for(var i = 1; i < this.topics.length; i++){
     			this.topics[i].slide_order = [];
-    			var slides = this.topics[i].slides;
-    			logger.log(slides);
+    			var slides = this.topics[i].slides;;
     			var img = slides.img;
     			var vid = slides.vid;
     			for (var j = 0; j < img.length; j++){
@@ -316,9 +315,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		if (slide_content[0] != undefined){
     			this._curNode.slide_description = slide_content;
     		}
-    		
-    		
-    		console.log("Updated Hash", this._hash);
     	},
     	PrepareNode: function(n){
     		console.log("PREPARE NODE");
@@ -358,7 +354,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 						width: 800,
 						'vertical-align': 'middle',
 					});               
-					self.cleanYTHolder();
+					//self.cleanYTHolder();
 					var play = new PresentationController(self._hash, false, true);
 					console.log("PresentationController: ", play, play.path.path);
 					play.playMovie();
@@ -377,7 +373,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 							width: 800,
 							'vertical-align': 'middle',
 						});            
-						self.cleanYTHolder();
+						//self.cleanYTHolder();
 						var play = new PresentationController(self._hash, false, true);
 						console.log("PresentationController: ", play, play.path.path);
 						play.playMovie();
@@ -448,30 +444,28 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 		//Create a pseudo-slide_description for default vids so that we don't waste time trying to load new ones
 		evaluateHash: function (){
 		logger.log("evaluating hash");
-			var path = this._hash.path, i,j;
+			var i,j;
 			var topics = this.topics;
-			for (i=0; i<path.length; i++){
-				if (!path[i].slide_description){
-					logger.log(topics[i+1]);
-					topics[i+1].updateHash();
+			for (i=1; i<topics.length; i++){
+				if (!topics[i].hash_object.slide_description){
+					topics[i].updateHash();
 				}
 				else{
 					var parts = 0;
-					for (j=0; j<path[i].slide_description.length; j++){
-						if (path[i].slide_description[j].type == "YouTubeSlide")
+					for (j=0; j<topics[i].hash_object.slide_description.length; j++){
+						if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide")
 							parts+=3
 						else
 							parts+=1;
 					}
-					
-					for (j=0; j<path[i].slide_description.length; j++){
-						if (path[i].slide_description[j].type == "YouTubeSlide"){
-							path[i].slide_description[j].data.duration = Math.floor((path[i].audio_time*3)/parts);
-							if (path[i].slide_description[j].player)
-								this.players.push(path[i].slide_description[j].player.playerId);
+					for (j=0; j<topics[i].hash_object.slide_description.length; j++){
+						if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide"){	
+							topics[i].hash_object.slide_description[j].data.duration = Math.floor((topics[i].hash_object.audio_time*3)/parts);
+							if (topics[i].hash_object.slide_description[j].player)
+								this.players.push(topics[i].hash_object.slide_description[j].player.playerId);
 						}
 						else
-							path[i].slide_description[j].data.duration = Math.floor(path[i].audio_time/parts);					
+							topics[i].hash_object.slide_description[j].data.duration = Math.floor(topics[i].hash_object.audio_time/parts);		
 					}
 				}
 			}
@@ -479,8 +473,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 			this.evaluated = true;
 			logger.log("finished evaluation");
 			this.emit('hash evaluated');
-		},
-		cleanYTHolder: function(){
+		}
+		//Keep all youtube players, since well need them again if we implement replay function
+		/*cleanYTHolder: function(){
 			var i;
 			
 			//add a class to the players we wanna save
@@ -490,7 +485,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 			
 			//Now remove the extraneous players
 			$('#ytholder').children().not('.save').remove();
-		}
+		}*/
 		
       
     };

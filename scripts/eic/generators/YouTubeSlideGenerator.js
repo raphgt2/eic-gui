@@ -41,6 +41,7 @@ function ($, BaseSlideGenerator, Logger) {
     this.orderMethod = options.orderMethod || 'relevance';
     this.totalDuration = 0;
     this.slides = [];
+	this.slidesCopy = [];
 	this.ready = false;
 	this.player = [];
   }
@@ -76,6 +77,12 @@ function ($, BaseSlideGenerator, Logger) {
     next: function () {
       return this.slides.shift();
     },
+	
+	resetGenerators: function() {
+		for (var i=0; i< this.slidesCopy.length; i++){
+			this.slides[i] = this.slidesCopy[i];		//Is this okay?
+		}
+	},
     
 	prepare: function(){
 		var i;
@@ -180,8 +187,10 @@ function ($, BaseSlideGenerator, Logger) {
 		
 		if (slide_info){
 			slide.slide_info = slide_info;
+			start = slide_info.data.start;
 		}
 		else{
+			start = self.skipVideoDuration;	
 			slide.slide_info = {
 				type: "YouTubeSlide",
 				data: {
@@ -190,7 +199,7 @@ function ($, BaseSlideGenerator, Logger) {
 					duration: duration,  
 				},
 			};
-		}
+		}				
 		
 		
 		if (!scriptFlag){
@@ -202,14 +211,7 @@ function ($, BaseSlideGenerator, Logger) {
 			addSlide();
 		}
 		
-		function addSlide(){			
-			if (slide_info)
-				start = slide_info.data.start
-			else
-				start = self.skipVideoDuration;			
-			
-			
-
+		function addSlide(){	
 			//Just a random error handler to prevent stalling on videos
 			if (!duration)
 				duration = 5000;
@@ -318,6 +320,7 @@ function ($, BaseSlideGenerator, Logger) {
 
 			
 			self.slides.push(slide);
+			self.slidesCopy.push(slide);
 			self.emit('newSlides');
 		}	
     },

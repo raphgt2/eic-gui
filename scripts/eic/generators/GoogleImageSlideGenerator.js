@@ -29,6 +29,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
       this.topic = topic;
       this.maxResults = maxResults || 8;
       this.slides = [];
+	  this.slidesCopy = [];
       this.cnt = 0;
 	  this.ready=true;
     }
@@ -72,12 +73,15 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
 
         /** Advances to the next slide. */
         next: function () {
-          if (!repeat)
-            return this.slides.shift();
-
-          this.cnt += 1;
-          return this.slides[(this.cnt - 1) % this.maxResults];
+		  return this.slides.shift();
         },
+		
+		/** Since next() shifts the array until it's empty, let's have a reset function to repopulate it with the original contents) */
+		resetGenerators: function() {
+			for (var i=0; i< this.slidesCopy.length; i++){
+				this.slides[i] = this.slidesCopy[i];		//Is this okay?
+			}
+		},
 
         /** Adds a new image slide. */
         addImageSlide: function (imageUrl, duration) {
@@ -98,6 +102,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
             setTimeout($.proxy($image, 'addClass', 'zoom'));
           });
           this.slides.push(slide);
+		  this.slidesCopy.push(slide);
           this.emit('newSlides');
         },
       });

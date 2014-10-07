@@ -28,7 +28,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       
       //stuff
       this.curSlide = null;
-      this.slides = {};
+      this.slides = [];
+	  this.slidesCopy =[];
       this.editedSlides = [];
     }
 
@@ -166,15 +167,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			}
 			
 			if (!this.hash_object.slide_description){
-				// randomly pick a generator and select its next slide			
+				this.hash_object.slide_description = [];
+				// randomly pick a generator and select its next slide					
 				for (var i=0; i<slide_count; i++){
 					do {
 						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
 					} while (!generator.hasNext())
-					slide= generator.next();
-					this.hash_object.slide_description = [];
+					slide= generator.next();				
 					this.hash_object.slide_description.push(slide.slide_info);
 				}
+				this.hash_object.temp = true;
 			}
 			else{
 				for (var i=0; i< this.generators.length; i++){
@@ -184,7 +186,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					}
 				}				
 			}
-
+			
+		},
+		resetGenerators: function() {
+			for (var i=0; i < this.generators.length; i++){
+				this.generators[i].resetGenerators();
+			}
 		},
         prepare: function () {
           this.curSlide = new TitleSlideGenerator(this.topic).demo();
@@ -196,9 +203,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           //add all the slides for each generator
           for(var val in this.generatorsHash){
           	var s = [];
-          	for(var i = 0; i < 20 && this.generatorsHash[val].hasNext() && 
-          		this.generatorsHash[val].next !== undefined; i++){
-          		s.push(this.generatorsHash[val].next());
+          	for(var i = 0; i< this.generatorsHash[val].slides.length; i++){
+          		s.push(this.generatorsHash[val].slides[i]);
           	}
           	this.slides[val] = s;
           }

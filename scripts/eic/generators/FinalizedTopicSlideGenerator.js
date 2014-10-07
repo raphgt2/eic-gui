@@ -273,7 +273,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			this.hash_object.audio_text=text;
 		},
 		
-		updateHash: function(){
+		updateHash: function(){		//Not actually a hash object updater in this case...more like making sure the 'slides' are prsented in the order specified by the hash
 			var slide_count=0;
 			var generator, slide;
 					
@@ -288,18 +288,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 						generator = this.generators[Math.floor(Math.random() * this.generators.length)];
 					} while (!generator.hasNext())
 					slide= generator.next();
-					logger.log(slide);
-					this.slides.push(slide);
-					this.hash_object.slide_description.push(slide.slide_info);
+					this.slides.push(slide);					
+					//this.hash_object.slide_description.push(slide.slide_info);
 				}
 			}
 			else{
 				for (var i=0; i< this.generators.length; i++){
 					while (this.generators[i].hasNext()){
 						slide = this.generators[i].next()
-						logger.log(slide)
 						this.slides.push(slide);
-						this.hash_object.slide_description.push(slide.slide_info);
+						//this.hash_object.slide_description.push(slide.slide_info);
 					}
 				}				
 			}
