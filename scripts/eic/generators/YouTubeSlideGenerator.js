@@ -112,6 +112,7 @@ function ($, BaseSlideGenerator, Logger) {
 			setTimeout(function(){
 				waiting=false;
 			}, 10000)
+			checkIfBuffered();
 		}
 		else{
 			self.once("playerReady"+index, function(){
@@ -120,6 +121,7 @@ function ($, BaseSlideGenerator, Logger) {
 				setTimeout(function(){
 					waiting=false;
 				}, 10000)
+				checkIfBuffered();
 			});
 		}
       
@@ -140,7 +142,6 @@ function ($, BaseSlideGenerator, Logger) {
 						setTimeout(function(){
 							if (player.status == "preparing"){
 								player.pauseVideo();
-								checkIfBuffered();
 							}
 						}, 200);
 					}
