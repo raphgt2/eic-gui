@@ -129,23 +129,11 @@ function ($, BaseSlideGenerator, Logger) {
 		function preload(){			
 			// if we did not start preparations yet, and the player object is ready
 			if (player && player.playVideo) {
-				// start preparing by playing the video, but only update the status started if we haven't already started.
-				if (player.status != "started")
-					player.status = "preparing";
-					
-				player.playVideo();
-				
-				// as soon as the video plays, pause it (give it 0.2 seconds to actually register the fact that it had started playing?)...
-				player.addEventListener('onStateChange', function () {
-					// ...but only if we're still in preparation mode (and not playing for real)
-					if (player.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
-						setTimeout(function(){
-							if (player.status == "preparing"){
-								player.pauseVideo();
-							}
-						}, 200);
-					}
-				});
+				//Putting this status check within, b/c we don't actually wanna call preload() again (it'd lead to an endless recursive call) if the status was something other than "unstarted"
+				if (player.status == "unstarted"){
+					player.status = "preparing";	
+					player.playVideo();
+				}
 			}
 			else{
 				setTimeout(function(){preload()},1000);
@@ -271,6 +259,16 @@ function ($, BaseSlideGenerator, Logger) {
 							self.totalDuration = 0;
 							logger.log("Error loading video for topic", self.topic.label);
 							self.emit("prepared");					
+						},
+						onStateChange: function (event) {
+							// as soon as the video plays, pause it (give it 0.2 seconds to actually register the fact that it had started playing?)...
+							if (player.status === "preparing" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
+								setTimeout(function(){
+									if (player.status == "preparing"){
+										player.pauseVideo();
+									}
+								}, 200);
+							}
 						}
 					}
 				});
@@ -314,7 +312,8 @@ function ($, BaseSlideGenerator, Logger) {
 				$container.fadeOut(function () {
 					if (player && player.seekTo){
 						player.pauseVideo();
-						player.seekTo(start/1000, false);
+						player.seekTo(start/1000, true);
+						player.status = "unstarted";
 					}
 					
 					$container.removeAttr("style");
