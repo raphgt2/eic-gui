@@ -112,6 +112,14 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
      $('#editor').show();
     })
     .text('Back to editor');
+	
+	$('<span>')
+    .addClass('button')
+    .appendTo($nav)
+    .click(function () {
+		$('#play-button').click();
+    })
+    .text('Replay');
   }
 
   function addShares($container, self) {
