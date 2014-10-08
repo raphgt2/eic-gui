@@ -312,10 +312,13 @@ function ($, BaseSlideGenerator, Logger) {
 				player.status = "stopped";
 				logger.log ("stopped");
 				$container.fadeOut(function () {
-					if (player && player.stopVideo)
-						player.stopVideo();
+					if (player && player.seekTo){
+						player.pauseVideo();
+						player.seekTo(start/1000, false);
+					}
 					
-					//$container.remove();
+					$container.removeAttr("style");
+					$container.css({ width: 0, height: 0, overflow: 'hidden' });
 				});
 			});
 

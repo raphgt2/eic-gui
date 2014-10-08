@@ -99,7 +99,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
         .addClass('button')
         .appendTo($nav)
         .click(function () {
-          window.location = "http://lodstories.isi.edu/LODStories-1.0.0-SNAPSHOT/html/lodstories_demo.html";
+          window.location = "/LODStories-1.0.0-SNAPSHOT/html/lodstories_demo.html";
         })
    .text('Start over');
 
