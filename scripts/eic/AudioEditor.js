@@ -31,10 +31,13 @@ function($,Logger,SlidePresenter){
 	
 	AudioEditor.prototype={
 		setTopic: function(topic)
-		{
+		{	
+			if (this.curTopic)
+				this.curTopic.off('newSlides', this.addAudio);
+			
 			this.curTopic = topic;
 			$('#textDescription').val(topic.hash_object.audio_text);
-			this.addAudio(topic);
+			this.setUpAudio(topic);
 			
 			var self = this;		
 			
@@ -46,7 +49,6 @@ function($,Logger,SlidePresenter){
 				$('#playButtonGroup').html("loading");
 				
 				self.curTopic.resendSpeech($('#textDescription').val());
-				self.addAudio(self.curTopic);
 			});
 			
 			$('#textDescription').focus(function(){
@@ -60,75 +62,38 @@ function($,Logger,SlidePresenter){
 				
 				self.curTopic.resendSpeech(self.curTopic.hash_object.defaultText);
 				$('#textDescription').val(self.curTopic.hash_object.defaultText);
-				self.addAudio(self.curTopic);
 			});
 		},
 		
-		addAudio: function(slide){
+		setUpAudio: function(slide){
 			//REPLACE ALL THE HTML_OBJECTS
 			if (slide.ready){
-				if (plugintype=="Audio"){
-		             $('#playButtonGroup').html(
-		                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
-		        }
-		        else if (plugintype=="QuickTime"){
-		             $('#playButtonGroup').html(
-		                "<embed id='audioPlayer' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
-		        }
-		        else if (plugintype=="Windows Media"){
-		             $('#playButtonGroup').html(
-		                "<embed id='audioPlayer' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
-		        }
-		        else if (plugintype=="VLC"){
-		             $('#playButtonGroup').html(
-		                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
-		        }
-				
-				slide.on('newSlides', function(){
-					if (slide.audioURL=='')
-						return;
-						
-					if (plugintype=="Audio"){
-			             $('#playButtonGroup').html(
-			                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
-			        }
-			        else if (plugintype=="QuickTime"){
-			             $('#playButtonGroup').html(
-			                "<embed id='audioPlayer' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
-			        }
-			        else if (plugintype=="Windows Media"){
-			             $('#playButtonGroup').html(
-			                "<embed id='audioPlayer' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
-			        }
-			        else if (plugintype=="VLC"){
-			             $('#playButtonGroup').html(
-			                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
-			        }	
-				});
+				this.addAudio;
 			}
-			else{
-				slide.on('newSlides', function(){
-					if (slide.audioURL=='')
-						return;
-						
-					if (plugintype=="Audio"){
-			             $('#playButtonGroup').html(
-			                "<audio id='audioPlayer' src='"+slide.audioURL+"' controls='true'/>");
-			        }
-			        else if (plugintype=="QuickTime"){
-			             $('#playButtonGroup').html(
-			                "<embed id='audioPlayer' src='" + slide.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
-			        }
-			        else if (plugintype=="Windows Media"){
-			             $('#playButtonGroup').html(
-			                "<embed id='audioPlayer' src='" + slide.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
-			        }
-			        else if (plugintype=="VLC"){
-			             $('#playButtonGroup').html(
-			                "<embed id='audioPlayer' target='" + slide.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
-			        }	
-				});
+			
+			slide.on('newSlides', this.addAudio);
+		},
+		
+		addAudio: function(){
+			if (this.curTopic.audioURL=='')
+				return;
+					
+			if (plugintype=="Audio"){
+				 $('#playButtonGroup').html(
+					"<audio id='audioPlayer' src='"+this.curTopic.audioURL+"' controls='true'/>");
 			}
+			else if (plugintype=="QuickTime"){
+				 $('#playButtonGroup').html(
+					"<embed id='audioPlayer' src='" + this.curTopic.audioURL + "' controller='true' enablejavascript='true' autoplay='false' loop='false'>");
+			}
+			else if (plugintype=="Windows Media"){
+				 $('#playButtonGroup').html(
+					"<embed id='audioPlayer' src='" + this.curTopic.audioURL + "' width='200' height='100' Enabled='true' AutoStart='false' ShowControls='true'>");
+			}
+			else if (plugintype=="VLC"){
+				 $('#playButtonGroup').html(
+					"<embed id='audioPlayer' target='" + this.curTopic.audioURL + "' width='200' height='100' autoplay='false' controls='true'>");
+			}	
 		}
 	};
 

@@ -10,7 +10,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jplayer.min', 'config/URLs'], function 
 	// Init jPlayer
 	var $audioContainer = $('<div>').addClass('audio').appendTo($('body'));
 	$audioContainer.jPlayer({
-		errorAlerts: true,
+		errorAlerts: false,
 		swfPath: urls.jplayerSWF,
 		supplied: "mp3",
 		wmode: "window"
