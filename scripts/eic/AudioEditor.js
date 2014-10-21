@@ -68,14 +68,14 @@ function($,Logger,SlidePresenter){
 		setUpAudio: function(slide){
 			//REPLACE ALL THE HTML_OBJECTS
 			if (slide.ready){
-				this.addAudio;
+				this.addAudio();
 			}
 			
 			slide.on('newSlides', this.addAudio);
 		},
 		
 		addAudio: function(){
-			if (this.curTopic.audioURL=='')
+			if (!this.curTopic || this.curTopic.audioURL=='')
 				return;
 					
 			if (plugintype=="Audio"){

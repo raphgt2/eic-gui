@@ -139,17 +139,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			data: {uri: nodeURI, num: 7},
 			success: function(json){
 				console.log("Json: ", json);
-				if (json){
-					if (json.children.length == 0){
-						//console.log("HERE 1");
-						var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
-						$("#canvasStepNavigator").append(alert_msg);
-						$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
-						setTimeout(function(){
-							$(".canvas-alert").remove();
-						},4000);
-					}
-					else if (self.round == 1){ // The Starting Node 
+				if (json){				
+					if (self.round == 1){ // The Starting Node 
 						self.history = json;
 						self.appendMap[name] = json;
 						self.appendMap[name].name = name;
@@ -168,6 +159,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.userPath = [];
 						self.trackPathParent(data_prev);
 						var children = [];
+						var newNodes=0;
 						for (var i = 0; i < json.children.length; i++){
 							//console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
 							//if (self.appendMap[json.children[i].name] == undefined){
@@ -175,27 +167,36 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 								json.children[i].children = null;
 								self.appendMap[json.children[i].name] = json.children[i];
 								var flag = 0;
-								//console.log(json.children[i].name, self.userPath.length);
+								
+								//Used to avoid placing the node multiple times in the same path
 								for (var j = 0; j < self.userPath.length; j++){
-									//console.log(json.children[i].name, self.userPath[j].name)
 									if (json.children[i].name == self.userPath[j].name){
 										flag = 1;
 										break;
 									}
 								}
-								//console.log("flag", flag);
+
 								if (flag != 1){
 									children.push(json.children[i]);
+									newNodes++;
 								}
 						}
+						
 						data_prev.children = children;
 						self.root = self.history;						
 						
 						self.updateCanvas(self.root);
-					}
-					
-				////	root = jQuery.extend(true, {}, history);
-					
+						
+						if (json.children.length == 0 || newNodes==0){
+							//console.log("HERE 1");
+							var alert_msg = '<div class="alert alert-warning canvas-alert">There are no new links for ' + name +'.</div>';
+							$("#canvasStepNavigator").append(alert_msg);
+							$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+							setTimeout(function(){
+								$(".canvas-alert").remove();
+							},4000);
+						}						
+					}		
 				}
 				else {
 					var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
