@@ -57,8 +57,8 @@
         "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
     },
     "destination": {
-        "name": "War of 1812",
-        "uri": "http://dbpedia.org/resource/War_of_1812"
+        "name": "William Joseph Burns",
+        "uri": "http://dbpedia.org/resource/William_Joseph_Burns"
     },
     "path": [
         {
@@ -75,76 +75,6 @@
             "type": "node",
             "name": "William Joseph Burns",
             "uri": "http://dbpedia.org/resource/William_Joseph_Burns"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/birthPlace"
-        },
-        {
-            "type": "node",
-            "name": "Fort Bragg",
-            "uri": "http://dbpedia.org/resource/Fort_Bragg"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/location"
-        },
-        {
-            "type": "node",
-            "name": "Harnett County, North Carolina",
-            "uri": "http://dbpedia.org/resource/Harnett_County,_North_Carolina"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/place"
-        },
-        {
-            "type": "node",
-            "name": "Battle of Averasborough",
-            "uri": "http://dbpedia.org/resource/Battle_of_Averasborough"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/isPartOfMilitaryConflict"
-        },
-        {
-            "type": "node",
-            "name": "American Civil War",
-            "uri": "http://dbpedia.org/resource/American_Civil_War"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/commander"
-        },
-        {
-            "type": "node",
-            "name": "Edwin M. Stanton",
-            "uri": "http://dbpedia.org/resource/Edwin_M._Stanton"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/president"
-        },
-        {
-            "type": "node",
-            "name": "James Buchanan",
-            "uri": "http://dbpedia.org/resource/James_Buchanan"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/battle"
-        },
-        {
-            "type": "node",
-            "name": "War of 1812",
-            "uri": "http://dbpedia.org/resource/War_of_1812"
         }
     ]
 };
