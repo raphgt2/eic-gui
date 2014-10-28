@@ -49,7 +49,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
       // Starts the movie about the connection between the user and the topic.
       startEdit: function () {
 		$('#videoEditor').css('display', 'block');
-
         
         // Create the slides panel
         var $slides = $('<div>').addClass('slides2'),
@@ -154,6 +153,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         		
         		var imgcnt = 0;
         		var vidcnt = 0;
+
+                $("#img-load").css('display', 'none');
+                $("#vid-load").css('display', 'none');
+
         		for(var val in slides){
       		    	if(val == 'img' || val == 'map'){
       		    	    imgcnt++;
@@ -211,11 +214,21 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
                      }
       			}
 
-      			if(imgcnt == 0) $("#imgerr").css('display', 'inline');
-      			else $("#imgerr").css('display', 'none');
+      			if(imgcnt == 0)
+                {
+                    $("#img-none").css('display', 'inline');
+                    $('img-none').addClass('alert alert-danger');
+                    $("img-none").text('No images found');
+                }
+      			else $("#img-none").css('display', 'none');
 
-      			if(vidcnt == 0) $("#viderr").css('display', 'inline');
-                else $("#viderr").css('display', 'none');
+      			if(vidcnt == 0)
+                {
+                    $("#vid-none").css('display', 'inline');
+                    $('#vid-none').addClass('alert alert-danger');
+                    $('#vid-none').text('No videos found');
+                }
+                else $("#vid-none").css('display', 'none');
 
       			for(var i = 0; i < editedSlides.length; i++){
         			var theImg = editedSlides[i].$element.clone().find('img');
