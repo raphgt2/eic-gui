@@ -8,7 +8,6 @@ define(function () {
     singlepath: dirName + "/rest/path/single/?jsoncallback=?",
 	hashRetrieve: dirName + "/retrieveHash?",
 	hashStore:  dirName + "/saveHash?",
-	ranking:  dirName + "/rankServlet?jsoncallback=?",
     jplayerSWF: "/scripts/swf"
   };
 });
