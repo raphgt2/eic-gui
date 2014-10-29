@@ -1,10 +1,7 @@
-/*jshint browser: true*/
- 
 (function (requirejs) {
   "use strict";
- 
+
   requirejs.config({
-    baseUrl : 'scripts',
     shim: {
       'lib/jquery': {
         exports: 'jQuery'
@@ -35,33 +32,18 @@
 	  },
 	  'lib/base64_handler':{
 		exports: 'base64_handler'
-	  }
+	  },	  
     },
   });
  
-  var scripts = ['lib/jquery',
+ //Just loads up some scripts...just keep adding new scripts to the list when creating test pages
+  require(['lib/jquery',
     'eic/WAVPlayer',
-    'eic/pluginsniff',
     'eic/SlidePresenter',
-    'eic/FacebookConnector',
     'eic/TTSService',
     'eic/PresentationController',
     'eic/PresentationController2',
-    'eic/generators/BaseSlideGenerator',
-    'eic/generators/IntroductionSlideGenerator',
-    'eic/generators/CompositeSlideGenerator',
-    'eic/generators/GoogleImageSlideGenerator',
-    'eic/generators/TitleSlideGenerator',
-    'eic/generators/TopicSlideGenerator',
-    'eic/generators/FBProfilePhotosGenerator',
-    'eic/generators/YouTubeSlideGenerator',
-    'eic/generators/IntroductionSlideGenerator'];
- 
-  requirejs(scripts, function (jQuery) {
-    var scriptHolder = {};
-    for (var i = 0; i < scripts.length; i++)
-      scriptHolder[scripts[i].replace(/^(\w+\/)*/, '')] = arguments[i];
-    if (window.startApplication)
-      window.startApplication(jQuery, scriptHolder);
-  });
-})(window.requirejs);
+    'config/URLs'], 
+	function ($, WAVPlayer, SlidePresenter, TTSService, PresentationController, PresentationController2, urls) {
+    });
+})(requirejs);
