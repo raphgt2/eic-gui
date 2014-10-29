@@ -42,7 +42,7 @@
 		
 		$(document).ready(function(){
 			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
-			
+			console.log(urls.singlepath);
 			$.ajax({
                 type: "GET",
                 url: urls.singlepath,
@@ -58,8 +58,52 @@
 					var view = new PiecesUI(controller);
 					view.initControls();
                 }
-           });         
+           });
+			function detectChange() {
+				var checkboxes = $('#singleCheckbox input[type="checkbox"]:checked');
+				if (checkboxes.length > 0) {
+					$("#play-button").removeAttr("disabled");
+				}
+				else {
+					$("#play-button").attr("disabled", "disabled");
+				}
+			}
+			console.log("eaf");
+			
+			$("#checkbox1").change(detectChange);
+			$("#checkbox2").change(detectChange);
+			$("#checkbox3").change(detectChange);
+			$("#checkbox4").change(detectChange);
+			$("#checkbox5").change(detectChange);
+			console.log($("#checkbox1"));
 		});
+		
+		function validate(subject,object){
+			console.log("clicked ");
+			var info = {};
+			var values= "";
+			$("input:checkbox[name=checkbox]:checked").each(function(index, element) {
+				console.log(element);
+				    values += element.value + ",";
+		});
+			info["key"] = values; console.log(values);
+			info["triple"] = subject + "," + object;console.log(info["triple"]);
+			document.getElementById("checkbox1").checked = false;
+			document.getElementById("checkbox2").checked = false;
+			document.getElementById("checkbox3").checked = false;
+			document.getElementById("checkbox4").checked = false;
+			$.ajax({
+				url:"/LODStories-1.0.0-SNAPSHOT/DemoPageServlet",
+				type: "GET",
+				data:info,
+				dataType: "json",
+				complete: function(xhr, textStatus) {
+					console.log(xhr.responseText);
+				},
+				error: function(xhr, textStatus) {
+				}
+			});
+		}
 
 					
         $("#play-button").click(function(){
