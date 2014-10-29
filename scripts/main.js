@@ -83,7 +83,7 @@
 				"uri": "http://dbpedia.org/resource/Fort_Bragg"
 			}
 		]
-};
+	};
 
 //console.log(path);
     var controller = new PresentationController2(path);
