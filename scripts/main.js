@@ -46,8 +46,8 @@
   });
 
   require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor'], function (PresentationController, PresentationController2, PiecesUI, SlideEditor) {
+  
 	var path = {
-		"hash": "h-3690378823082678040",
 		"source": {
 			"name": "Hillary Rodham Clinton",
 			"uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
@@ -84,8 +84,9 @@
 			}
 		]
 	};
-
-//console.log(path);
+	$("#editor").css("display", "inline");
+	$("#body").css("display", "block");
+	
     var controller = new PresentationController2(path);
     var view = new PiecesUI(controller);
     view.initControls();
