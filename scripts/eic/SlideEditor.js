@@ -524,6 +524,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					for (var j=0; j<hash.path[i].slide_description.length; j++){
 						if (hash.path[i].slide_description[j].type == "YouTubeSlide"){
 							delete hash.path[i].slide_description[j].player;
+							delete hash.path[i].temp;
 						}
 					}
 				}

@@ -64,9 +64,10 @@
 			$.ajax({
 				url: urls.hashRetrieve,	
 				type: 'GET',
-				data: {hashID: location.hash.slice(1)},
+				data: {hashID: hashId},
 				success: function (data) {
 					var path = JSON.parse(unescapeString(data));
+					path.hashID = hashId;
 					
 					$("#editor").css("display", "inline");
 					$("#body").css("display", "block");
@@ -82,36 +83,8 @@
 				error: function(error){
 					location.hash = "";
 					$("#searchWindow").css("display", "inline");
-			
-					var jsonObject = {
-						"source": {
-							"name": "Hillary Rodham Clinton",
-							"uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
-						},
-						"destination": {
-							"name": "William Joseph Burns",
-							"uri": "http://dbpedia.org/resource/William_Joseph_Burns"
-						},
-						"path": [
-							{
-								"type": "node",
-								"name": "Hillary Rodham Clinton",
-								"uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
-							},
-							{
-								"type": "link",
-								"inverse": true,
-								"uri": "http://dbpedia.org/ontology/deputy"
-							},
-							{
-								"type": "node",
-								"name": "William Joseph Burns",
-								"uri": "http://dbpedia.org/resource/William_Joseph_Burns"
-							}
-						]
-					};
 
-					var path_finder = new PathFinder(jsonObject);
+					var path_finder = new PathFinder();
 				}
 			});
             

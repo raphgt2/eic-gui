@@ -10,7 +10,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
     "use strict";
     var logger = new Logger("PathFinder");
   		
-    function PathFinder(hashObj) {
+    function PathFinder() {
     	/* Define HTML Elements*/
 		
 				
