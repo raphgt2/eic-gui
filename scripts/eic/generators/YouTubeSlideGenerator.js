@@ -131,12 +131,9 @@ function ($, BaseSlideGenerator, Logger) {
 			if (player && player.playVideo) {
 				//Putting this status check within, b/c we don't actually wanna call preload() again (it'd lead to an endless recursive call) if the status was something other than "unstarted"
 				if (player.status == "unstarted"){
-					console.log("play");
 					player.status = "preparing";	
 					player.playVideo();
 				}
-				else
-					console.log(player.status);
 			}
 			else{
 				setTimeout(function(){preload()},1000);
@@ -269,14 +266,9 @@ function ($, BaseSlideGenerator, Logger) {
 							if (player.status == "preparing" || player.status == "loaded" && player.getPlayerState() == window.YT.PlayerState.PLAYING){
 								setTimeout(function(){
 									if (player.status == "preparing" || player.status == "loaded"){
-										console.log("pause");
 										player.pauseVideo();
 									}
 								}, 200);
-							}
-							else{
-								console.log(player.status);
-								console.log(player.getPlayerState());
 							}
 						}
 					}
@@ -320,7 +312,6 @@ function ($, BaseSlideGenerator, Logger) {
 				logger.log ("stopped");
 				$container.fadeOut(function () {
 					if (player && player.seekTo){
-						console.log("trying to restart");
 						player.pauseVideo();
 						player.seekTo(start/1000, true);
 						player.status = "unstarted";

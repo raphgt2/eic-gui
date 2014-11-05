@@ -45,15 +45,29 @@
     },
   });
 
-        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, PathFinder){
+        require(['eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder', 'config/URLs'], function(PresentationController2, PiecesUI, SlideEditor, PathFinder, urls){
 			
 			var hashId = location.hash.slice(1);
+			
+			function unescapeString(str){			
+				str = str.replace(/\\\\/g,"\\");
+				str = str.replace(/\\0/g, "\0");
+				str = str.replace(/\\n/g, "\n");
+				str = str.replace(/\\r/g, "\r");
+				str = str.replace(/\\'/g, "'");
+				str = str.replace(/\\"/g, '"');
+				str = str.replace(/\\Z/g, "\x1a");
+				
+				return str;
+			}
 		  
 			$.ajax({
-				url: "/LODStories-1.0.0-SNAPSHOT/retrieveHash?",	
+				url: urls.hashRetrieve,	
 				type: 'GET',
 				data: {hashID: location.hash.slice(1)},
-				success: function (path) {
+				success: function (data) {
+					var path = JSON.parse(unescapeString(data));
+					
 					$("#editor").css("display", "inline");
 					$("#body").css("display", "block");
 					
@@ -66,6 +80,7 @@
 					});
 				},
 				error: function(error){
+					location.hash = "";
 					$("#searchWindow").css("display", "inline");
 			
 					var jsonObject = {
