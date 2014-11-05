@@ -37,7 +37,7 @@
   });
 
 
-  require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs'], function (PresentationController, PiecesUI, urls) {
+  require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs','eic/Summarizer'], function (PresentationController, PiecesUI, urls,Summarizer) {
 		$('#frame').show();
 		
 		$(document).ready(function(){
@@ -54,6 +54,15 @@
                 success: function (path) {
                 	document.getElementById('subject').innerHTML = path.source.name;
                 	document.getElementById('object').innerHTML = path.destination.name;
+                	var relation = path.path[1].uri;
+                	relation = relation.substr(relation.lastIndexOf("/")+1);
+                	console.log(relation);
+                	var inverse = path.path[1].inverse;
+                	console.log(inverse);
+                	var relationContent = Summarizer.prototype.generateRelationshipSentence(path.source.name, path.destination.name, relation, inverse);
+                	
+                	console.log(relationContent);
+                	document.getElementById('relation').innerHTML = relationContent;
                 	var controller = new PresentationController(path, false, false);
 					var view = new PiecesUI(controller);
 					view.initControls();
@@ -78,7 +87,7 @@
 			console.log($("#checkbox1"));
 		});
 		
-		function validate(subject,object){
+		function validate(subject,relation,object){
 			console.log("clicked ");
 			var info = {};
 			var values= "";
@@ -87,13 +96,15 @@
 				    values += element.value + ",";
 		});
 			info["key"] = values; console.log(values);
-			info["triple"] = subject + "," + object;console.log(info["triple"]);
+			info["triple"] = subject + "," + relation + "," + object;
+			console.log(info["triple"]);
 			document.getElementById("checkbox1").checked = false;
 			document.getElementById("checkbox2").checked = false;
 			document.getElementById("checkbox3").checked = false;
 			document.getElementById("checkbox4").checked = false;
+			document.getElementById("checkbox5").checked = false;
 			$.ajax({
-				url:"/LODStories-1.0.0-SNAPSHOT/DemoPageServlet",
+				url:"/LODStories/DemoPageServlet",
 				type: "GET",
 				data:info,
 				dataType: "json",
@@ -101,6 +112,7 @@
 					console.log(xhr.responseText);
 				},
 				error: function(xhr, textStatus) {
+					console.log(xhr.responseText);
 				}
 			});
 		}
@@ -123,7 +135,12 @@
 						var controller = new PresentationController(path, false, false);
 						var view = new PiecesUI(controller);
 						view.initControls();
-						validate(path.source.name,path.destination.name);
+						var relation = path.path[1].uri;
+	                	relation = relation.substr(relation.lastIndexOf("/")+1);
+	                	var inverse = path.path[1].inverse;
+	                	var relationContent = Summarizer.prototype.generateRelationshipSentence(path.source.name, path.destination.name, relation, inverse);	                	
+	                	document.getElementById('relation').innerHTML = relationContent;
+						validate(path.source.name,relation,path.destination.name);
 					}
 				},
 				error: function(error){

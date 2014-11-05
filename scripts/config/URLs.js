@@ -1,6 +1,6 @@
 define(function () {
   "use strict";
-  var dirName = "/LODStories-1.0.0-SNAPSHOT";
+  var dirName = "/LODStories";
   return {
     abstracts: dirName + "/descriptions?jsoncallback=?",
     festivalspeech: "http://lodstories.isi.edu/festival_service-1.0-SNAPSHOT/rest/audiotest/jsonfull/?jsoncallback=?",
