@@ -74,7 +74,9 @@ function ($, Logger, EventEmitter, urls) {
 					sendSpeech(self.attempt);
 				}
 			},15000);
-
+			
+			console.log("Attempt #"+self.attempt+" for "+text);
+			
 			$.ajax({
 				beforeSend: function (xhr){
 					self.requests[self.attempt] = xhr;
