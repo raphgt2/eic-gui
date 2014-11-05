@@ -4,10 +4,10 @@
 * Licensed under 
 */
 
-define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
+define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor',
   'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/CompositeSlideGenerator',
   'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController','lib/jquery__ui'],
-  function ($, Logger, EventEmitter, AudioEditor,
+  function ($, Logger, EventEmitter, urls, AudioEditor,
     IntroductionSlideGenerator, OutroductionSlideGenerator, CompositeSlideGenerator,
     ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController,jquery__ui) {
     "use strict";
@@ -19,9 +19,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 		this.curTopic = null;
 		this.tempSlides = {};
 		this.topics = controller.topicToTopic.generators;
-		this.hash_object = path;
-      
-      
+		this.hash_object = path;      
       
       //EDITING NODES//
 			
@@ -396,15 +394,24 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 	      	});
 
 	      	$('#play-slide').click(function () {
-	                 if($('#play-slide').html() == 'Play Slide'){
-	                          $('#play-slide').html('Pause Slide');
-	                          self.playSlide();
-	                  }
-	                  else{
-	                          $('#play-slide').html('Play Slide');
-	                          self.pauseSlide();
-	                  }
+				if($('#play-slide').html() == 'Play Slide'){
+					$('#play-slide').html('Pause Slide');
+					self.playSlide();
+				}
+				else{
+					$('#play-slide').html('Play Slide');
+					self.pauseSlide();
+				}
 	      	});
+			
+			$('#save-button').click(function(){
+				self.restoreCurrentNode(self._curIndex);
+				
+				//Give a second for the last node's edits to process before saving the hash
+				setTimeout(function(){
+					self.saveHash(self.hash_object.hashID);
+				}, 1000);
+			});
     		
     		$( ".node-element-list" ).sortable({
 			  connectWith: "#movie-nav-bar",
@@ -488,7 +495,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 			this.evaluated = true;
 			logger.log("finished evaluation");
 			this.emit('hash evaluated');
-		}
+		},
 		//Keep all youtube players, since well need them again if we implement replay function
 		/*cleanYTHolder: function(){
 			var i;
@@ -501,6 +508,56 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 			//Now remove the extraneous players
 			$('#ytholder').children().not('.save').remove();
 		}*/
+		saveHash: function(hashID){		
+			var hash = JSON.parse(JSON.stringify(this.hash_object));
+			var self = this;
+			
+			//Nodes are found every 2 steps in the path (other half of the steps are links)
+			for (var i=0; i< hash.path.length; i+=2){
+				//Dereference temporary slide descriptions
+				if (hash.path[i].temp){
+					delete hash.path[i].slide_description;
+					delete hash.path[i].temp;
+				}
+				//else save the description if it has one, but unreference all youtube player-related objects
+				else if (hash.path[i].slide_description){
+					for (var j=0; j<hash.path[i].slide_description.length; j++){
+						if (hash.path[i].slide_description[j].type == "YouTubeSlide"){
+							delete hash.path[i].slide_description[j].player;
+						}
+					}
+				}
+			}
+			
+			console.log(hash);
+			console.log(this.hash_object);
+			
+			function escapeString(str){			
+				str = str.replace(/\\/g,"\\\\");
+				str = str.replace(/\0/g, "\\0");
+				str = str.replace(/\n/g, "\\n");
+				str = str.replace(/\r/g, "\\r");
+				str = str.replace(/'/g, "\\'");
+				str = str.replace(/"/g, '\\"');
+				str = str.replace(/\x1a/g, "\\Z");
+				
+				return str;
+			}
+			
+			$.ajax({
+				url: urls.hashStore,	
+				type: 'POST',
+				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash))},
+				success: function (data) {
+					location.hash=data.trim();
+					self.hash_object.hashID = data.trim();
+					alert("Your movie can be accessed at "+window.location.href);
+				},
+				error: function(error){
+					alert("Could not save movie");
+				}
+			});
+		}
 		
       
     };

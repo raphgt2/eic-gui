@@ -45,65 +45,77 @@
     },
   });
 
-        require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, PathFinder){
-            //var jsonObject,view,controller;
-           // $.getJSON("../data_json/hash_object_test_1.json", function(data){
-            var jsonObject = new Object;
+        require(['eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder', 'config/URLs'], function(PresentationController2, PiecesUI, SlideEditor, PathFinder, urls){
+			
+			var hashId = location.hash.slice(1);
+			
+			function unescapeString(str){			
+				str = str.replace(/\\\\/g,"\\");
+				str = str.replace(/\\0/g, "\0");
+				str = str.replace(/\\n/g, "\n");
+				str = str.replace(/\\r/g, "\r");
+				str = str.replace(/\\'/g, "'");
+				str = str.replace(/\\"/g, '"');
+				str = str.replace(/\\Z/g, "\x1a");
+				
+				return str;
+			}
+		  
+			$.ajax({
+				url: urls.hashRetrieve,	
+				type: 'GET',
+				data: {hashID: location.hash.slice(1)},
+				success: function (data) {
+					var path = JSON.parse(unescapeString(data));
+					
+					$("#editor").css("display", "inline");
+					$("#body").css("display", "block");
+					
+					var controller = new PresentationController2(path);
+					var view = new PiecesUI(controller);
+					view.initControls();
+					
+					controller.once('slide_generation_finished', function(){
+						var editor = new SlideEditor(controller.generator, controller.path, controller, path);
+					});
+				},
+				error: function(error){
+					location.hash = "";
+					$("#searchWindow").css("display", "inline");
+			
+					var jsonObject = {
+						"source": {
+							"name": "Hillary Rodham Clinton",
+							"uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
+						},
+						"destination": {
+							"name": "William Joseph Burns",
+							"uri": "http://dbpedia.org/resource/William_Joseph_Burns"
+						},
+						"path": [
+							{
+								"type": "node",
+								"name": "Hillary Rodham Clinton",
+								"uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
+							},
+							{
+								"type": "link",
+								"inverse": true,
+								"uri": "http://dbpedia.org/ontology/deputy"
+							},
+							{
+								"type": "node",
+								"name": "William Joseph Burns",
+								"uri": "http://dbpedia.org/resource/William_Joseph_Burns"
+							}
+						]
+					};
+
+					var path_finder = new PathFinder(jsonObject);
+				}
+			});
             
-            jsonObject = {
-    "hash": "h-3690378823082678040",
-    "source": {
-        "name": "Hillary Rodham Clinton",
-        "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
-    },
-    "destination": {
-        "name": "William Joseph Burns",
-        "uri": "http://dbpedia.org/resource/William_Joseph_Burns"
-    },
-    "path": [
-        {
-            "type": "node",
-            "name": "Hillary Rodham Clinton",
-            "uri": "http://dbpedia.org/resource/Hillary_Rodham_Clinton"
-        },
-        {
-            "type": "link",
-            "inverse": true,
-            "uri": "http://dbpedia.org/ontology/deputy"
-        },
-        {
-            "type": "node",
-            "name": "William Joseph Burns",
-            "uri": "http://dbpedia.org/resource/William_Joseph_Burns"
-        }
-    ]
-};
             
-            
-            
-            
-            
-            
-            
-            
-            
-            var path_finder = new PathFinder(jsonObject);
-            
-            
-            //console.log("Finish: ", $("#finish"));
-            // $("#finish").click(function(){
-            	// var controller = new PresentationController2(jsonObject);
-	            // var view = new PiecesUI(controller);
-	            // //controller.init();
-	            // console.log("Controller I ", controller);
-	            // view.initControls();
-				// console.log("Hash Object Output", jsonObject);
-		        // controller.once("slide_generation_finished", function(){
-					// console.log("Controllers", controller);
-					// console.log("Hash Object Output", jsonObject);
-					// var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
-		        // });
-            // });
             
         });
  

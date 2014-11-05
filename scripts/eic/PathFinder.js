@@ -31,7 +31,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		this.tree = new Object();
 		this.diagnal = new Object;
 		this.userPath = [];
-		this.userHash = hashObj; 
+		this.userHash = new Object(); 
 		this.keyWord = '';	
 		this.vis = new Object
 		this.diagonal = d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; });		
@@ -518,7 +518,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		generateHashObject: function(){
 			var self = this;
 			
-			self.userHash.hash = "h-3690378823082678040";
 			self.userHash.source = new Object();
 			self.userHash.source.name = self.userPath[0].name;
 			self.userHash.source.uri = self.userPath[0].uri;
