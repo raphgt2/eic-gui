@@ -426,6 +426,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var self=this;
 			$("#relation").empty();
 			var relationContent = '<div id="relationContent" class="close" >';
+			console.log(relation);
 			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
 			relationContent += '</div>';
 			$("#relation").append(relationContent);
