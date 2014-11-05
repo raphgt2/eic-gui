@@ -102,6 +102,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				/*Shift Screen*/
 				self.generateHashObject();
 				$("#canvasWindow").css("display", "none");
+				$("#editor").css("display", "inline");
 				$("#body").css("display", "block");
 				console.log("userPath", self.userPath);
 				
