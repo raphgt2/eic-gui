@@ -313,10 +313,13 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
 					sentence = subject + "'s subsidiary is at " + object;
 					break;
 				case ("distributingLabel"):
-					sentence = subject + "'s label is distributed at " + object;
+					sentence = object + "'s distributing label is " + subject;
 					break;
 				case ("recordedIn"):
-					sentence = subject + " is recorded in " + object;
+					sentence = subject + " was recorded in " + object;
+					break;
+				case ("starring"):
+					sentence = object + " starred in " + subject;
 					break;
 				default: 
 					sentence = subject + "'s" + relation_lower + " is " + object;	  

@@ -10,7 +10,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
     "use strict";
     var logger = new Logger("PathFinder");
   		
-    function PathFinder(hashObj) {
+    function PathFinder() {
     	/* Define HTML Elements*/
 				
 		/* Define Constants and Data */
@@ -29,7 +29,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		this.tree = new Object();
 		this.diagnal = new Object;
 		this.userPath = [];
-		this.userHash = hashObj; 
+		this.userHash = new Object(); 
 		this.keyWord = '';	
 		this.vis = new Object
 		this.diagonal = d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; });		
@@ -100,6 +100,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				/*Shift Screen*/
 				self.generateHashObject();
 				$("#canvasWindow").css("display", "none");
+				$("#editor").css("display", "inline");
 				$("#body").css("display", "block");
 				console.log("userPath", self.userPath);
 				
@@ -420,6 +421,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var self=this;
 			$("#relation").empty();
 			var relationContent = '<div id="relationContent" class="close" >';
+			console.log(relation);
 			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
 			relationContent += '</div>';
 			$("#relation").append(relationContent);
@@ -512,7 +514,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		generateHashObject: function(){
 			var self = this;
 			
-			self.userHash.hash = "h-3690378823082678040";
 			self.userHash.source = new Object();
 			self.userHash.source.name = self.userPath[0].name;
 			self.userHash.source.uri = self.userPath[0].uri;
