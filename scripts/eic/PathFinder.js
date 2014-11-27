@@ -5,15 +5,13 @@
 */
 
 
-define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI','eic/SlideEditor', 'eic/Summarizer', 'config/URLs'],
+define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI', 'eic/HashObject', 'eic/SlideEditor', 'eic/Summarizer', 'config/URLs'],
   function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer, urls) {
     "use strict";
     var logger = new Logger("PathFinder");
   		
     function PathFinder(hashObj) {
     	/* Define HTML Elements*/
-		
-				
 				
 		/* Define Constants and Data */
 		this.URLRef = new Object;
@@ -108,13 +106,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				/*Prepare Video Editor*/
             	var controller = new PresentationController2(self.userHash);
 	            var view = new PiecesUI(controller);
-	            //console.log("Controller I ", controller);
 	            view.initControls();
 				console.log("Hash Object Output", self.userHash);
 		        controller.once("slide_generation_finished", function(){
 		        	$(".canvas-alert").remove();
-					//console.log("Controllers", controller);
-					//console.log("Hash Object Output", self.userHash);
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
 		        });
             });

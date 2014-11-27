@@ -20,19 +20,16 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 		this.tempSlides = {};
 		this.topics = controller.topicToTopic.generators;
 		this.hash_object = path;
-      
-      
-      
+
       //EDITING NODES//
 			
     	this._path = hashObj.path;
     	this._Slide_Element_Collection = new Object();
-    	this._Play_Sequence = [];
-    	this._curNode = this._path[0];
+    	//this._Play_Sequence = [];
+    	//this._curNode = this._path[0];
     	this._curIndex = 1;
     	this._hash = hashObj;
-    	//var self = this;
-    	
+
     	var self = this;
     	
 		this.players = [];
@@ -40,7 +37,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 
       
 		logger.log("Created slideEditor");
-		this.startEdit();
+
+        $('#movie-nav-bar').on('drop', function(ev){ self.drop(ev, self._curIndex, self.topics); });
+        $('#movie-nav-bar').on('dragover', function(ev){ self.allowDrop(ev); });
+
+        self.startEdit();
     }
 
     /* Member functions */
@@ -75,11 +76,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         	    	.html(self.topics[i].topic.label);
         		$button.click(function(){ 
         			$("#movie-nav-bar").html('');
-        			self.switchTopic(this.id, self.curTopic); 
-        			var index = $(this).attr("order");
-        			self.restoreCurrentNode(index);
-	    			self.PrepareNode(index);
-	    			self._curIndex = index;
+        			//self.restoreCurrentNode(self._curIndex);
+                    self._curIndex = $(this).attr("order");
+                    //self.PrepareNode(self._curIndex);
+                    self.switchTopic(this.id, self._curIndex);
         		});
         		$('#nodeNavBar').append($button);
         		if(!firstInit && self.topics[i] !== undefined){
@@ -89,10 +89,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         			self.$slides.append(slide.$element);
         		}
         	}
-        	self.switchTopic(self.topics[1].topic.label, self.topics[1]);
+
+        	self.switchTopic(self.topics[1].topic.label, 1);
         	$('#img-element-list-wrap').css('display', 'inline');
             $('#vid-element-list-wrap').css('display', 'none');
-          //}, 500);
           
           setTimeout(function() {
           	self.initElementCollection();
@@ -101,38 +101,47 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
           }, 10);
       },
       
-      switchTopic: function(id, prevTopic){
+      switchTopic: function(id, curIndex){
       	//set the previous slide's chosen topics
-      	var prevSlides = prevTopic.getSlides();
-      	for(var val in prevSlides){
-      		var s = prevSlides[val];
-      		for(var i = 0; i < s.length; i++){
-      			var imgs = s[i].$element.clone().find('img');
-      			var vids = s[i].slide_info.data.videoID;
-      			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
-      			for(var j = 0; j < this._Play_Sequence.length; j++){
-      				if(imgs[0] != undefined && imgs[0].src == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
-      				if(vidsString == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
-      			}
-      		}
-      	}
-  		
-  		//make sure none of the current slide's topics have been put back
-  		var eSlides = prevTopic.getEditedSlides();
-  		for(var i = 0; i < eSlides.length; i++){
-  			var imgs = eSlides[i].$element.clone().find('img');
-  			var present = false;
-  			for(var j = 0; j < this._Play_Sequence.length; j++){
-  				if(imgs[0] == undefined){
-  					var vids = eSlides[i].slide_info.data.videoID;
-  					var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
-  					if(vidsString == this._Play_Sequence[j]) present = true;
-  				} else if(imgs[0].src == this._Play_Sequence[j]) present = true;
-  			}
-  			if(present == false) prevTopic.deleteEditedSlide(i);
-  		}
-  		
-  		//
+//      	var prevSlides = prevTopic.getSlides();
+//      	for(var val in prevSlides){
+//      		var s = prevSlides[val];
+//      		for(var i = 0; i < s.length; i++){
+//      			var imgs = s[i].$element.clone().find('img');
+//      			var vids = s[i].slide_info.data.videoID;
+//      			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
+//      			for(var j = 0; j < this._Play_Sequence.length; j++){
+//      				if(imgs[0] != undefined && imgs[0].src == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
+//      				if(vidsString == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
+//      			}
+//      		}
+//      	}
+//
+//  		//make sure none of the current slide's topics have been put back
+//  		var eSlides = prevTopic.getEditedSlides();
+//  		for(var i = 0; i < eSlides.length; i++){
+//  			var imgs = eSlides[i].$element.clone().find('img');
+//  			var present = false;
+//  			for(var j = 0; j < this._Play_Sequence.length; j++){
+//  				if(imgs[0] == undefined){
+//  					var vids = eSlides[i].slide_info.data.videoID;
+//  					var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
+//  					if(vidsString == this._Play_Sequence[j]) present = true;
+//  				} else if(imgs[0].src == this._Play_Sequence[j]) present = true;
+//  			}
+//  			if(present == false) prevTopic.deleteEditedSlide(i);
+//  		}
+
+        if(this.topics[curIndex].slide_order !== undefined)
+        {
+            var editedSlides = new Array;
+            for (var i = 0; i < this.topics[curIndex].slide_order.length; i++)
+            {
+                editedSlides.push(this._Slide_Element_Collection[this.topics[curIndex].slide_order[i]]);
+            }
+            this._path[2*(curIndex-1)].slide_description = editedSlides;
+        }
+
 	  	for(var i = 1; i < this.topics.length; i++){
 	  		if(this.topics[i] !== undefined && this.topics[i].topic.label == id){
 
@@ -149,8 +158,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
         		
         		//add appropriate slides to edit box
         		var slides = self.topics[i].getSlides();
-        		var editedSlides = self.topics[i].getEditedSlides();
-        		
+        		//var editedSlides = self.topics[i].getEditedSlides();
+
         		var imgcnt = 0;
         		var vidcnt = 0;
 
@@ -166,21 +175,36 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 
       					for(var i = 0; i < s.length; i++){
       						var isEdited = false;
-      						for(var j = 0; j < editedSlides.length; j++){
-      							if(editedSlides[j] == s[i]){
-      								isEdited = true;
-      								break;
-      							}
-      						}
-      						if(!isEdited){
+//      						for(var j = 0; j < editedSlides.length; j++){
+//      							if(editedSlides[j] == s[i]){
+//      								isEdited = true;
+//      								break;
+//      							}
+//      						}
+      						//if(!isEdited){
       							var imgs = s[i].$element.clone().find('img'); //get just the image link
+                                 if(editedSlides !== undefined && editedSlides.length > 0)
+                                 {
+                                     for(var j = 0; j < editedSlides.length; j++)
+                                     {
+                                         if(editedSlides[j].type == "GoogleImageSlide" && editedSlides[j].data.url == imgs)
+                                         {
+                                             isEdited = true;
+                                             break;
+                                         }
+                                     }
+                                 }
+                            if(!isEdited)
+                            {
       							imgs.attr('id', val + 's' + i)
       								.attr('class', 'nodeElementBarContent');
       							$(imgs).click(function () {
       								self.setContent(this.id, i, 'img');
       							});
       							$('#imgs').append('<li id=img' + i + '></li>');
-      							$('#img' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+      							$('#img' + i + '').addClass('nodeElementBarContentWrap');
+                                $('#img' + i + '').attr('draggable', 'true');
+                                $('#img' + i + '').on('dragstart', function(ev){ self.drag(ev); });
       							$('#img' + i + '').append(imgs[0]);
       							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
@@ -193,16 +217,31 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
                         $('#vids').children().remove();
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
-      						for(var j = 0; j < editedSlides.length; j++){
-      							if(editedSlides[j] == s[i]){
-      								isEdited = true;
-      								break;
-      							}
-      						}
-      						if(!isEdited){
-                          		var vids = s[i].slide_info.data.videoID;
+//      						for(var j = 0; j < editedSlides.length; j++){
+//      							if(editedSlides[j] == s[i]){
+//      								isEdited = true;
+//      								break;
+//      							}
+//      						}
+      						//if(!isEdited){
+                          	var vids = s[i].slide_info.data.videoID;
+                            if(editedSlides !== undefined && editedSlides.length > 0)
+                            {
+                                for(var j = 0; j < editedSlides.length; j++)
+                                {
+                                    if(editedSlides[j].type == "YouTubeSlide" && editedSlides[j].data.videoID == vids)
+                                    {
+                                        isEdited = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(!isEdited)
+                            {
                          		$('#vids').append('<li id=vid' + i + '></li>');
-                         		$('#vid' + i + '').addClass('ui-state-default nodeElementBarContentWrap btn btn-default');
+                         		$('#vid' + i + '').addClass('nodeElementBarContentWrap');
+                                $('#vid' + i + '').attr('draggable', 'true');
+                                $('#vid' + i + '').on('dragstart', function(ev){ self.drag(ev); });
                          		$('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
                          		$('#vids' + i + '').addClass('nodeElementBarContent');
                          		$('#vids' + i).click(function () {
@@ -230,16 +269,33 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
                 }
                 else $("#vid-none").css('display', 'none');
 
-      			for(var i = 0; i < editedSlides.length; i++){
-        			var theImg = editedSlides[i].$element.clone().find('img');
-        			$('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
-      				$('#hurr' + i + '').addClass('ui-state-default btn btn-default movieNavElementWrap');
-      				$('#hurr' + i + '').css('display', 'block');
-        			if(theImg[0] == undefined){
-        				var theVid = editedSlides[i].slide_info.data.videoID;
-					  $('#hurr' + i + '').append('<img src=http://img.youtube.com/vi/' + theVid + "/default.jpg id=hurrs+" + i + " class='nodeElementBarContent'>");
-        			} else $('#hurr' + i + '').append('<img src=' + theImg[0].src + " id=hurrs+" + i + " class='nodeElementBarContent'>");
-        		}
+                if(editedSlides !== undefined && editedSlides.length > 0)
+                {
+                    for(var i = 0; i < editedSlides.length; i++)
+                    {
+                        $('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
+                        $('#hurr' + i + '').addClass('ui-state-default btn btn-default movieNavElementWrap');
+                        $('#hurr' + i + '').css('display', 'block');
+                        if(editedSlides[i].type == "YouTubeSlide") {
+                            $('#hurr' + i + '').append('<img src=http://img.youtube.com/vi/' + editedSlides[i].data.videoID +
+                                "/default.jpg id=hurrs+" + i + " class='nodeElementBarContent'>");
+                        }
+                        else
+                        {
+                            $('#hurr' + i + '').append('<img src=' + editedSlides[i].data.url + " id=hurrs+" + i + " class='nodeElementBarContent'>");
+                        }
+                    }
+                }
+//      			for(var i = 0; i < editedSlides.length; i++){
+//        			var theImg = editedSlides[i].$element.clone().find('img');
+//        			$('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
+//      				$('#hurr' + i + '').addClass('ui-state-default btn btn-default movieNavElementWrap');
+//      				$('#hurr' + i + '').css('display', 'block');
+//        			if(theImg[0] == undefined){
+//        				var theVid = editedSlides[i].slide_info.data.videoID;
+//					  $('#hurr' + i + '').append('<img src=http://img.youtube.com/vi/' + theVid + "/default.jpg id=hurrs+" + i + " class='nodeElementBarContent'>");
+//        			} else $('#hurr' + i + '').append('<img src=' + theImg[0].src + " id=hurrs+" + i + " class='nodeElementBarContent'>");
+//        		}
       			break;	
 	  		}
 	  	}
@@ -249,7 +305,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
       	var arr = this.tempSlides[type];
 
         /*TODO: BETTER WAY TO DO THIS!!!!*/
-      	if(id == 'imgs0' || id == 'maps0' || id == 'vids0') this.curTopic.setCurSlide(arr[0]);
+      	if(id == 'imgs0' || id == 'vids0') this.curTopic.setCurSlide(arr[0]);
       	else if(id == 'imgs1' || id == 'vids1') this.curTopic.setCurSlide(arr[1]);
       	else if(id == 'imgs2' || id == 'vids2') this.curTopic.setCurSlide(arr[2]);
       	else if(id == 'imgs3' || id == 'vids3') this.curTopic.setCurSlide(arr[3]);
@@ -307,34 +363,34 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
     		}
     		
     	},
-    	restoreCurrentNode: function(n){
-    		var self = this;
-    		//console.log("Self Test", self);
-    		console.log("RESTORE NODE", n);
-    		for (var i = 0; i < this._Play_Sequence.length; i++){
-    			if (this._Play_Sequence[i].indexOf("youtube") != -1){
-    				var vidID = this._Play_Sequence[i].substring(26,37);
-    				this._Play_Sequence[i] = vidID;
-    				//console.log("vidID", vidID);
-    			}
-    		}
-    		this.topics[n].slide_order = this._Play_Sequence;
-    		var slide_content = new Array;
-    		console.log("THIS", this);
-    		for (var i = 0; i < this._Play_Sequence.length; i++){
-       			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
-    		}
-    		console.log("slide_content", slide_content);
-    		if (slide_content[0] != undefined){
-    			this._curNode.slide_description = slide_content;
-				this._curNode.temp = false;		//Indicate that the slide description is an actual thing
-    		}
-    	},
-    	PrepareNode: function(n){
-    		console.log("PREPARE NODE");
-    		this._curNode = this._path[2*(n-1)];
-    		this._Play_Sequence = this.topics[n].slide_order;
-    	},
+
+//    	restoreCurrentNode: function(n){
+//    		console.log("RESTORE NODE", n);
+//    		for (var i = 0; i < this._Play_Sequence.length; i++){
+//    			if (this._Play_Sequence[i].indexOf("youtube") != -1){
+//    				var vidID = this._Play_Sequence[i].substring(26,37);
+//    				this._Play_Sequence[i] = vidID;
+//    			}
+//    		}
+//
+//    		this.topics[n].slide_order = this._Play_Sequence;
+//
+//    		var slide_content = new Array;
+//    		for (var i = 0; i < this._Play_Sequence.length; i++){
+//       			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
+//    		}
+//    		if (slide_content[0] != undefined){
+//    			this._curNode.slide_description = slide_content;
+//				this._curNode.temp = false;		//Indicate that the slide description is an actual thing
+//    		}
+//    	},
+//
+//    	PrepareNode: function(n){
+//    		console.log("PREPARE NODE");
+//    		this._curNode = this._path[2*(n-1)];
+//    		this._Play_Sequence = this.topics[n].slide_order;
+//    	},
+
     	EnableUIAnimation: function(){
     		var self = this;
     		console.log("UI Animation");
@@ -347,7 +403,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 				//Hide the editor so that it's not possible to click the play button multiple times...
 				$('#editor').css('display', 'none');
     			
-				self.restoreCurrentNode(self._curIndex);
+				//self.restoreCurrentNode(self._curIndex);
 
 				//Give a second for the last node's edits to process before checking the hash
 				setTimeout(function(){
@@ -355,7 +411,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 				},1000);
 				
 				if (self.evaluated){
-					logger.log("Evaluated hash", self._hash);						
+					logger.log("Evaluated hash", self._hash);
 					$('#screen').remove();
 					$('#editor').css('display', 'none');
 					$(document.body).append("<div id='screen'> </div>");
@@ -366,16 +422,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 						overflow: 'hidden',
 						height: 600,
 						width: 800,
-						'vertical-align': 'middle',
-					});               
-					//self.cleanYTHolder();
+						'vertical-align': 'middle'
+					});
 					var play = new PresentationController(self._hash, false, true);
 					console.log("PresentationController: ", play, play.path.path);
 					play.playMovie();
 				}
 				else{
 					self.once('hash evaluated', function(){
-						logger.log("Evaluated hash", self._hash);					
+						logger.log("Evaluated hash", self._hash);
 						$('#screen').remove();
 						$(document.body).append("<div id='screen'> </div>");
 						$('#screen').css({
@@ -385,9 +440,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 							overflow: 'hidden',
 							height: 600,
 							width: 800,
-							'vertical-align': 'middle',
-						});            
-						//self.cleanYTHolder();
+							'vertical-align': 'middle'
+						});
 						var play = new PresentationController(self._hash, false, true);
 						console.log("PresentationController: ", play, play.path.path);
 						play.playMovie();
@@ -405,62 +459,67 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 	                          self.pauseSlide();
 	                  }
 	      	});
-    		
-    		$( ".node-element-list" ).sortable({
-			  connectWith: "#movie-nav-bar",
-			  helper: "clone",
-		      appendTo: "#videoEditor",
-		      revert: true,
-		      scroll: false,
-		      receive: function(event, ui){
-		      	ui.item.removeClass("movieNavElementWrap")
-					   .addClass("nodeElementBarContentWrap");
-		      }
-		    });
 
-		    $("#movie-nav-bar").sortable({
-				connectWith: ".node-element-list",
-				helper:"clone",
-				appendTo:"#videoEditor",
-				revert: true,
-				scroll: false,
-				over: function(event, ui){
-					$("#movieNavBarWrap").css("border", "2px solid black");
-				},
-				out: function(event, ui){
-					$("#movieNavBarWrap").css("border", "1px solid gray");
-				},
-				receive: function(event, ui){
-					console.log("Receive!");
-					ui.item.removeClass("nodeElementBarContentWrap")
-						   .addClass("movieNavElementWrap");
-					$('#movie-nav-bar').css("padding", "3px");
-				},
-				update: function(event, ui){
-					self.grabMovieNav();
-				}
-			});
 			$( "#movie-nav-bar, .node-element-list" ).disableSelection();
     	},
-    	grabMovieNav: function(){
-    		var movieNav = $("#movie-nav-bar .nodeElementBarContent");
-    		var navlist = [movieNav.length];
-    		 for (var i = 0; i<movieNav.length; i++){
-    			 navlist[i] = movieNav[i].src;
-    		 }
 
-    		if (movieNav[0] == undefined){;
-    			$("#movie-nav-bar").css("padding", "50px");
-    		}
-    		this._Play_Sequence = navlist;
-    	},
+      allowDrop: function(ev) {
+          ev.preventDefault();
+      },
+
+      drag: function(ev) {
+          console.log("got drag");
+          ev.dataTransfer = ev.originalEvent.dataTransfer.setData("text/html", ev.target.id);
+      },
+
+      drop: function(ev, curIndex, topics) {
+          console.log("got drop");
+          ev.preventDefault();
+          var data = ev.originalEvent.dataTransfer.getData("text/html");
+          console.log(data);
+          ev.target.appendChild(document.getElementById(data));
+          $('#' + data + '').removeClass("nodeElementBarContentWrap").addClass("movieNavElementWrap");
+          $('#movie-nav-bar').css("padding", "3px");
+
+          var movieNav = $("#movie-nav-bar .nodeElementBarContent");
+          var navlist = [movieNav.length];
+          for (var i = 0; i<movieNav.length; i++){
+              navlist[i] = movieNav[i].src;
+          }
+
+          if (movieNav[0] == undefined){;
+              $("#movie-nav-bar").css("padding", "50px");
+          }
+
+          for (var i = 0; i < navlist.length; i++){
+              if (navlist[i].indexOf("youtube") != -1){
+                  var vidID = navlist[i].substring(26,37);
+                  navlist[i] = vidID;
+              }
+          }
+
+          topics[curIndex].slide_order = navlist;
+      },
+
 		//Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
 		//Create a pseudo-slide_description for default vids so that we don't waste time trying to load new ones
 		evaluateHash: function (){
 		logger.log("evaluating hash");
 			var i,j;
 			var topics = this.topics;
+
+            //update the hash object with the chosen slides
+            for(var k = 1; k < topics.length; k++)
+            {
+                var editedSlides = new Array();
+                for (var l = 0; l < this.topics[k].slide_order.length; l++) {
+                    editedSlides.push(this._Slide_Element_Collection[this.topics[k].slide_order[l]]);
+                }
+                this._path[2 * (k - 1)].slide_description = editedSlides;
+            }
+
 			for (i=1; i<topics.length; i++){
+
 				if (!topics[i].hash_object.slide_description){
 					topics[i].updateHash();
 				}
@@ -483,26 +542,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'eic/AudioEditor',
 							topics[i].hash_object.slide_description[j].data.duration = Math.floor(topics[i].hash_object.audio_time/parts);		
 					}
 				}
+
+               console.log(topics[1].hash_object.slide_description);
 			}
 			//Make sure NOT to start cleaning the ytholder or starting the presentation controller until the entire hash has been looped through				
 			this.evaluated = true;
 			logger.log("finished evaluation");
 			this.emit('hash evaluated');
 		}
-		//Keep all youtube players, since well need them again if we implement replay function
-		/*cleanYTHolder: function(){
-			var i;
-			
-			//add a class to the players we wanna save
-			for (i=0; i<this.players.length; i++){
-				$('#container_'+this.players[i]).addClass('save');
-			}
-			
-			//Now remove the extraneous players
-			$('#ytholder').children().not('.save').remove();
-		}*/
-		
-      
     };
 
     return SlideEditor;

@@ -13,14 +13,6 @@ define(['lib/jquery','lib/prefixfree.jquery'],
       this.controller = presentationController;        
       this.drawScreen($('#screen'));
 
-// $(window).on('resize', function(){
-// var sX = ($(this).width() / 800);
-// var sY = ($(this).height() / 600);
-// if (sX > sY)
-// $('body').css('transform', 'scale(' + sY + ',' + sY + ')');
-// else
-// $('body').css('transform', 'scale(' + sX + ',' + sX + ')');
-// });
     }
 
     PiecesUI.prototype = {

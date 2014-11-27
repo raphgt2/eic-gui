@@ -46,8 +46,6 @@
   });
 
         require(['eic/PresentationController', 'eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder'], function(PresentationController, PresentationController2, PiecesUI, SlideEditor, PathFinder){
-            //var jsonObject,view,controller;
-           // $.getJSON("../data_json/hash_object_test_1.json", function(data){
             var jsonObject = new Object;
             
             jsonObject = {
@@ -78,32 +76,7 @@
         }
     ]
 };
-            
-            
-            
-            
-            
-            
-            
-            
-            
             var path_finder = new PathFinder(jsonObject);
-            
-            
-            //console.log("Finish: ", $("#finish"));
-            // $("#finish").click(function(){
-            	// var controller = new PresentationController2(jsonObject);
-	            // var view = new PiecesUI(controller);
-	            // //controller.init();
-	            // console.log("Controller I ", controller);
-	            // view.initControls();
-				// console.log("Hash Object Output", jsonObject);
-		        // controller.once("slide_generation_finished", function(){
-					// console.log("Controllers", controller);
-					// console.log("Hash Object Output", jsonObject);
-					// var editor = new SlideEditor(controller.generator, controller.path, controller, jsonObject);
-		        // });
-            // });
             
         });
  
