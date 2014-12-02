@@ -404,12 +404,52 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				}
 	      	});
 			
+			$("#mask").css({
+				'z-index': 5,
+				position: 'fixed',
+				display: 'none',
+				'opacity': 0.7,
+				'background-color': '#ccc',
+				height: '100%',
+				width: '100%',
+				top: '0px',
+				left: '0px',
+
+			});
+			
+			var dialog = $( "#dialog-form" ).dialog({
+				dialogClass: "no-close",
+				autoOpen: false,
+				height: 300,
+				width: 200,
+				modal: true,
+				position: {
+					my: "center",
+					at: "center",
+					of: "body"
+				},
+				buttons: {
+					"Save Hash Object": function(){
+						$("#mask").hide();
+						dialog.dialog("close");
+						self.saveHash();
+					},
+					Cancel: function() {
+						$("#mask").hide();
+						dialog.dialog( "close" );
+					}
+				}
+			});
+			
+			$("#dialog-form").show();		//Now that we've attached the form to a dialog box....it can be "shown"
+			
 			$('#save-button').click(function(){
 				self.restoreCurrentNode(self._curIndex);
 				
 				//Give a second for the last node's edits to process before saving the hash
 				setTimeout(function(){
-					self.saveHash(self.hash_object.hashID);
+					$("#mask").show();
+					dialog.dialog("open");
 				}, 1000);
 			});
     		
@@ -508,12 +548,36 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			//Now remove the extraneous players
 			$('#ytholder').children().not('.save').remove();
 		}*/
-		saveHash: function(hashID){		
+		saveHash: function(hashID){				
+			function escapeString(str){			
+				str = str.replace(/\\/g,"\\\\");
+				str = str.replace(/\0/g, "\\0");
+				str = str.replace(/\n/g, "\\n");
+				str = str.replace(/\r/g, "\\r");
+				str = str.replace(/'/g, "\\'");
+				str = str.replace(/"/g, '\\"');
+				str = str.replace(/\x1a/g, "\\Z");
+				
+				return str;
+			}
+			
 			var hash = JSON.parse(JSON.stringify(this.hash_object));
+			var path = "";
 			var self = this;
+			var title = $("#title").val();
+			var author = $("#author").val();
+			if (!title)
+				title="Untitled";
+			if (!author)
+				author="Anonymous";
+			title = escapeString(title);
+			author = escapeString(author);
 			
 			//Nodes are found every 2 steps in the path (other half of the steps are links)
 			for (var i=0; i< hash.path.length; i+=2){
+				var node= hash.path[i].uri;
+				path+=	node.substr(node.lastIndexOf("/")+1)+", ";
+			
 				//Dereference temporary slide descriptions
 				if (hash.path[i].temp){
 					delete hash.path[i].slide_description;
@@ -529,26 +593,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					}
 				}
 			}
-			
-			console.log(hash);
-			console.log(this.hash_object);
-			
-			function escapeString(str){			
-				str = str.replace(/\\/g,"\\\\");
-				str = str.replace(/\0/g, "\\0");
-				str = str.replace(/\n/g, "\\n");
-				str = str.replace(/\r/g, "\\r");
-				str = str.replace(/'/g, "\\'");
-				str = str.replace(/"/g, '\\"');
-				str = str.replace(/\x1a/g, "\\Z");
-				
-				return str;
-			}
+			path = escapeString(path.trim());
 			
 			$.ajax({
 				url: urls.hashStore,	
 				type: 'POST',
-				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash))},
+				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash)), author: author, title: title},
 				success: function (data) {
 					location.hash=data.trim();
 					self.hash_object.hashID = data.trim();
