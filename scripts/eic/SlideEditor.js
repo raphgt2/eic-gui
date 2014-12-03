@@ -418,7 +418,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			$("#dialog-form").show();		//Now that we've attached the form to a dialog box....it can be "shown"
 			
 			$('#save-button').click(function(){
-				self.restoreCurrentNode(self._curIndex);
+				//Save the newest edits
 				
 				//Give a second for the last node's edits to process before saving the hash
 				setTimeout(function(){

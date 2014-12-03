@@ -21,10 +21,11 @@ define(['lib/jquery',
 
     var defaultDuration = 1000;
 
-    function TopicToTopicSlideGenerator2(path) {
+    function TopicToTopicSlideGenerator2(path, generatorOptions) {
       CompositeSlideGenerator.call(this);
       this.ready=false;
       this.path=path;
+	  this.generatorOptions = generatorOptions || {};
     }
 
     $.extend(TopicToTopicSlideGenerator2.prototype,
@@ -33,7 +34,7 @@ define(['lib/jquery',
         init: function () {
             if (!this.initedStart) {
               CompositeSlideGenerator.prototype.init.call(this);
-              this.addGenerator(this.loader = new LoadingSlideGenerator());
+              //this.addGenerator(this.loader = new LoadingSlideGenerator());
               this.initedStart = true;
             }
 
@@ -43,7 +44,7 @@ define(['lib/jquery',
               var summ = new Summarizer();
                   $(summ).one('generated', function (event, story) {
                     story.steps.forEach(function (step) {
-                      self.addGenerator(new CustomSlideGenerator(step.topic, step.hash_object));
+                      self.addGenerator(new CustomSlideGenerator(step.topic, step.hash_object, self.generatorOptions));
                     });
                     
 			        setTimeout(function(){						
@@ -55,7 +56,7 @@ define(['lib/jquery',
 							if (self.ready)
 								return;
 								
-							self.loader.stopWaiting();
+							//self.loader.stopWaiting();
 							self.ready=true;
 							self.emit('topic slides ready');									
 						})

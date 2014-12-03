@@ -16,8 +16,9 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 
     function PresentationController(path, options) {
       this.path = path;
-      this.intro = options.intro || false;
-      this.outro = options.outro || false;
+	  options = options || {};
+      this.intro = options.intro || true;
+      this.outro = options.outro || true;
 	  this.generatorOptions = options.generatorOptions || {};
 	  
 	  this.topicToTopic;

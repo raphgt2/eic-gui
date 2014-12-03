@@ -14,7 +14,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
     * CLEANUP
     **/
 
-    function CustomSlideGenerator(topic, hash_object, slides) {
+    function CustomSlideGenerator(topic, hash_object, options) {
       CompositeSlideGenerator.call(this);
 
       this.hash_object = hash_object;
@@ -23,6 +23,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.durationLeft = 0;
       this.audioURL ='';
       this.audio = true;
+	  
+	  options = options || {};
+	  this.videoOptions = options.videoOptions || {};
+	  this.maxImages = options.maxImages;
       
       this.generatorsHash = {}; //take care of this
       
@@ -50,13 +54,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
           //Create all generators depending on the type of the topic
           switch (this.topic.type) {
           case "http://dbpedia.org/ontology/PopulatedPlace":
-            this.addCutomGenerator(new GoogleImageSlideGenerator(this.topic), false, "img");
-            this.addCustomGenerator(new YouTubeSlideGenerator(this.topic, false), false, "vid");
+            this.addCutomGenerator(new GoogleImageSlideGenerator(this.topic, this.maxImages), false, "img");
+            this.addCustomGenerator(new YouTubeSlideGenerator(this.topic, this.videoOptions), false, "vid");
             this.addCustomGenerator(new GoogleMapsSlideGenerator(this.topic), false, "img");
             break;
           default:
-            this.addCustomGenerator(new GoogleImageSlideGenerator(this.topic), false, "img");
-            this.addCustomGenerator(new YouTubeSlideGenerator(this.topic), false, "vid");
+            this.addCustomGenerator(new GoogleImageSlideGenerator(this.topic, this.maxImages), false, "img");
+            this.addCustomGenerator(new YouTubeSlideGenerator(this.topic, this.videoOptions), false, "vid");
             break;
           }
 

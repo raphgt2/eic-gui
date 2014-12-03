@@ -21,6 +21,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.durationLeft = 0;
       this.audioURL ='';
       this.ready=false;
+	  options = options || {};
 	  this.videoOptions = options.videoOptions || {};
 	  this.maxImages = options.maxImages;
       

@@ -33,10 +33,9 @@ function ($, BaseSlideGenerator, Logger) {
     BaseSlideGenerator.call(this);
 	
     this.topic = topic;
+    options = options || {};
 	this.preload = options.preload || true;
-    //options = options || {};
-    this.maxVideoCount = options.maxVideoCount === undefined ? 2 : options.maxVideoCount;
-	console.log(this.maxVideoCount);
+    this.maxVideoCount = options.maxVideoCount === undefined ? 1 : options.maxVideoCount;
     this.maxVideoDuration = options.maxVideoDuration || 5000;
     this.skipVideoDuration = options.skipVideoDuration || 10000;
     this.orderMethod = options.orderMethod || 'relevance';

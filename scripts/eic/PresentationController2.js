@@ -19,6 +19,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
       this.slides = {};
       this.generator;
       EventEmitter.call(this);
+	  
+	  options = options || {};
 	  this.intro = options.intro || false;
 	  this.outro = options.outro || false;
 	  this.generatorOptions = options.generatorOptions || {};
@@ -45,7 +47,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		if (this.intro)
 			this.generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
-		this.topicToTopic = new TopicToTopicSlideGenerator2(this.path);
+		this.topicToTopic = new TopicToTopicSlideGenerator2(this.path, this.generatorOptions);
 		this.generator.addGenerator(this.topicToTopic);
 		
 		if (this.outro)
