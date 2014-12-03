@@ -131,7 +131,8 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					setTimeout(function(){		
 						self.waitforReady(0,function(){
 							self.ready=true;
-							self.emit('newSlides');									
+							self.emit('newSlides');	
+							self.emit('newSpeech');							
 						})
 					}, 3000);
 				});

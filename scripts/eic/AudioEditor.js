@@ -2,16 +2,6 @@ define(['lib/jquery','eic/Logger','eic/SlidePresenter','eic/pluginsniff'],
 function($,Logger,SlidePresenter){
 	var logger = new Logger("AudioEditor");
 	var plugintype;
-	
-	/*if (Audio){
-        if (document.createElement('audio').canPlayType("audio/wav"))
-            plugintype="Audio";
-        else
-            plugintype=Plugin.getPluginsForMimeType("audio/wav");
-    }
-    else{
-        plugintype=Plugin.getPluginsForMimeType("audio/wav");
-    }*/
     
     if (Audio){
         if (document.createElement('audio').canPlayType("audio/mpeg"))
@@ -24,20 +14,25 @@ function($,Logger,SlidePresenter){
     }
 	
 	function AudioEditor(){
-		this.curTopic = null;
+		this.curTopic;
 		this.previousText;		//Used to avoid excessive speech resends
+	
+	var self = this;
+		$("#test").click(function(){
+			console.log(self.curTopic.listeners());
+		});	
 	
 	}
 	
 	AudioEditor.prototype={
 		setTopic: function(topic)
-		{	
+		{
 			if (this.curTopic)
-				this.curTopic.off('newSlides', this.addAudio);
+				this.curTopic.removeAllListeners('newSpeech');
 			
 			this.curTopic = topic;
 			$('#textDescription').val(topic.hash_object.audio_text);
-			this.setUpAudio(topic);
+			this.setUpAudio(this.curTopic);
 			
 			var self = this;		
 			
@@ -71,13 +66,16 @@ function($,Logger,SlidePresenter){
 				this.addAudio();
 			}
 			
-			slide.on('newSlides', this.addAudio);
+			var self = this;
+			slide.on('newSpeech', function(){
+				self.addAudio();
+			});
 		},
 		
 		addAudio: function(){
 			if (!this.curTopic || this.curTopic.audioURL=='')
 				return;
-					
+			
 			if (plugintype=="Audio"){
 				 $('#playButtonGroup').html(
 					"<audio id='audioPlayer' src='"+this.curTopic.audioURL+"' controls='true'/>");

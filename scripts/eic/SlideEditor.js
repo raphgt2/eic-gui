@@ -65,7 +65,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
         
 			var self = this;
         	
-          	for(var i = 0; i < self.topics.length; i++){
+          	for(var i = 1; i < self.topics.length; i++){
            		self.topics[i].prepare();
         	}
         	
@@ -103,6 +103,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       },
       
       switchTopic: function(id, curIndex){
+		this.audio_editor.setTopic(this.topics[curIndex]);		//Switch the active node in the AudioEditor
+		
         if(this.topics[curIndex].slide_order !== undefined)
         {
             var editedSlides = new Array;
@@ -117,7 +119,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 	  		if(this.topics[i] !== undefined && this.topics[i].topic.label == id){
 
 	  			this.curTopic = this.topics[i];
-	  			this.audio_editor.setTopic(this.curTopic);
+	  			
 
 	  			var slide = this.topics[i].next();
         		// start the transition of other children
@@ -312,10 +314,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
     	EnableUIAnimation: function(){
     		var self = this;
     		console.log("UI Animation");
-
+			
     		$('#lastStep').click(function(){
     			console.log("Hash Object Test: ", self._hash);
     		});
+
     		$('#play-button').click(function () {
 				
 				//Hide the editor so that it's not possible to click the play button multiple times...

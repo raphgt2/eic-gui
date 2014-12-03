@@ -143,6 +143,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				self.audio=true;
 				// When speech is received, 'remind' the presenter that the slides are ready
 				self.emit('newSlides');
+				self.emit('newSpeech');
 			});
 			
 			//Fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
