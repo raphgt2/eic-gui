@@ -34,7 +34,7 @@ define(['lib/jquery',
         init: function () {
             if (!this.initedStart) {
               CompositeSlideGenerator.prototype.init.call(this);
-              //this.addGenerator(this.loader = new LoadingSlideGenerator());
+              this.addGenerator(this.loader = new LoadingSlideGenerator());
               this.initedStart = true;
             }
 
@@ -56,7 +56,7 @@ define(['lib/jquery',
 							if (self.ready)
 								return;
 								
-							//self.loader.stopWaiting();
+							self.loader.stopWaiting();
 							self.ready=true;
 							self.emit('topic slides ready');									
 						})
