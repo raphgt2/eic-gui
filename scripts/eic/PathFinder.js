@@ -5,7 +5,7 @@
 */
 
 
-define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI', 'eic/HashObject', 'eic/SlideEditor', 'eic/Summarizer', 'config/URLs'],
+define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor', 'eic/Summarizer', 'config/URLs'],
   function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer, urls) {
     "use strict";
     var logger = new Logger("PathFinder");
