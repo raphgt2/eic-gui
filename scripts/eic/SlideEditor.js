@@ -39,10 +39,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       
 		logger.log("Created slideEditor");
 
-        $('#movie-nav-bar').on('drop', function(ev){ self.drop(ev, self._curIndex, self.topics); });
-        $('#movie-nav-bar').on('dragover', function(ev){ self.allowDrop(ev); });
+       $('#movie-nav-bar').on('drop', function (ev) { self.drop(ev, self._curIndex, self.topics); });
+       $('#movie-nav-bar').on('dragover', function (ev) { self.allowDrop(ev); });
 
-        self.startEdit();
+       self.startEdit();
     }
 
     /* Member functions */
@@ -103,36 +103,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       },
       
       switchTopic: function(id, curIndex){
-      	//set the previous slide's chosen topics
-//      	var prevSlides = prevTopic.getSlides();
-//      	for(var val in prevSlides){
-//      		var s = prevSlides[val];
-//      		for(var i = 0; i < s.length; i++){
-//      			var imgs = s[i].$element.clone().find('img');
-//      			var vids = s[i].slide_info.data.videoID;
-//      			var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
-//      			for(var j = 0; j < this._Play_Sequence.length; j++){
-//      				if(imgs[0] != undefined && imgs[0].src == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
-//      				if(vidsString == this._Play_Sequence[j]) prevTopic.setEditedSlide(s[i]);
-//      			}
-//      		}
-//      	}
-//
-//  		//make sure none of the current slide's topics have been put back
-//  		var eSlides = prevTopic.getEditedSlides();
-//  		for(var i = 0; i < eSlides.length; i++){
-//  			var imgs = eSlides[i].$element.clone().find('img');
-//  			var present = false;
-//  			for(var j = 0; j < this._Play_Sequence.length; j++){
-//  				if(imgs[0] == undefined){
-//  					var vids = eSlides[i].slide_info.data.videoID;
-//  					var vidsString = 'http://img.youtube.com/vi/' + vids + '/default.jpg';
-//  					if(vidsString == this._Play_Sequence[j]) present = true;
-//  				} else if(imgs[0].src == this._Play_Sequence[j]) present = true;
-//  			}
-//  			if(present == false) prevTopic.deleteEditedSlide(i);
-//  		}
-
         if(this.topics[curIndex].slide_order !== undefined)
         {
             var editedSlides = new Array;
@@ -176,13 +146,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
       					for(var i = 0; i < s.length; i++){
       						var isEdited = false;
-//      						for(var j = 0; j < editedSlides.length; j++){
-//      							if(editedSlides[j] == s[i]){
-//      								isEdited = true;
-//      								break;
-//      							}
-//      						}
-      						//if(!isEdited){
       							var imgs = s[i].$element.clone().find('img'); //get just the image link
                                  if(editedSlides !== undefined && editedSlides.length > 0)
                                  {
@@ -204,8 +167,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       							});
       							$('#imgs').append('<li id=img' + i + '></li>');
       							$('#img' + i + '').addClass('nodeElementBarContentWrap');
-                                $('#img' + i + '').attr('draggable', 'true');
-                                $('#img' + i + '').on('dragstart', function(ev){ self.drag(ev); });
+                                $('#img' + i + '').attr('draggable', 'true').on('dragstart', function(ev){ self.drag(ev); });
       							$('#img' + i + '').append(imgs[0]);
       							$('#imgs' + i + '').addClass('nodeElementBarContent');
       						}
@@ -218,13 +180,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         $('#vids').children().remove();
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
-//      						for(var j = 0; j < editedSlides.length; j++){
-//      							if(editedSlides[j] == s[i]){
-//      								isEdited = true;
-//      								break;
-//      							}
-//      						}
-      						//if(!isEdited){
                           	var vids = s[i].slide_info.data.videoID;
                             if(editedSlides !== undefined && editedSlides.length > 0)
                             {
@@ -241,8 +196,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                             {
                          		$('#vids').append('<li id=vid' + i + '></li>');
                          		$('#vid' + i + '').addClass('nodeElementBarContentWrap');
-                                $('#vid' + i + '').attr('draggable', 'true');
-                                $('#vid' + i + '').on('dragstart', function(ev){ self.drag(ev); });
+                                $('#vid' + i + '').attr('draggable', 'true').on('dragstart', function(ev){ self.drag(ev); });
                          		$('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
                          		$('#vids' + i + '').addClass('nodeElementBarContent');
                          		$('#vids' + i).click(function () {
@@ -287,16 +241,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         }
                     }
                 }
-//      			for(var i = 0; i < editedSlides.length; i++){
-//        			var theImg = editedSlides[i].$element.clone().find('img');
-//        			$('#movie-nav-bar').append('<li id=hurr' + i + '></li>');
-//      				$('#hurr' + i + '').addClass('ui-state-default btn btn-default movieNavElementWrap');
-//      				$('#hurr' + i + '').css('display', 'block');
-//        			if(theImg[0] == undefined){
-//        				var theVid = editedSlides[i].slide_info.data.videoID;
-//					  $('#hurr' + i + '').append('<img src=http://img.youtube.com/vi/' + theVid + "/default.jpg id=hurrs+" + i + " class='nodeElementBarContent'>");
-//        			} else $('#hurr' + i + '').append('<img src=' + theImg[0].src + " id=hurrs+" + i + " class='nodeElementBarContent'>");
-//        		}
       			break;	
 	  		}
 	  	}
@@ -365,33 +309,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
     		
     	},
 
-//    	restoreCurrentNode: function(n){
-//    		console.log("RESTORE NODE", n);
-//    		for (var i = 0; i < this._Play_Sequence.length; i++){
-//    			if (this._Play_Sequence[i].indexOf("youtube") != -1){
-//    				var vidID = this._Play_Sequence[i].substring(26,37);
-//    				this._Play_Sequence[i] = vidID;
-//    			}
-//    		}
-//
-//    		this.topics[n].slide_order = this._Play_Sequence;
-//
-//    		var slide_content = new Array;
-//    		for (var i = 0; i < this._Play_Sequence.length; i++){
-//       			slide_content.push(this._Slide_Element_Collection[this._Play_Sequence[i]]);
-//    		}
-//    		if (slide_content[0] != undefined){
-//    			this._curNode.slide_description = slide_content;
-//				this._curNode.temp = false;		//Indicate that the slide description is an actual thing
-//    		}
-//    	},
-//
-//    	PrepareNode: function(n){
-//    		console.log("PREPARE NODE");
-//    		this._curNode = this._path[2*(n-1)];
-//    		this._Play_Sequence = this.topics[n].slide_order;
-//    	},
-
     	EnableUIAnimation: function(){
     		var self = this;
     		console.log("UI Animation");
@@ -403,8 +320,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				
 				//Hide the editor so that it's not possible to click the play button multiple times...
 				$('#editor').css('display', 'none');
-    			
-				//self.restoreCurrentNode(self._curIndex);
 
 				//Give a second for the last node's edits to process before checking the hash
 				setTimeout(function(){
@@ -471,42 +386,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					self.saveHash(self.hash_object.hashID);
 				}, 1000);
 			});
-    		
-    		$( ".node-element-list" ).sortable({
-			  connectWith: "#movie-nav-bar",
-			  helper: "clone",
-		      appendTo: "#videoEditor",
-		      revert: true,
-		      scroll: false,
-		      receive: function(event, ui){
-		      	ui.item.removeClass("movieNavElementWrap")
-					   .addClass("nodeElementBarContentWrap");
-		      }
-		    });
-
-		    $("#movie-nav-bar").sortable({
-				connectWith: ".node-element-list",
-				helper:"clone",
-				appendTo:"#videoEditor",
-				revert: true,
-				scroll: false,
-				over: function(event, ui){
-					$("#movieNavBarWrap").css("border", "2px solid black");
-				},
-				out: function(event, ui){
-					$("#movieNavBarWrap").css("border", "1px solid gray");
-				},
-				receive: function(event, ui){
-					console.log("Receive!");
-					ui.item.removeClass("nodeElementBarContentWrap")
-						   .addClass("movieNavElementWrap");
-					$('#movie-nav-bar').css("padding", "3px");
-				},
-				update: function(event, ui){
-					self.grabMovieNav();
-				}
-			});
-			$( "#movie-nav-bar, .node-element-list" ).disableSelection();
     	},
 
       allowDrop: function(ev) {
@@ -520,7 +399,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
       drop: function(ev, curIndex, topics) {
           console.log("got drop");
-          ev.preventDefault();
           var data = ev.originalEvent.dataTransfer.getData("text/html");
           console.log(data);
           ev.target.appendChild(document.getElementById(data));
