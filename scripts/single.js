@@ -63,7 +63,7 @@
                 	
                 	console.log(relationContent);
                 	document.getElementById('relation').innerHTML = relationContent;
-                	var controller = new PresentationController(path, false, false);
+                	var controller = new PresentationController(path, {intro: false, outro: false, generatorOptions: {videoOptions: {maxVideoCount: 0}}});
 					var view = new PiecesUI(controller);
 					view.initControls();
                 }
@@ -132,7 +132,7 @@
 					else{
 						document.getElementById('subject').innerHTML = path.source.name;
 	                	document.getElementById('object').innerHTML = path.destination.name; 
-						var controller = new PresentationController(path, false, false);
+						var controller = new PresentationController(path, {intro: false, outro: false, generatorOptions: {videoOptions: {maxVideoCount: 0}}});
 						var view = new PiecesUI(controller);
 						view.initControls();
 						var relation = path.path[1].uri;

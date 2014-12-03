@@ -11,7 +11,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
     * CLEANUP
     **/
 
-    function FinalizedTopicSlideGenerator(topic, hash_object) {
+    function FinalizedTopicSlideGenerator(topic, hash_object, options) {
       CompositeSlideGenerator.call(this);
 	  
 	  this.hash_object = hash_object;
@@ -21,12 +21,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
       this.durationLeft = 0;
       this.audioURL ='';
       this.ready=false;
+	  this.videoOptions = options.videoOptions || {};
+	  this.maxImages = options.maxImages;
       
       //stuff
       this.slides = [];
-      this.firstSlide = new TitleSlideGenerator(this.topic);
-	  
-	  
+      this.firstSlide = new TitleSlideGenerator(this.topic);  
     }
 
     $.extend(FinalizedTopicSlideGenerator.prototype,
@@ -52,13 +52,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
 				switch (this.topic.type) {
 				case "http://dbpedia.org/ontology/PopulatedPlace":
-					this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-					this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
+					this.addGenerator(new GoogleImageSlideGenerator(this.topic, this.maxImages), false);
+					this.addGenerator(new YouTubeSlideGenerator(this.topic, this.videoOptions), false);
 					this.addGenerator(new GoogleMapsSlideGenerator(this.topic), false);
 					break;
 				default:
-					this.addGenerator(new GoogleImageSlideGenerator(this.topic), false);
-					this.addGenerator(new YouTubeSlideGenerator(this.topic, true), false);
+					this.addGenerator(new GoogleImageSlideGenerator(this.topic, this.maxImages), false);
+					this.addGenerator(new YouTubeSlideGenerator(this.topic, this.videoOptions), false);
 					break;
 				}
 			}
@@ -69,13 +69,13 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 					//Create all generators depending on the type of the topic; suppress inits b/c we're not doing a search for vids/images
 					switch (this.topic.type) {
 					case "http://dbpedia.org/ontology/PopulatedPlace":
-						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
-						this.addGenerator(new YouTubeSlideGenerator(this.topic, true), true);
+						this.addGenerator(new GoogleImageSlideGenerator(this.topic, this.maxImages), false);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic, this.videoOptions), false);
 						this.addGenerator(new GoogleMapsSlideGenerator(this.topic), true);
 						break;
 					default:
-						this.addGenerator(new GoogleImageSlideGenerator(this.topic), true);
-						this.addGenerator(new YouTubeSlideGenerator(this.topic, true), true);
+						this.addGenerator(new GoogleImageSlideGenerator(this.topic, this.maxImages), false);
+						this.addGenerator(new YouTubeSlideGenerator(this.topic, this.videoOptions), false);
 						break;
 					}
 				}
@@ -95,7 +95,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 
 								break;
 							case "YouTubeSlide":
-								slide = new YouTubeSlideGenerator(self.topic, true);
+								slide = new YouTubeSlideGenerator(self.topic);
 								self.addGenerator(slide,true);
 
 								slide.addVideoSlide(description.data.videoID, (description.data.duration), description);
