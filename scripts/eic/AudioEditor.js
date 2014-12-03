@@ -15,13 +15,7 @@ function($,Logger,SlidePresenter){
 	
 	function AudioEditor(){
 		this.curTopic;
-		this.previousText;		//Used to avoid excessive speech resends
-	
-	var self = this;
-		$("#test").click(function(){
-			console.log(self.curTopic.listeners());
-		});	
-	
+		this.previousText;		//Used to avoid excessive speech resends	
 	}
 	
 	AudioEditor.prototype={
@@ -65,7 +59,6 @@ function($,Logger,SlidePresenter){
 			if (slide.ready){
 				this.addAudio();
 			}
-			
 			var self = this;
 			slide.on('newSpeech', function(){
 				self.addAudio();
