@@ -23,7 +23,6 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     this.startTopic = startTopic;
     this.hash_object = endTopic;		//used to be known as 'endTopic'
     this.duration = duration || 1000;
-    this.description="";
     this.ready=false;
   }
 
@@ -57,6 +56,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
           }, 500);
         });
         slide.audioURL = this.audioURL;
+		slide.audio_text = this.hash_object.audio_text;
 
         this.done = true;
 
@@ -80,7 +80,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
       resendSpeech: function(text) {
 		var self = this,
 			 tts = new TTSService();
-		this.description=text;
+		self.hash_object.audio_text=text;
 		this.ready=false;
         tts.getSpeech(text, 'en_GB', function (response) {
 			self.audioURL = response.snd_url;
@@ -108,7 +108,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     .appendTo($nav)
     .click(function () {
      //window.location.reload();
-     $('#screen').remove();
+     $('#screenWrap').hide();
      $('#editor').show();
     })
     .text('Back to editor');

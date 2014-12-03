@@ -331,10 +331,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				
 				if (self.evaluated){
 					logger.log("Evaluated hash", self._hash);
-					$('#screen').remove();
+					//$('#screen').remove();
 					$('#editor').css('display', 'none');
-					$(document.body).append("<div id='screen'> </div>");
-					$('#screen').css({
+					//$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
+					/*$('#screen').css({
 						display: 'none',
 						position: 'relative',
 						margin: 'auto',
@@ -342,7 +342,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 						height: 600,
 						width: 800,
 						'vertical-align': 'middle'
-					});
+					});*/
+					$('#screen').html('');
+					$('#subtitles').text('');
+					$('#screenWrap').show();
 					var play = new PresentationController(self._hash, false, true);
 					console.log("PresentationController: ", play, play.path.path);
 					play.playMovie();
@@ -350,8 +353,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				else{
 					self.once('hash evaluated', function(){
 						logger.log("Evaluated hash", self._hash);
-						$('#screen').remove();
-						$(document.body).append("<div id='screen'> </div>");
+						//$('#screen').remove();
+						/*$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
 						$('#screen').css({
 							display: 'none',
 							position: 'relative',
@@ -360,7 +363,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 							height: 600,
 							width: 800,
 							'vertical-align': 'middle'
-						});
+						});*/
+						$('#screen').html('');
+						$('#subtitles').text('');
+						$('#screenWrap').show();
 						var play = new PresentationController(self._hash, false, true);
 						console.log("PresentationController: ", play, play.path.path);
 						play.playMovie();

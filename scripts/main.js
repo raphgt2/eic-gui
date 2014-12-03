@@ -87,7 +87,7 @@
 	$("#editor").css("display", "inline");
 	$("#body").css("display", "block");
 	
-    var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 0}}});
+    var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}}});
     var view = new PiecesUI(controller);
     view.initControls();
     

@@ -41,7 +41,8 @@
 		$('#frame').show();
 		
 		$(document).ready(function(){
-			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
+			$('#screenWrap').html("<div id='screen'> </div> <div id='subtitles'></div>");
+			$('#screen').html('');
 			console.log(urls.singlepath);
 			$.ajax({
                 type: "GET",
@@ -119,7 +120,9 @@
 
 					
         $("#play-button").click(function(){
-			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
+			//$('#screenWrap').html("<div id='screen' style ='height:465px; width: 758px'> </div> <div id='subtitles' style ='width: 758px'></div>");
+			$('#screen').html('');
+			$('#subtitles').text('');
 	        $.ajax({
                 type: "GET",
                 url: urls.singlepath,

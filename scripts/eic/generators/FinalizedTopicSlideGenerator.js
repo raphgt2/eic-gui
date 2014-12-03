@@ -209,7 +209,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
             // make sure first slide is always a titleslide
             slide = this.firstSlide.next();
 			slide.audioURL = this.audioURL;
-
+			slide.audio_text = this.hash_object.audio_text;
             // prepare other generators
             //this.generators.forEach(function (g) { g.prepare(); });
 

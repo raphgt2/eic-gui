@@ -83,6 +83,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jplayer.min', 'config/URLs'], function 
 				// if slide contains a audio url attached, play it
 				if (currentSlide.audioURL) {
 					logger.log("Audio found in slide", currentSlide.audioURL);
+					$("#subtitles").text(currentSlide.audio_text);
 					$audioContainer.jPlayer("setMedia", {mp3: currentSlide.audioURL}).jPlayer("play");
 					logger.log("Playing", currentSlide.audioURL);
 				}
