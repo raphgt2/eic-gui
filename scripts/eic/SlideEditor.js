@@ -564,6 +564,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			for (var i=0; i< hash.path.length; i+=2){
 				var node= hash.path[i].uri;
 				path+=	node.substr(node.lastIndexOf("/")+1)+", ";
+				
+				//Dereference the audio info since the URL's most likely is a binary blob and we'll get the time again anyway
+				delete hash.path[i].audioURL;
+				delete hash.path[i].audio_time;
 			
 				//Dereference temporary slide descriptions
 				if (hash.path[i].temp){

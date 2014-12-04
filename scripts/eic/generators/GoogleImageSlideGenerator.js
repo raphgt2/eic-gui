@@ -101,9 +101,9 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
           slide.on('started', function () {
             setTimeout($.proxy($image, 'addClass', 'zoom'));
           });
-		  slide.once('stopped', function(){
+		  /*slide.once('stopped', function(){
 			$image.hide();
-		  });
+		  });*/
           this.slides.push(slide);
 		  this.slidesCopy.push(slide);
           this.emit('newSlides');
