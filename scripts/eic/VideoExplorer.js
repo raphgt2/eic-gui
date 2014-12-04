@@ -49,7 +49,17 @@ function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summariz
 				if (startLabel=='')
 					return;
 					
-				console.log(startLabel);
+				$.ajax({
+					url: urls.hashFilter,
+					type: 'GET',
+					data: {startNode: startLabel},
+					success: function (data) {
+						console.log(data);
+					},
+					error: function(error){
+						$("#messageBox").html("No videos for "+startLabel+" found. Why don't you <a href='/LODStories/html/lodstories_demo.html'>create one</a>?");
+					}
+				});
 			});
 		}
 	};
