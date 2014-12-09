@@ -110,7 +110,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
             {
                 editedSlides.push(this._Slide_Element_Collection[this.topics[curIndex].slide_order[i]]);
             }
-            this._path[2*(curIndex-1)].slide_description = editedSlides;
+            //this._path[2*(curIndex-1)].slide_description = editedSlides;
         }
 
 	  	for(var i = 1; i < this.topics.length; i++){
@@ -129,7 +129,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
         		
         		//add appropriate slides to edit box
         		var slides = self.topics[i].getSlides();
-        		//var editedSlides = self.topics[i].getEditedSlides();
 
         		var imgcnt = 0;
         		var vidcnt = 0;
@@ -146,30 +145,29 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
       					for(var i = 0; i < s.length; i++){
       						var isEdited = false;
-      							var imgs = s[i].$element.clone().find('img'); //get just the image link
-                                 if(editedSlides !== undefined && editedSlides.length > 0)
+      					    var imgs = s[i].slide_info.data.url; //get just the image link
+                            if(editedSlides !== undefined && editedSlides.length > 0)
+                            {
+                                 for(var j = 0; j < editedSlides.length; j++)
                                  {
-                                     for(var j = 0; j < editedSlides.length; j++)
+                                     if(editedSlides[j].type == "GoogleImageSlide" && editedSlides[j].data.url == imgs)
                                      {
-                                         if(editedSlides[j].type == "GoogleImageSlide" && editedSlides[j].data.url == imgs)
-                                         {
-                                             isEdited = true;
-                                             break;
-                                         }
+                                         isEdited = true;
+                                         break;
                                      }
                                  }
+                            }
                             if(!isEdited)
                             {
-      							imgs.attr('id', val + 's' + i)
-      								.attr('class', 'nodeElementBarContent');
-      							$(imgs).click(function () {
-      								self.setContent(this.id, i, 'img');
-      							});
       							$('#imgs').append('<li id=img' + i + '></li>');
       							$('#img' + i + '').addClass('nodeElementBarContentWrap');
                                 $('#img' + i + '').attr('draggable', 'true').on('dragstart', function(ev){ self.drag(ev); });
-      							$('#img' + i + '').append(imgs[0]);
+      							$('#img' + i + '').append('<img id=imgs' + i + ' src=' + imgs + '>');
       							$('#imgs' + i + '').addClass('nodeElementBarContent');
+                                $('#imgs' + i).click(function () {
+                                    var id = "imgs" + i;
+                                    self.setContent(id, i, 'img');
+                                });
       						}
       					}
       				}
@@ -178,6 +176,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         var s = slides['vid'];
                         this.tempSlides['vid'] = s;
                         $('#vids').children().remove();
+
                         for(var i = 0; i < s.length; i++){
                         	var isEdited = false;
                           	var vids = s[i].slide_info.data.videoID;
@@ -393,14 +392,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       },
 
       drag: function(ev) {
-          console.log("got drag");
           ev.dataTransfer = ev.originalEvent.dataTransfer.setData("text/html", ev.target.id);
       },
 
       drop: function(ev, curIndex, topics) {
-          console.log("got drop");
           var data = ev.originalEvent.dataTransfer.getData("text/html");
-          console.log(data);
           ev.target.appendChild(document.getElementById(data));
           $('#' + data + '').removeClass("nodeElementBarContentWrap").addClass("movieNavElementWrap");
           $('#movie-nav-bar').css("padding", "3px");
