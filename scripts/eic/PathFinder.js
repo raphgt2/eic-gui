@@ -45,6 +45,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       // Starts the movie about the connection between the user and the topic.
       initLinkedDataEdu: function () {
       	console.log("[===================Initialize Linked Data Edu App===================]");
+		$("#liveSearchResult").html('');
       	var self=this;
       	$.getJSON('../data_json/uri_matching.json', function(data) {
       		self.url_ref = data;
@@ -74,15 +75,18 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					//console.log(key, val.name, uriMatch);
 					if (val.name == uriMatch) {
 						$("#liveSearchResult").html(val.uri);
-						
 					}
-			});
+				});
 				$('#search').val($(this).html());
 				self.keyWord = $(this).html(); 
 				$('#liveSearch').empty();
 			});
 		});
-      	$("#draw").click(function(){
+      	$("#searchButton").click(function(){
+		console.log($("#liveSearchResult").html());
+			if ($("#liveSearchResult").html()==='')		//Do not enter the path explorer page unless we actually have a uri
+				return;
+				
       		self.keyWord = $("#input").val();
       		self.addNode($("#liveSearchResult").html(), $("#search").val(), null);
       		$("#searchWindow").css("display", "none");

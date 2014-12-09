@@ -45,7 +45,7 @@
         },
     });
 
-    require(['eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder', 'config/URLs'], function(PresentationController2, PiecesUI, SlideEditor, PathFinder, urls){
+    require(['eic/PresentationController','eic/PiecesUI','eic/VideoExplorer','config/URLs'], function(PresentationController, PiecesUI, VideoExplorer, urls){
 
         var hashId = location.hash.slice(1);
 
@@ -69,22 +69,19 @@
                 var path = JSON.parse(unescapeString(data));
                 path.hashID = hashId;
 
-                $("#editor").css("display", "inline");
                 $("#body").css("display", "block");
 
-                var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}}});
+                var controller = new PresentationController(path, {generatorOptions: {videoOptions: {maxVideoCount: 0}}});
                 var view = new PiecesUI(controller);
                 view.initControls();
-
-                controller.once('slide_generation_finished', function(){
-                    var editor = new SlideEditor(controller.generator, controller.path, controller, path);
-                });
             },
             error: function(error){
                 location.hash = "";
                 $("#searchWindow").css("display", "inline");
+				
+				var video_explorer = new VideoExplorer();
 
-                var path_finder = new PathFinder();
+                //var path_finder = new PathFinder();
             }
         });
 

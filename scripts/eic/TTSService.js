@@ -93,7 +93,7 @@ function ($, Logger, EventEmitter, urls) {
 					if (data.res === 'OK') {
 						
 						if (!data.text){
-							if (self.attempt>=2){
+							if (self.attempt>=3){
 								if (!self.finished){
 									logger.log('Error receiving speech', data);
 									self.emit('speechError', data);

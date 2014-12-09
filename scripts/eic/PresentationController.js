@@ -14,10 +14,12 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
     "use strict";
     var logger = new Logger("PresentationController");
 
-    function PresentationController(path, intro, outro) {
+    function PresentationController(path, options) {
       this.path = path;
-      this.intro = intro;
-      this.outro = outro;
+	  options = options || {};
+      this.intro = options.intro === undefined ? true : options.intro;
+      this.outro = options.outro === undefined ? true : options.outro;
+	  this.generatorOptions = options.generatorOptions || {};
 	  
 	  this.topicToTopic;
     }
@@ -54,7 +56,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 		if (this.intro)
 			generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
-		this.topicToTopic = new TopicToTopicSlideGenerator(this.path, loader)
+		this.topicToTopic = new TopicToTopicSlideGenerator(this.path, loader, this.generatorOptions)
 		generator.addGenerator(this.topicToTopic);
 		logger.log(this.topicToTopic);
 		

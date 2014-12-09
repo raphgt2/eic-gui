@@ -41,7 +41,8 @@
 		$('#frame').show();
 		
 		$(document).ready(function(){
-			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
+			$('#screenWrap').html("<div id='screen'> </div> <div id='subtitles'></div>");
+			$('#screen').html('');
 			console.log(urls.singlepath);
 			$.ajax({
                 type: "GET",
@@ -63,7 +64,7 @@
                 	
                 	console.log(relationContent);
                 	document.getElementById('relation').innerHTML = relationContent;
-                	var controller = new PresentationController(path, false, false);
+                	var controller = new PresentationController(path, {intro: false, outro: false, generatorOptions: {videoOptions: {maxVideoCount: 0}}});
 					var view = new PiecesUI(controller);
 					view.initControls();
                 }
@@ -119,7 +120,9 @@
 
 					
         $("#play-button").click(function(){
-			$('#screenWrap').html("<div id='screen' style =' height:465px; width: 758px'> </div>");
+			//$('#screenWrap').html("<div id='screen' style ='height:465px; width: 758px'> </div> <div id='subtitles' style ='width: 758px'></div>");
+			$('#screen').html('');
+			$('#subtitles').text('');
 	        $.ajax({
                 type: "GET",
                 url: urls.singlepath,
@@ -132,7 +135,7 @@
 					else{
 						document.getElementById('subject').innerHTML = path.source.name;
 	                	document.getElementById('object').innerHTML = path.destination.name; 
-						var controller = new PresentationController(path, false, false);
+						var controller = new PresentationController(path, {intro: false, outro: false, generatorOptions: {videoOptions: {maxVideoCount: 0}}});
 						var view = new PiecesUI(controller);
 						view.initControls();
 						var relation = path.path[1].uri;

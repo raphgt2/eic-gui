@@ -21,11 +21,12 @@ define(['lib/jquery',
 
     var defaultDuration = 1000;
 
-    function TopicToTopicSlideGenerator(path, loader) {
+    function TopicToTopicSlideGenerator(path, loader, generatorOptions) {
       CompositeSlideGenerator.call(this);
       this.ready=false;
       this.path=path;
 	  this.loader = loader;
+	  this.generatorOptions = generatorOptions || {};
     }
 
     $.extend(TopicToTopicSlideGenerator.prototype,
@@ -43,7 +44,7 @@ define(['lib/jquery',
               var summ = new Summarizer();
                   $(summ).one('generated', function (event, story) {
                     story.steps.forEach(function (step) {
-                      self.addGenerator(new FinalizedTopicSlideGenerator(step.topic, step.hash_object));
+                      self.addGenerator(new FinalizedTopicSlideGenerator(step.topic, step.hash_object, self.generatorOptions));
                     });
                     
 			        setTimeout(function(){

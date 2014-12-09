@@ -29,13 +29,13 @@ function ($, BaseSlideGenerator, Logger) {
 * - the maximum duration (in milliseconds) of a video
 * - the skipping duration (in milliseconds) at the beginning of the video
 */
-  function YouTubeSlideGenerator(topic, preload, options) {
+  function YouTubeSlideGenerator(topic, options) {
     BaseSlideGenerator.call(this);
-
+	
     this.topic = topic;
-	this.preload = preload;
     options = options || {};
-    this.maxVideoCount = options.maxVideoCount || 2;
+	this.preload = options.preload || true;
+    this.maxVideoCount = options.maxVideoCount === undefined ? 1 : options.maxVideoCount;
     this.maxVideoDuration = options.maxVideoDuration || 5000;
     this.skipVideoDuration = options.skipVideoDuration || 10000;
     this.orderMethod = options.orderMethod || 'relevance';
@@ -56,9 +56,16 @@ function ($, BaseSlideGenerator, Logger) {
 
     /** Fetches a list of images about the topic. */
     init: function () {
-      if (this.inited)
+      if (this.inited)		
         return;
-      
+     
+		if (this.maxVideoCount==0){		//Why waste time finding videos if we have none?
+			this.ready = true;
+			this.emit("prepared");
+			this.inited = true;
+			return;
+		}
+	 
       var self = this;	
 	  
 	  if (!scriptFlag){
@@ -331,36 +338,42 @@ function ($, BaseSlideGenerator, Logger) {
     },
   });
   
-  function searchVideos(self, startResults, maxResult, skip) {
-	  	  
+  function searchVideos(self, startResults, maxResult, skip) {	  	  
     if (maxResult > 50) { //YouTube API restriction
       maxResult = 50;
     }
     var inspected = 0;
     var resultCounter = startResults;
-    $.ajax('https://gdata.youtube.com/feeds/api/videos?v=2&max-results=' + maxResult + '&orderby=' + self.orderMethod + '&alt=jsonc&q=' + self.topic.label + "&format=5")
-     .success(function (response) {
-        var items, itemCount;
-        if (response.data.items)
-			items = response.data.items;
-		else
-			items = 0;
-		
-		
-		if (items !=0)
-			itemCount = Math.min(items.length, self.maxVideoCount);
-		else
-			itemCount = 0;
-		
-		if (itemCount == 0){
+    $.ajax({
+		url: 'https://gdata.youtube.com/feeds/api/videos?v=2&max-results=' + maxResult + '&orderby=' + self.orderMethod + '&alt=jsonc&q=' + self.topic.label + "&format=5",
+		success: function (response) {
+			var items, itemCount;
+			if (response.data.items)
+				items = response.data.items;
+			else
+				items = 0;
+			
+			
+			if (items !=0)
+				itemCount = Math.min(items.length, self.maxVideoCount);
+			else
+				itemCount = 0;
+			
+			if (itemCount == 0){
+				self.ready = true;
+				logger.log("no youtube videos for " + self.topic.label);
+				self.emit("prepared");
+			}
+			
+			for (var i = 0; i < itemCount; i++)
+				self.addVideoSlide(items[i].id, self.maxVideoDuration);
+		},
+		error: function(error){
 			self.ready = true;
-			logger.log("no youtube videos for " + self.topic.label);
+			logger.log("could not search youtube videos for " + self.topic.label);
 			self.emit("prepared");
 		}
-		
-        for (var i = 0; i < itemCount; i++)
-          self.addVideoSlide(items[i].id, self.maxVideoDuration);
-      });
+	});
   }
 
   return YouTubeSlideGenerator;

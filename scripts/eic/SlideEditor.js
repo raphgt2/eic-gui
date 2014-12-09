@@ -65,7 +65,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
         
 			var self = this;
         	
-          	for(var i = 0; i < self.topics.length; i++){
+          	for(var i = 1; i < self.topics.length; i++){
            		self.topics[i].prepare();
         	}
         	
@@ -101,6 +101,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       },
       
       switchTopic: function(id, curIndex){
+		this.audio_editor.setTopic(this.topics[curIndex]);		//Switch the active node in the AudioEditor
+		
         if(this.topics[curIndex].slide_order !== undefined)
         {
             var editedSlides = new Array;
@@ -115,7 +117,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 	  		if(this.topics[i] !== undefined && this.topics[i].topic.label == id){
 
 	  			this.curTopic = this.topics[i];
-	  			this.audio_editor.setTopic(this.curTopic);
+	  			
 
 	  			var slide = this.topics[i].next();
         		// start the transition of other children
@@ -308,10 +310,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
     	EnableUIAnimation: function(){
     		var self = this;
     		console.log("UI Animation");
-
+			
     		$('#lastStep').click(function(){
     			console.log("Hash Object Test: ", self._hash);
     		});
+
     		$('#play-button').click(function () {
 				
 				//Hide the editor so that it's not possible to click the play button multiple times...
@@ -324,10 +327,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				
 				if (self.evaluated){
 					logger.log("Evaluated hash", self._hash);
-					$('#screen').remove();
+					//$('#screen').remove();
 					$('#editor').css('display', 'none');
-					$(document.body).append("<div id='screen'> </div>");
-					$('#screen').css({
+					//$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
+					/*$('#screen').css({
 						display: 'none',
 						position: 'relative',
 						margin: 'auto',
@@ -335,7 +338,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 						height: 600,
 						width: 800,
 						'vertical-align': 'middle'
-					});
+					});*/
+					$('#screen').html('');
+					$('#subtitles').text('');
+					$('#screenWrap').show();
 					var play = new PresentationController(self._hash, false, true);
 					console.log("PresentationController: ", play, play.path.path);
 					play.playMovie();
@@ -343,8 +349,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				else{
 					self.once('hash evaluated', function(){
 						logger.log("Evaluated hash", self._hash);
-						$('#screen').remove();
-						$(document.body).append("<div id='screen'> </div>");
+						//$('#screen').remove();
+						/*$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
 						$('#screen').css({
 							display: 'none',
 							position: 'relative',
@@ -353,7 +359,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 							height: 600,
 							width: 800,
 							'vertical-align': 'middle'
-						});
+						});*/
+						$('#screen').html('');
+						$('#subtitles').text('');
+						$('#screenWrap').show();
 						var play = new PresentationController(self._hash, false, true);
 						console.log("PresentationController: ", play, play.path.path);
 						play.playMovie();
@@ -374,12 +383,52 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
 
 			
+			$("#mask").css({
+				'z-index': 5,
+				position: 'fixed',
+				display: 'none',
+				'opacity': 0.7,
+				'background-color': '#ccc',
+				height: '100%',
+				width: '100%',
+				top: '0px',
+				left: '0px',
+
+			});
+			
+			var dialog = $( "#dialog-form" ).dialog({
+				dialogClass: "no-close",
+				autoOpen: false,
+				height: 300,
+				width: 200,
+				modal: true,
+				position: {
+					my: "center",
+					at: "center",
+					of: "body"
+				},
+				buttons: {
+					"Save Hash Object": function(){
+						$("#mask").hide();
+						dialog.dialog("close");
+						self.saveHash();
+					},
+					Cancel: function() {
+						$("#mask").hide();
+						dialog.dialog( "close" );
+					}
+				}
+			});
+			
+			$("#dialog-form").show();		//Now that we've attached the form to a dialog box....it can be "shown"
+			
 			$('#save-button').click(function(){
-				self.restoreCurrentNode(self._curIndex);
+				//Save the newest edits
 				
 				//Give a second for the last node's edits to process before saving the hash
 				setTimeout(function(){
-					self.saveHash(self.hash_object.hashID);
+					$("#mask").show();
+					dialog.dialog("open");
 				}, 1000);
 			});
     	},
@@ -480,12 +529,40 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			//Now remove the extraneous players
 			$('#ytholder').children().not('.save').remove();
 		}*/
-		saveHash: function(hashID){		
+		saveHash: function(hashID){				
+			function escapeString(str){			
+				str = str.replace(/\\/g,"\\\\");
+				str = str.replace(/\0/g, "\\0");
+				str = str.replace(/\n/g, "\\n");
+				str = str.replace(/\r/g, "\\r");
+				str = str.replace(/'/g, "\\'");
+				str = str.replace(/"/g, '\\"');
+				str = str.replace(/\x1a/g, "\\Z");
+				
+				return str;
+			}
+			
 			var hash = JSON.parse(JSON.stringify(this.hash_object));
+			var path = "";
 			var self = this;
+			var title = $("#title").val();
+			var author = $("#author").val();
+			if (!title)
+				title="Untitled";
+			if (!author)
+				author="Anonymous";
+			title = escapeString(title);
+			author = escapeString(author);
 			
 			//Nodes are found every 2 steps in the path (other half of the steps are links)
 			for (var i=0; i< hash.path.length; i+=2){
+				var node= hash.path[i].uri;
+				path+=	node.substr(node.lastIndexOf("/")+1)+", ";
+				
+				//Dereference the audio info since the URL's most likely is a binary blob and we'll get the time again anyway
+				delete hash.path[i].audioURL;
+				delete hash.path[i].audio_time;
+			
 				//Dereference temporary slide descriptions
 				if (hash.path[i].temp){
 					delete hash.path[i].slide_description;
@@ -501,26 +578,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					}
 				}
 			}
-			
-			console.log(hash);
-			console.log(this.hash_object);
-			
-			function escapeString(str){			
-				str = str.replace(/\\/g,"\\\\");
-				str = str.replace(/\0/g, "\\0");
-				str = str.replace(/\n/g, "\\n");
-				str = str.replace(/\r/g, "\\r");
-				str = str.replace(/'/g, "\\'");
-				str = str.replace(/"/g, '\\"');
-				str = str.replace(/\x1a/g, "\\Z");
-				
-				return str;
-			}
+			path = escapeString(path.trim());
 			
 			$.ajax({
 				url: urls.hashStore,	
 				type: 'POST',
-				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash))},
+				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash)), author: author, title: title},
 				success: function (data) {
 					location.hash=data.trim();
 					self.hash_object.hashID = data.trim();

@@ -14,13 +14,16 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
     "use strict";
     var logger = new Logger("PresentationController");
 
-    function PresentationController(path, intro, outro) {
+    function PresentationController(path, options) {	  
       this.path = path;
       this.slides = {};
       this.generator;
       EventEmitter.call(this);
-	  this.intro = intro;
-	  this.outro = outro;
+	  
+	  options = options || {};
+	  this.intro = options.intro || false;
+	  this.outro = options.outro || false;
+	  this.generatorOptions = options.generatorOptions || {};
       logger.log("Created PresentationController2, ready to generate slides");
 
 	  this.topicToTopic;
@@ -44,7 +47,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		if (this.intro)
 			this.generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
-		this.topicToTopic = new TopicToTopicSlideGenerator2(this.path);
+		this.topicToTopic = new TopicToTopicSlideGenerator2(this.path, this.generatorOptions);
 		this.generator.addGenerator(this.topicToTopic);
 		
 		if (this.outro)

@@ -43,6 +43,7 @@ define(['lib/jquery', 'eic/generators/CompositeSlideGenerator', 'eic/generators/
           var slide = CompositeSlideGenerator.prototype.next.apply(this);
           if (this.audioURL) {
             slide.audioURL = this.audioURL;
+			slide.audio_text = this.hash_object.audio_text;
             delete this.audioURL;
           }
           return slide;
