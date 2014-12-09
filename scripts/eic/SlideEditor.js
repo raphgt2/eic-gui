@@ -77,9 +77,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
         	    	.html(self.topics[i].topic.label);
         		$button.click(function(){ 
         			$("#movie-nav-bar").html('');
-        			//self.restoreCurrentNode(self._curIndex);
                     self._curIndex = $(this).attr("order");
-                    //self.PrepareNode(self._curIndex);
                     self.switchTopic(this.id, self._curIndex);
         		});
         		$('#nodeNavBar').append($button);
@@ -142,7 +140,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       		    		var s = slides['img'];
       		    		this.tempSlides['img'] = s;
       					$('#imgs').children().remove();
-
       					for(var i = 0; i < s.length; i++){
       						var isEdited = false;
       					    var imgs = s[i].slide_info.data.url; //get just the image link
@@ -396,6 +393,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       },
 
       drop: function(ev, curIndex, topics) {
+          ev.preventDefault();
           var data = ev.originalEvent.dataTransfer.getData("text/html");
           ev.target.appendChild(document.getElementById(data));
           $('#' + data + '').removeClass("nodeElementBarContentWrap").addClass("movieNavElementWrap");
