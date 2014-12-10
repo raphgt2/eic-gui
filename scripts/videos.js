@@ -60,6 +60,34 @@
 
             return str;
         }
+		
+		var exitButtons = [];
+	
+		var button = $('<span>')
+				.addClass('button')
+				.click(function () {
+				  window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html";
+				})
+		   .text('Start over');
+		exitButtons.push(button);
+	   
+		button = $('<span>')
+		.addClass('button')
+		.click(function () {
+		 //window.location.reload();
+		 $('#screenWrap').hide();
+		 $('#editor').show();
+		})
+		.text('Back to editor');
+		exitButtons.push(button);
+		
+		button = $('<span>')
+		.addClass('button')
+		.click(function () {
+			$('#play-button').click();
+		})
+		.text('Replay');
+		exitButtons.push(button);
 
         $.ajax({
             url: urls.hashRetrieve,
@@ -70,7 +98,7 @@
 				//If there's no hash field, then the query failed. Go to search mode
 				if (!data.hash){
 					location.hash = "";
-					$("#searchWindow").css("display", "inline");
+					$("#mainWrap").css("display", "inline");
 					
 					var video_explorer = new VideoExplorer();
 				}
@@ -83,14 +111,14 @@
 					$('#subtitles').text('');
 					$('#screenWrap').show();
 
-					var controller = new PresentationController(path, {generatorOptions: {videoOptions: {maxVideoCount: 0}}});
+					var controller = new PresentationController(path, {intro: false, outro: true, generatorOptions: {videoOptions: {maxVideoCount: 2}},outroOptions:{outroButtons: exitButtons}});
 					var view = new PiecesUI(controller);
 					view.initControls();
 				}
             },
             error: function(error){
                 location.hash = "";
-                $("#searchWindow").css("display", "inline");
+                $("#mainWrap").css("display", "inline");
 				
 				var video_explorer = new VideoExplorer();
 

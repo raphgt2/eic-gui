@@ -60,6 +60,45 @@
 			
 			return str;
 		}
+		
+		var exitButtons = [];
+	
+		var button = $('<span>')
+				.addClass('button')
+				.click(function () {
+				  window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html";
+				})
+		   .text('Start over');
+		exitButtons.push(button);
+	   
+		button = $('<span>')
+		.addClass('button')
+		.click(function () {
+		 //window.location.reload();
+		 $('#screenWrap').hide();
+		 $('#editor').show();
+		})
+		.text('Back to editor');
+		exitButtons.push(button);
+		
+		button = $('<span>')
+		.addClass('button')
+		.click(function () {
+			$('#play-button').click();
+		})
+		.text('Replay');
+		exitButtons.push(button);
+		
+		var options = {
+			generatorOptions: {
+				videoOptions: {
+					maxVideoCount: 2
+				}
+			},
+			outroOptions:{
+				outroButtons: exitButtons
+			}
+		};
 
         $.ajax({
             url: urls.hashRetrieve,
@@ -72,7 +111,7 @@
 					location.hash = "";
 					$("#searchWindow").css("display", "inline");
 
-					var path_finder = new PathFinder();
+					var path_finder = new PathFinder(options);
 				}
 				else{
 					var path = JSON.parse(unescapeString(data.hash));
@@ -81,7 +120,7 @@
 					$("#editor").css("display", "inline");
 					$("#body").css("display", "block");
 
-					var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}}});
+					var controller = new PresentationController2(path, options);
 					var view = new PiecesUI(controller);
 					view.initControls();
 
@@ -94,7 +133,7 @@
                 location.hash = "";
                 $("#searchWindow").css("display", "inline");
 
-                var path_finder = new PathFinder();
+                var path_finder = new PathFinder(options);
             }
         });
 

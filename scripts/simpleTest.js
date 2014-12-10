@@ -115,7 +115,18 @@
     .text('Replay');
 	exitButtons.push(button);
 	
-    var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}},outroOptions:{outroButtons: exitButtons}});
+	var options = {
+		generatorOptions: {
+			videoOptions: {
+				maxVideoCount: 2
+			}
+		},
+		outroOptions:{
+			outroButtons: exitButtons
+		}
+	};
+	
+    var controller = new PresentationController2(path, options);
     var view = new PiecesUI(controller);
     view.initControls();
     

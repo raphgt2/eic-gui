@@ -10,7 +10,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
     "use strict";
     var logger = new Logger("PathFinder");
   		
-    function PathFinder() {
+    function PathFinder(options) {
     	/* Define HTML Elements*/
 				
 		/* Define Constants and Data */
@@ -36,6 +36,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 //var tree = d3.layout.tree()
 //	.size([h, w]);
 		this.initLinkedDataEdu();
+		
+		this.movieOptions = options || {};
     	
 		
     }
@@ -109,7 +111,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				console.log("userPath", self.userPath);
 				
 				/*Prepare Video Editor*/
-            	var controller = new PresentationController2(self.userHash);
+            	var controller = new PresentationController2(self.userHash, self.movieOptions);
 	            var view = new PiecesUI(controller);
 	            view.initControls();
 				console.log("Hash Object Output", self.userHash);
