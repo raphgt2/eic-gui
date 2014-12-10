@@ -49,36 +49,46 @@
 
         var hashId = location.hash.slice(1);
 
-        function unescapeString(str){
-            str = str.replace(/\\\\/g,"\\");
-            str = str.replace(/\\0/g, "\0");
-            str = str.replace(/\\n/g, "\n");
-            str = str.replace(/\\r/g, "\r");
-            str = str.replace(/\\'/g, "'");
-            str = str.replace(/\\"/g, '"');
-            str = str.replace(/\\Z/g, "\x1a");
-
-            return str;
-        }
+        function unescapeString(str){			
+			str = str.replace(/\\\\/g,"\\");
+			str = str.replace(/\\0/g, "\0");
+			str = str.replace(/\\n/g, "\n");
+			str = str.replace(/\\r/g, "\r");
+			str = str.replace(/\\'/g, "'");
+			str = str.replace(/\\"/g, '"');
+			str = str.replace(/\\Z/g, "\x1a");
+			
+			return str;
+		}
 
         $.ajax({
             url: urls.hashRetrieve,
             type: 'GET',
+			dataType: 'json',
             data: {hashID: hashId},
             success: function (data) {
-                var path = JSON.parse(unescapeString(data));
-                path.hashID = hashId;
+				//If there's no hash field, then the query failed. Go to search mode
+				if (!data.hash){
+					location.hash = "";
+					$("#searchWindow").css("display", "inline");
 
-                $("#editor").css("display", "inline");
-                $("#body").css("display", "block");
+					var path_finder = new PathFinder();
+				}
+				else{
+					var path = JSON.parse(unescapeString(data.hash));
+					path.hashID = hashId;
 
-                var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}}});
-                var view = new PiecesUI(controller);
-                view.initControls();
+					$("#editor").css("display", "inline");
+					$("#body").css("display", "block");
 
-                controller.once('slide_generation_finished', function(){
-                    var editor = new SlideEditor(controller.generator, controller.path, controller, path);
-                });
+					var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}}});
+					var view = new PiecesUI(controller);
+					view.initControls();
+
+					controller.once('slide_generation_finished', function(){
+						var editor = new SlideEditor(controller.generator, controller.path, controller, path);
+					});
+				}
             },
             error: function(error){
                 location.hash = "";

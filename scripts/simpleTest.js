@@ -87,7 +87,35 @@
 	$("#editor").css("display", "inline");
 	$("#body").css("display", "block");
 	
-    var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}}});
+	var exitButtons = [];
+	
+	var button = $('<span>')
+			.addClass('button')
+			.click(function () {
+			  window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html";
+			})
+	   .text('Start over');
+    exitButtons.push(button);
+   
+    button = $('<span>')
+    .addClass('button')
+    .click(function () {
+     //window.location.reload();
+     $('#screenWrap').hide();
+     $('#editor').show();
+    })
+    .text('Back to editor');
+	exitButtons.push(button);
+	
+	button = $('<span>')
+    .addClass('button')
+    .click(function () {
+		$('#play-button').click();
+    })
+    .text('Replay');
+	exitButtons.push(button);
+	
+    var controller = new PresentationController2(path, {generatorOptions: {videoOptions: {maxVideoCount: 2}},outroOptions:{outroButtons: exitButtons}});
     var view = new PiecesUI(controller);
     view.initControls();
     

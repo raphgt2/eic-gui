@@ -24,6 +24,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 	  this.intro = options.intro || false;
 	  this.outro = options.outro || false;
 	  this.generatorOptions = options.generatorOptions || {};
+	  this.outroOptions = options.outroOptions || {};
       logger.log("Created PresentationController2, ready to generate slides");
 
 	  this.topicToTopic;
@@ -51,7 +52,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		this.generator.addGenerator(this.topicToTopic);
 		
 		if (this.outro)
-			this.generator.addGenerator(new OutroductionSlideGenerator(this.profile || this.startTopic, this.endTopic));
+			this.generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic, this.outroOptions));
 			
 
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   

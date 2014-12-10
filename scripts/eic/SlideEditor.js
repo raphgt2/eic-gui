@@ -16,6 +16,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
     function SlideEditor(generator, path, controller, hashObj) {
 		EventEmitter.call(this);
 		
+		this.controller = controller;
 		this.curTopic = null;
 		this.tempSlides = {};
 		this.topics = controller.topicToTopic.generators;
@@ -322,15 +323,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
 				//Give a second for the last node's edits to process before checking the hash
 				setTimeout(function(){
-					self.evaluateHash();
+					self.evaluateHash(true);
 				},1000);
 				
 				if (self.evaluated){
 					logger.log("Evaluated hash", self._hash);
-					//$('#screen').remove();
 					$('#editor').css('display', 'none');
-					//$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
-					/*$('#screen').css({
+					/*$('#screen').remove();
+					$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
+					$('#screen').css({
 						display: 'none',
 						position: 'relative',
 						margin: 'auto',
@@ -342,15 +343,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					$('#screen').html('');
 					$('#subtitles').text('');
 					$('#screenWrap').show();
-					var play = new PresentationController(self._hash, false, true);
+					var play = new PresentationController(self._hash, {intro: false, outro: true, generatorOptions: self.controller.generatorOptions, outroOptions: self.controller.outroOptions});
 					console.log("PresentationController: ", play, play.path.path);
 					play.playMovie();
 				}
 				else{
 					self.once('hash evaluated', function(){
 						logger.log("Evaluated hash", self._hash);
-						//$('#screen').remove();
-						/*$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
+						/*$('#screen').remove();
+						$('#screenWrap').html("<div id='screen'> </div><div id='subtitles' style ='width: 800px'></div>");
 						$('#screen').css({
 							display: 'none',
 							position: 'relative',
@@ -363,7 +364,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 						$('#screen').html('');
 						$('#subtitles').text('');
 						$('#screenWrap').show();
-						var play = new PresentationController(self._hash, false, true);
+						var play = new PresentationController(self._hash, {intro: false, outro: true, generatorOptions: self.controller.generatorOptions, outroOptions: self.controller.outroOptions});
 						console.log("PresentationController: ", play, play.path.path);
 						play.playMovie();
 					});
@@ -424,6 +425,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			
 			$('#save-button').click(function(){
 				//Save the newest edits
+				self.evaluateHash(false);
 				
 				//Give a second for the last node's edits to process before saving the hash
 				setTimeout(function(){
@@ -470,7 +472,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
 		//Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
 		//Create a pseudo-slide_description for default vids so that we don't waste time trying to load new ones
-		evaluateHash: function (){
+		evaluateHash: function (finalize){
 		logger.log("evaluating hash");
 			var i,j;
 			var topics = this.topics;
@@ -484,33 +486,35 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                 }
                 this._path[2 * (k - 1)].slide_description = editedSlides;
             }
+			
+			//This part of the function populates the hash with pseudo-descriptions for the defaults, as well as normalizing duration settings
+			if (finalize){		
+				for (i=1; i<topics.length; i++){
 
-			for (i=1; i<topics.length; i++){
-
-				if (!topics[i].hash_object.slide_description){
-					topics[i].updateHash();
-				}
-				//Only do proper time updates if the slide_description was real
-				else if (!topics[i].hash_object.temp){
-					var parts = 0;
-					for (j=0; j<topics[i].hash_object.slide_description.length; j++){
-						if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide")
-							parts+=3
-						else
-							parts+=1;
+					if (!topics[i].hash_object.slide_description){
+						topics[i].updateHash();
 					}
-					for (j=0; j<topics[i].hash_object.slide_description.length; j++){
-						if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide"){	
-							topics[i].hash_object.slide_description[j].data.duration = Math.floor((topics[i].hash_object.audio_time*3)/parts);
-							if (topics[i].hash_object.slide_description[j].player)
-								this.players.push(topics[i].hash_object.slide_description[j].player.playerId);
+					//Only do proper time updates if the slide_description was real
+					else if (!topics[i].hash_object.temp){
+						var parts = 0;
+						for (j=0; j<topics[i].hash_object.slide_description.length; j++){
+							if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide")
+								parts+=3
+							else
+								parts+=1;
 						}
-						else
-							topics[i].hash_object.slide_description[j].data.duration = Math.floor(topics[i].hash_object.audio_time/parts);		
+						for (j=0; j<topics[i].hash_object.slide_description.length; j++){
+							if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide"){	
+								topics[i].hash_object.slide_description[j].data.duration = Math.floor((topics[i].hash_object.audio_time*3)/parts);
+								if (topics[i].hash_object.slide_description[j].player)
+									this.players.push(topics[i].hash_object.slide_description[j].player.playerId);
+							}
+							else
+								topics[i].hash_object.slide_description[j].data.duration = Math.floor(topics[i].hash_object.audio_time/parts);		
+						}
 					}
 				}
-
-               console.log(topics[1].hash_object.slide_description);
+				console.log(topics[1].hash_object.slide_description);
 			}
 			//Make sure NOT to start cleaning the ytholder or starting the presentation controller until the entire hash has been looped through				
 			this.evaluated = true;
@@ -583,7 +587,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			$.ajax({
 				url: urls.hashStore,	
 				type: 'POST',
-				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash)), author: author, title: title},
+				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash)), author: author, title: title, path: path},
 				success: function (data) {
 					location.hash=data.trim();
 					self.hash_object.hashID = data.trim();

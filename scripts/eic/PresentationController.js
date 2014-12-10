@@ -20,8 +20,10 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
       this.intro = options.intro === undefined ? true : options.intro;
       this.outro = options.outro === undefined ? true : options.outro;
 	  this.generatorOptions = options.generatorOptions || {};
-	  
+	  this.outroOptions = options.outroOptions || {};
 	  this.topicToTopic;
+	  
+	  console.log(options);
     }
 
     /* Member functions */
@@ -61,7 +63,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 		logger.log(this.topicToTopic);
 		
 		if (this.outro)
-			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic));
+			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic, this.outroOptions));
 
 		//Go straight to "playing" so that the loading slide shows
 		new SlidePresenter($slides, generator).start();

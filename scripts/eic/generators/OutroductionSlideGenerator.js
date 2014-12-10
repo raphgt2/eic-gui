@@ -14,7 +14,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
    **/
 
   /** Generator that creates outroductory slides */
-  function OutroductionSlideGenerator(startTopic, endTopic, duration) {
+  function OutroductionSlideGenerator(startTopic, endTopic, options) {
     if (!startTopic)
       throw "The OutroductionSlideGenerator has no starttopic";
 
@@ -22,7 +22,8 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
 
     this.startTopic = startTopic;
     this.hash_object = endTopic;		//used to be known as 'endTopic'
-    this.duration = duration || 1000;
+    this.duration = options.duration || 1000;
+	this.exitButtons = options.outroButtons || [];
     this.ready=false;
   }
 
@@ -52,7 +53,7 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
             slide = this.createBaseSlide('outro', $outro, this.duration);
         slide.once('started', function () {
           setTimeout(function () {
-           addNavigation($outro.parent());
+           addNavigation($outro.parent(), self.exitButtons);
           }, 500);
         });
         slide.audioURL = this.audioURL;
@@ -90,36 +91,16 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
 	  }
     });
 
-  function addNavigation($container) {
+  function addNavigation($container, exitButtons) {
     var $nav = $('<div />')
     .addClass('navigation')
     .appendTo($container);
-
-     $('<span>')
-        .addClass('button')
-        .appendTo($nav)
-        .click(function () {
-          window.location = "/LODStories-1.0.0-SNAPSHOT/html/lodstories_demo.html";
-        })
-   .text('Start over');
-
-    $('<span>')
-    .addClass('button')
-    .appendTo($nav)
-    .click(function () {
-     //window.location.reload();
-     $('#screenWrap').hide();
-     $('#editor').show();
-    })
-    .text('Back to editor');
 	
-	$('<span>')
-    .addClass('button')
-    .appendTo($nav)
-    .click(function () {
-		$('#play-button').click();
-    })
-    .text('Replay');
+	console.log(exitButtons.length);
+    for (var i=0; i<exitButtons.length; i++){
+		
+		exitButtons[i].appendTo($nav);
+	}	
   }
 
   function addShares($container, self) {

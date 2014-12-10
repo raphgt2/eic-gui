@@ -64,16 +64,29 @@
         $.ajax({
             url: urls.hashRetrieve,
             type: 'GET',
+			dataType: 'json',
             data: {hashID: hashId},
             success: function (data) {
-                var path = JSON.parse(unescapeString(data));
-                path.hashID = hashId;
+				//If there's no hash field, then the query failed. Go to search mode
+				if (!data.hash){
+					location.hash = "";
+					$("#searchWindow").css("display", "inline");
+					
+					var video_explorer = new VideoExplorer();
+				}
+				else{//Else, load up the video
+					var path = JSON.parse(unescapeString(data.hash));
+					path.hashID = hashId;
 
-                $("#body").css("display", "block");
+					//$("#body").css("display", "block");
+					$('#screen').html('');
+					$('#subtitles').text('');
+					$('#screenWrap').show();
 
-                var controller = new PresentationController(path, {generatorOptions: {videoOptions: {maxVideoCount: 0}}});
-                var view = new PiecesUI(controller);
-                view.initControls();
+					var controller = new PresentationController(path, {generatorOptions: {videoOptions: {maxVideoCount: 0}}});
+					var view = new PiecesUI(controller);
+					view.initControls();
+				}
             },
             error: function(error){
                 location.hash = "";
