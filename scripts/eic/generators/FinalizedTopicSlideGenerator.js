@@ -24,6 +24,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 	  options = options || {};
 	  this.videoOptions = options.videoOptions || {};
 	  this.maxImages = options.maxImages;
+	  
       
       //stuff
       this.slides = [];
@@ -113,50 +114,35 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			if (!self.hash_object.audioURL){
 				var tts = new TTSService();
 				tts.once('speechReady', function (event, data) {
-					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
-					if (self.audioURL!='')
-						return;
-						
 					self.durationLeft = Math.floor(data.snd_time);
-					//add extra time because ie definitely needs a plugin, which takes time to embed
+					//Add extra time because IE definitely needs a plugin, which takes time to embed
 					if (navigator.userAgent.indexOf('MSIE') !=-1)
 						self.durationLeft +=5000;
-						
-					self.hash_object.audio_time = self.durationLeft;
-						
+								
 					self.audioURL = data.snd_url;
-					logger.log('received speech for topic', self.topic.label);
 					
-					//After audio is ready, check that media slides have finished preparing. Also give 5 seconds for the slides to be added into the generator
-					setTimeout(function(){		
-						self.waitforReady(0,function(){
-							self.ready=true;
-							self.emit('newSlides');	
-							self.emit('newSpeech');							
-						})
-					}, 3000);
+					self.hash_object.audio_time = self.durationLeft;
+					self.hash_object.audioURL = self.audioURL;
+					
+					logger.log('Received speech for topic', self.topic.label);
+					self.ready=true;
+					self.audio=true;
+					// When speech is received, 'remind' the presenter that the slides are ready
+					self.emit('newSlides');
+					self.emit('newSpeech');
 				});
 
 				//fallback if speech fails is to simply make the slide play 5 seconds of silence...at least there will be pictures
 				tts.once('speechError', function(event, data){
-					//since the tts service is possibly sent several times b/c of timeouts, make sure we don't override completed requests
-					if (self.audioURL!='')
-						return;
-						
 					self.durationLeft = 10000;
-					//self.hash_object.audio_time = self.durationleft;
+					self.hash_object.audio_time = self.durationLeft;
 					
-					self.audioURL = '';
-					logger.log('failed to receive speech for topic', self.topic.label);
-					
-					//After audio is ready, check that media slides have finished preparing. Also give 3 seconds for the slides to be added into the generator
-					setTimeout(function(){		
-						self.waitforReady(0,function(){
-							logger.log("Topic " + self.topic.label + " has a duration of " + self.durationLeft + " milliseconds");
-							self.ready=true;
-							self.emit('newSlides');									
-						})
-					}, 3000);
+					self.audioURL = null;
+					logger.log('Failed to receive speech for topic', self.topic.label);
+					self.ready=true;
+					self.audio=false;
+					// When speech is received, 'remind' the presenter that the slides are ready
+					self.emit('newSlides');
 				});
 
 				logger.log('getting speech for topic', this.topic.label);
@@ -171,6 +157,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				setTimeout(function(){		
 					self.waitforReady(0,function(){
 						self.ready=true;
+						self.audio=true;
 						self.emit('newSlides');									
 					})
 				}, 3000);

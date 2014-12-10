@@ -47,8 +47,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jplayer.min', 'config/URLs'], function 
 				// else, wait for new slides to arrive
 				else {
 					//Our slides should've been loaded already, so this stop() only affects the last slide
-					if (currentSlide)
-						currentSlide.stop();
+					/*if (currentSlide)
+						currentSlide.stop();*/
 						
 					self.generator.once('newSlides', loadNext);
 					logger.log('No pending slides');

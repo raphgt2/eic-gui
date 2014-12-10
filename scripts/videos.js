@@ -6,9 +6,6 @@
             'lib/jquery': {
                 exports: 'jQuery'
             },
-            'lib/d3': {
-                exports: 'd3'
-            },
             'lib/jqyerUI': {
                 deps: ['lib/jquery__ui']
             },
@@ -68,26 +65,37 @@
 				.click(function () {
 				  window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html";
 				})
-		   .text('Start over');
+		   .text('Create new Movie');
 		exitButtons.push(button);
 	   
 		button = $('<span>')
 		.addClass('button')
 		.click(function () {
-		 //window.location.reload();
-		 $('#screenWrap').hide();
-		 $('#editor').show();
+			window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html";
 		})
-		.text('Back to editor');
+		.text('Edit this movie!');
 		exitButtons.push(button);
 		
-		button = $('<span>')
+		/*button = $('<span>')
 		.addClass('button')
 		.click(function () {
 			$('#play-button').click();
 		})
 		.text('Replay');
-		exitButtons.push(button);
+		exitButtons.push(button);*/
+		
+		var options = {
+			intro: false,
+			outro: true,
+			generatorOptions: {
+				videoOptions: {
+					maxVideoCount: 1
+				}
+			},
+			outroOptions:{
+				outroButtons: exitButtons
+			}
+		};
 
         $.ajax({
             url: urls.hashRetrieve,
@@ -111,7 +119,7 @@
 					$('#subtitles').text('');
 					$('#screenWrap').show();
 
-					var controller = new PresentationController(path, {intro: false, outro: true, generatorOptions: {videoOptions: {maxVideoCount: 2}},outroOptions:{outroButtons: exitButtons}});
+					var controller = new PresentationController(path, options);
 					var view = new PiecesUI(controller);
 					view.initControls();
 				}
