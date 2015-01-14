@@ -5,11 +5,11 @@
 */
 
 define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor',
-  'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/CompositeSlideGenerator',
-  'eic/generators/ErrorSlideGenerator', 'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController','lib/jquery__ui'],
+  'eic/generators/IntroductionSlideGenerator', 'eic/generators/OutroductionSlideGenerator', 'eic/generators/CompositeSlideGenerator', 'eic/generators/ErrorSlideGenerator', 
+  'eic/TopicSelector', 'eic/generators/CustomSlideGenerator', 'eic/SlidePresenter', 'eic/PresentationController', 'eic/HashParser','lib/jquery__ui'],
   function ($, Logger, EventEmitter, urls, AudioEditor,
-    IntroductionSlideGenerator, OutroductionSlideGenerator, CompositeSlideGenerator,
-    ErrorSlideGenerator, TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController,jquery__ui) {
+    IntroductionSlideGenerator, OutroductionSlideGenerator, CompositeSlideGenerator, ErrorSlideGenerator,
+    TopicSelector, CustomSlideGenerator, SlidePresenter, PresentationController, HashParser, jquery__ui) {
     "use strict";
     var logger = new Logger("SlideEditor");
   		
@@ -313,6 +313,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
     		console.log("UI Animation");
 			
     		$('#lastStep').click(function(){
+				location.hash='';
     			console.log("Hash Object Test: ", self._hash);
     		});
 
@@ -533,19 +534,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			//Now remove the extraneous players
 			$('#ytholder').children().not('.save').remove();
 		}*/
-		saveHash: function(hashID){				
-			function escapeString(str){			
-				str = str.replace(/\\/g,"\\\\");
-				str = str.replace(/\0/g, "\\0");
-				str = str.replace(/\n/g, "\\n");
-				str = str.replace(/\r/g, "\\r");
-				str = str.replace(/'/g, "\\'");
-				str = str.replace(/"/g, '\\"');
-				str = str.replace(/\x1a/g, "\\Z");
-				
-				return str;
-			}
-			
+		saveHash: function(hashID){						
 			var hash = JSON.parse(JSON.stringify(this.hash_object));
 			var path = "";
 			var self = this;
@@ -555,13 +544,16 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				title="Untitled";
 			if (!author)
 				author="Anonymous";
-			title = escapeString(title);
-			author = escapeString(author);
+			title = HashParser.prototype.escapeString(title);
+			author = HashParser.prototype.escapeString(author);
 			
 			//Nodes are found every 2 steps in the path (other half of the steps are links)
 			for (var i=0; i< hash.path.length; i+=2){
 				var node= hash.path[i].uri;
-				path+=	node.substr(node.lastIndexOf("/")+1)+", ";
+				node = node.substr(node.lastIndexOf("/")+1);
+				node = decodeURI(node);
+				node = node.replace(/_/g,' ');
+				path+=	node+", ";
 				
 				//Dereference the audio info since the URL's most likely is a binary blob and we'll get the time again anyway
 				delete hash.path[i].audioURL;
@@ -582,16 +574,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					}
 				}
 			}
-			path = escapeString(path.trim());
+			path = HashParser.prototype.escapeString(path.trim());
+			path = path.substr(0,path.length-1);
 			
 			$.ajax({
 				url: urls.hashStore,	
 				type: 'POST',
-				data: {hashID: hashID, hash: escapeString(JSON.stringify(hash)), author: author, title: title, path: path},
+				data: {hashID: hashID, hash: HashParser.prototype.escapeString(JSON.stringify(hash)), author: author, title: title, path: path},
 				success: function (data) {
 					location.hash=data.trim();
 					self.hash_object.hashID = data.trim();
-					alert("Your movie can be accessed at "+window.location.href);
+					alert("Your movie can be accessed at http://lodstories.isi.edu/LODStories/html/lodstories_videos.html#"+data.trim());
 				},
 				error: function(error){
 					alert("Could not save movie");

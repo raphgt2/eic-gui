@@ -45,22 +45,10 @@
         },
     });
 
-    require(['eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder', 'config/URLs'], function(PresentationController2, PiecesUI, SlideEditor, PathFinder, urls){
+    require(['eic/PresentationController2','eic/PiecesUI','eic/SlideEditor','eic/PathFinder', 'eic/HashParser', 'config/URLs'], 
+	function(PresentationController2, PiecesUI, SlideEditor, PathFinder, HashParser, urls){
 
-        var hashId = location.hash.slice(1);
-
-        function unescapeString(str){			
-			str = str.replace(/\\\\/g,"\\");
-			str = str.replace(/\\0/g, "\0");
-			str = str.replace(/\\n/g, "\n");
-			str = str.replace(/\\r/g, "\r");
-			str = str.replace(/\\'/g, "'");
-			str = str.replace(/\\"/g, '"');
-			str = str.replace(/\\Z/g, "\x1a");
-			
-			return str;
-		}
-		
+        var hashId = location.hash.slice(1);		
 		var exitButtons = [];
 	
 		var button = $('<span>')
@@ -114,7 +102,7 @@
 					var path_finder = new PathFinder(options);
 				}
 				else{
-					var path = JSON.parse(unescapeString(data.hash));
+					var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
 					path.hashID = hashId;
 
 					$("#editor").css("display", "inline");

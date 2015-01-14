@@ -42,21 +42,9 @@
         },
     });
 
-    require(['eic/PresentationController','eic/PiecesUI','eic/VideoExplorer','config/URLs'], function(PresentationController, PiecesUI, VideoExplorer, urls){
+    require(['eic/PresentationController','eic/PiecesUI','eic/VideoExplorer','eic/HashParser','config/URLs'], function(PresentationController, PiecesUI, VideoExplorer, HashParser, urls){
 
         var hashId = location.hash.slice(1);
-
-        function unescapeString(str){
-            str = str.replace(/\\\\/g,"\\");
-            str = str.replace(/\\0/g, "\0");
-            str = str.replace(/\\n/g, "\n");
-            str = str.replace(/\\r/g, "\r");
-            str = str.replace(/\\'/g, "'");
-            str = str.replace(/\\"/g, '"');
-            str = str.replace(/\\Z/g, "\x1a");
-
-            return str;
-        }
 		
 		var exitButtons = [];
 	
@@ -106,15 +94,14 @@
 				//If there's no hash field, then the query failed. Go to search mode
 				if (!data.hash){
 					location.hash = "";
-					$("#mainWrap").css("display", "inline");
+					$("#searchWindow").css("display", "inline");
 					
 					var video_explorer = new VideoExplorer();
 				}
 				else{//Else, load up the video
-					var path = JSON.parse(unescapeString(data.hash));
+					var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
 					path.hashID = hashId;
 
-					//$("#body").css("display", "block");
 					$('#screen').html('');
 					$('#subtitles').text('');
 					$('#screenWrap').show();
@@ -126,11 +113,8 @@
             },
             error: function(error){
                 location.hash = "";
-                $("#mainWrap").css("display", "inline");
-				
-				var video_explorer = new VideoExplorer();
-
-                //var path_finder = new PathFinder();
+                $("#searchWindow").css("display", "inline");
+				var video_explorer = new VideoExplorer(options);
             }
         });
 
