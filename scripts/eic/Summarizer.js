@@ -124,10 +124,12 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
               function getLabel(item) {
                 if (item.label)
                   return item.label;
-
+				
+				
                 var label = uri.substr(uri.lastIndexOf('/') + 1);
+				label = decodeURI(label);
 
-                return label.replace(/[^A-Za-z0-9]/g, ' ');
+                return label.replace(/_/g,' ');
               }
 
               function getDescription(item) {

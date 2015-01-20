@@ -5,8 +5,8 @@
 */
 
 
-define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor', 'eic/Summarizer', 'config/URLs'],
-  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer, urls) {
+define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/PiecesUI', 'eic/SlideEditor', 'eic/Summarizer', 'eic/HashParser', 'config/URLs'],
+  function ($, Logger, d3,PresentationController2, PiecesUI, SlideEditor, Summarizer, HashParser, urls) {
     "use strict";
     var logger = new Logger("PathFinder");
   		
@@ -152,6 +152,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						for (var i = 0; i < json.children.length; i++){
 							json.children[i].search = 0;
 							json.children[i].children = null;
+							json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
 							self.appendMap[json.children[i].name] = json.children[i];
 						}
 						self.root = self.history;
@@ -167,6 +168,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							//if (self.appendMap[json.children[i].name] == undefined){
 								json.children[i].search = 0;
 								json.children[i].children = null;
+								json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
 								self.appendMap[json.children[i].name] = json.children[i];
 								var flag = 0;
 								

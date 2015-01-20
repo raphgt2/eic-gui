@@ -549,11 +549,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 			
 			//Nodes are found every 2 steps in the path (other half of the steps are links)
 			for (var i=0; i< hash.path.length; i+=2){
-				var node= hash.path[i].uri;
-				node = node.substr(node.lastIndexOf("/")+1);
-				node = decodeURI(node);
-				node = node.replace(/_/g,' ');
-				path+=	node+", ";
+				var node= HashParser.prototype.generateLabelFromUri(hash.path[i].uri);
+				path+=	node+"; ";
 				
 				//Dereference the audio info since the URL's most likely is a binary blob and we'll get the time again anyway
 				delete hash.path[i].audioURL;

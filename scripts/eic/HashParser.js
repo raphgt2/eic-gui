@@ -1,5 +1,6 @@
 define([], function () {
 	//Dummy class whose sole purpose is to escape and unescape hash objects for mysql-appropriate strings...doesn't need to be instantiated to work
+	//Also threw the uri->label function here for lack of anywhere else to put it
 	function HashParser() {
 	}
 	
@@ -25,7 +26,14 @@ define([], function () {
             str = str.replace(/\\Z/g, "\x1a");
 
             return str;
-        }
+        },
+		generateLabelFromUri: function(uri){
+			var label = uri.substr(uri.lastIndexOf('/') + 1);
+			label = decodeURI(label);
+			label = label.replace(/_/g,' ');
+			
+			return label;
+		}
 	};
 	return HashParser;
 });

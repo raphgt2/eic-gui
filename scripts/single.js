@@ -37,7 +37,7 @@
   });
 
 
-  require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs','eic/Summarizer'], function (PresentationController, PiecesUI, urls,Summarizer) {
+  require(['eic/PresentationController', 'eic/PiecesUI', 'config/URLs','eic/Summarizer', 'eic/HashParser'], function (PresentationController, PiecesUI, urls,Summarizer, HashParser) {
 		$('#frame').show();
 		
 		$(document).ready(function(){
@@ -55,9 +55,7 @@
                 success: function (path) {
                 	document.getElementById('subject').innerHTML = path.source.name;
                 	document.getElementById('object').innerHTML = path.destination.name;
-                	var relation = path.path[1].uri;
-                	relation = relation.substr(relation.lastIndexOf("/")+1);
-                	console.log(relation);
+                	var relation = HashParser.prototype.generateLabelFromUri(path.path[1].uri);
                 	var inverse = path.path[1].inverse;
                 	console.log(inverse);
                 	var relationContent = Summarizer.prototype.generateRelationshipSentence(path.source.name, path.destination.name, relation, inverse);
@@ -138,8 +136,7 @@
 						var controller = new PresentationController(path, {intro: false, outro: false, generatorOptions: {videoOptions: {maxVideoCount: 0}}});
 						var view = new PiecesUI(controller);
 						view.initControls();
-						var relation = path.path[1].uri;
-	                	relation = relation.substr(relation.lastIndexOf("/")+1);
+						var relation = HashParser.prototype.generateLabelFromUri(path.path[1].uri);
 	                	var inverse = path.path[1].inverse;
 	                	var relationContent = Summarizer.prototype.generateRelationshipSentence(path.source.name, path.destination.name, relation, inverse);	                	
 	                	document.getElementById('relation').innerHTML = relationContent;

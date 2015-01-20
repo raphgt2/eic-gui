@@ -31,10 +31,7 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 				var myExp = new RegExp(searchField, "i");
 				var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
 				$.each(url_ref, function(key, val) {
-					var label = val.uri.substr(val.uri.lastIndexOf("/")+1);
-					label = decodeURI(label);
-					label = label.replace(/_/g,' ');
-					//console.log(key, val.name.search(myExp));
+					var label = HashParser.prototype.generateLabelFromUri(val.uri);
 					if ((label.search(myExp) != -1)) {
 						output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
 						output += label;
