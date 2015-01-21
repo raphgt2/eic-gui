@@ -53,17 +53,17 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 				$.ajax({
 					url: urls.hashFilter,
 					type: 'POST',
-					data: {startNode: startLabel},
+					data: {startNode: HashParser.prototype.escapeString(startLabel)},
 					success: function (data) {
 						console.log(data);
 						$("#searchWindow").css("display", "none");
 						$("#videoList").show();
 						for (var i=0; i<data.hashObjects.length; i++){
 							$('#videoList').append("<tr><td class='videoID'>"+data.hashObjects[i].hashID+
-												"</td><td class='videoThumbnailImage'>"+data.hashObjects[i].thumbnail+
-												"</td><td class='videoTitle'>"+data.hashObjects[i].title+
-												"</td><td class='videoAuthor'>"+data.hashObjects[i].author+
-												"</td><td class='videoPath'>"+data.hashObjects[i].path+
+												"</td><td class='videoThumbnail'> <img src='"+data.hashObjects[i].thumbnail+"' class='videoThumbnailImage'>"+
+												"</td><td class='videoTitle'>"+HashParser.prototype.unescapeString(data.hashObjects[i].title)+
+												"</td><td class='videoAuthor'>"+HashParser.prototype.unescapeString(data.hashObjects[i].author)+
+												"</td><td class='videoPath'>"+HashParser.prototype.unescapeString(data.hashObjects[i].path)+
 												"</td><td class='videoRating'>"+data.hashObjects[i].rating+"</td></tr>");
 						}
 						

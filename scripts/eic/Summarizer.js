@@ -3,7 +3,7 @@
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
-define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function ($, Logger, urls, TTSService) {
+define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashParser'], function ($, Logger, urls, TTSService, HashParser) {
   //"use strict";
   var logger = new Logger("Summarizer");
 
@@ -125,11 +125,10 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
                 if (item.label)
                   return item.label;
 				
+                var label = HashParser.prototype.generateLabelFromUri(uri);
+				item.label = label;
 				
-                var label = uri.substr(uri.lastIndexOf('/') + 1);
-				label = decodeURI(label);
-
-                return label.replace(/_/g,' ');
+				return label;
               }
 
               function getDescription(item) {
@@ -184,16 +183,16 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService'], function (
             
             function retrieveAbstract(index, vertice) {
               var uri = vertice.uri || '';
-              var tregex = /\n|([^\r\n.!?]+([.!?]+|$))/gim;
+              var tregex = /\n|([^\r\n.!]+([.!]+|$))/gim;
 
               function getLabel(item) {
                 if (item.label)
                   return item.label;
-
-                var label = uri.substr(uri.lastIndexOf('/') + 1);
-				label = decodeURI(label);
-				return label.replace(/_/g,' ');
-                //return label.replace(/[^A-Za-z0-9]/g, ' ');
+				
+                var label = HashParser.prototype.generateLabelFromUri(uri);
+				item.label = label;
+				
+				return label;
               }
 
               function getDescription(item) {

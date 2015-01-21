@@ -224,7 +224,6 @@ function ($, BaseSlideGenerator, Logger) {
 				$container = $('#container_'+playerId);
 				temp = self.player.push(player)-1;
 				self.player[temp] = player;
-				
 								
 				self.prepareVid(temp);
 				
