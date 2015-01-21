@@ -63,7 +63,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 		logger.log(this.topicToTopic);
 		
 		if (this.outro)
-			generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic, this.outroOptions));
+			generator.addGenerator(new OutroductionSlideGenerator(this.path.hashID, this.endTopic, this.outroOptions));
 
 		//Go straight to "playing" so that the loading slide shows
 		new SlidePresenter($slides, generator).start();

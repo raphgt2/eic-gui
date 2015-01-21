@@ -3,8 +3,8 @@
  * Copyright 2012, Multimedia Lab - Ghent University - iMinds
  * Licensed under GPL Version 3 license <http://www.gnu.org/licenses/gpl.html> .
  */
-define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/TTSService', 'lib/jvent'],
-function ($, BaseSlideGenerator, TTSService, EventEmitter) {
+define(['lib/jquery', 'eic/generators/BaseSlideGenerator', 'eic/TTSService', 'config/URLs', 'lib/jvent'],
+function ($, BaseSlideGenerator, TTSService, urls, EventEmitter) {
   "use strict";
 
 	var tts = new TTSService();
@@ -14,16 +14,14 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
    **/
 
   /** Generator that creates outroductory slides */
-  function OutroductionSlideGenerator(startTopic, endTopic, options) {
-    if (!startTopic)
-      throw "The OutroductionSlideGenerator has no starttopic";
+  function OutroductionSlideGenerator(hashID, endTopic, options) {
 
     BaseSlideGenerator.call(this);
 
-    this.startTopic = startTopic;
     this.hash_object = endTopic;		//used to be known as 'endTopic'
     this.duration = options.duration || 1000;
 	this.exitButtons = options.outroButtons || [];
+	this.hashID = hashID;
     this.ready=false;
   }
 
@@ -53,7 +51,9 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
             slide = this.createBaseSlide('outro', $outro, this.duration);
         slide.once('started', function () {
           setTimeout(function () {
-           addNavigation($outro.parent(), self.exitButtons);
+				addNavigation($outro.parent(), self.exitButtons);
+				if (self.hashID)
+					addRating($outro.parent(), self);
           }, 500);
         });
         slide.audioURL = this.audioURL;
@@ -95,12 +95,43 @@ function ($, BaseSlideGenerator, TTSService, EventEmitter) {
     var $nav = $('<div />')
     .addClass('navigation')
     .appendTo($container);
-	
-	console.log(exitButtons.length);
+
     for (var i=0; i<exitButtons.length; i++){
-		
 		exitButtons[i].appendTo($nav);
 	}	
+  }
+  
+  function addRating($container, self){
+	var $rate = $('<div />')
+	.addClass('rating')
+	
+	var button =  $('<span>')
+			.addClass('button')
+			.click(function (){
+				$rate.hide();
+				$.ajax({
+					url: urls.hashRate,	
+					type: 'POST',
+					data: {hashID: self.hashID, vote: true},
+				});
+			})
+			.text('Upvote');
+	button.appendTo($rate);
+	
+	var button =  $('<span>')
+			.addClass('button')
+			.click(function (){
+				$rate.hide();
+				$.ajax({
+					url: urls.hashRate,	
+					type: 'POST',
+					data: {hashID: self.hashID, vote: false},
+				});
+			})
+			.text('Downvote');
+	button.appendTo($rate);
+	
+	$container.append($('<h2>').text('Rate:'), $rate);
   }
 
   function addShares($container, self) {

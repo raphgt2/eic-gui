@@ -52,7 +52,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 		this.generator.addGenerator(this.topicToTopic);
 		
 		if (this.outro)
-			this.generator.addGenerator(new OutroductionSlideGenerator(this.startTopic, this.endTopic, this.outroOptions));
+			this.generator.addGenerator(new OutroductionSlideGenerator(this.path.hashID, this.endTopic, this.outroOptions));
 			
 
 		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   

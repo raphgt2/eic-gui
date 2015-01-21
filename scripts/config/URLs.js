@@ -10,6 +10,7 @@ define(function () {
 	hashRetrieve: dirName + "/retrieveHash?",
 	hashStore:  dirName + "/saveHash?",
 	hashFilter: dirName + "/filterHash?",
+	hashRate: dirName + "/rateHash?",
     jplayerSWF: "/scripts/swf"
   };
 });
