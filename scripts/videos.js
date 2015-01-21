@@ -55,22 +55,16 @@
 				})
 		   .text('Create new Movie');
 		exitButtons.push(button);
-	   
+		
 		button = $('<span>')
-		.addClass('button')
-		.click(function () {
-			window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html";
-		})
-		.text('Edit this movie!');
+				.addClass('button')
+				.text('Edit this movie!');
 		exitButtons.push(button);
 		
-		/*button = $('<span>')
-		.addClass('button')
-		.click(function () {
-			$('#play-button').click();
-		})
-		.text('Replay');
-		exitButtons.push(button);*/
+		button = $('<span>')
+				.addClass('button')
+				.text('Replay');
+		exitButtons.push(button);
 		
 		var options = {
 			intro: false,
@@ -101,14 +95,27 @@
 				else{//Else, load up the video
 					var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
 					path.hashID = hashId;
-
+					
+					//Attach functions to the replay and edit buttons now that the specific video is known					
+					$(exitButtons[1]).click(function () {
+						window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html#"+hashId;
+					})
+					
+					$(exitButtons[2]).click(function () {
+						$('#screen').html('');
+						$('#subtitles').text('');
+						$('#screenWrap').show();
+						var play = new PresentationController(path, options);
+						play.playMovie();
+					})					
+					
+					//Actually get around to playing the movie now
 					$('#screen').html('');
 					$('#subtitles').text('');
 					$('#screenWrap').show();
 
 					var controller = new PresentationController(path, options);
-					var view = new PiecesUI(controller);
-					view.initControls();
+					controller.playMovie();
 				}
             },
             error: function(error){

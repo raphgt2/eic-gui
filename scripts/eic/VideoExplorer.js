@@ -13,6 +13,7 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 	//Constructor
 	function VideoExplorer(options) {
 		this.options = options || {};
+		this.index = 0;
 		this.init();
 	}
 
@@ -46,18 +47,18 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 					$('#liveSearch').empty();
 				});
 			});
-			$("#searchButton").click(function(){
+			$(".videoSearch").click(function(){
 				if (startLabel=='')
 					return;
 					
 				$.ajax({
 					url: urls.hashFilter,
 					type: 'POST',
-					data: {startNode: HashParser.prototype.escapeString(startLabel)},
+					data: {startNode: HashParser.prototype.escapeString(startLabel), startIndex: self.index},
 					success: function (data) {
 						console.log(data);
 						$("#searchWindow").css("display", "none");
-						$("#videoList").show();
+						$(".listWrap").show();
 						for (var i=0; i<data.hashObjects.length; i++){
 							$('#videoList').append("<tr><td class='videoID'>"+data.hashObjects[i].hashID+
 												"</td><td class='videoThumbnail'> <img src='"+data.hashObjects[i].thumbnail+"' class='videoThumbnailImage'>"+
@@ -66,6 +67,7 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 												"</td><td class='videoPath'>"+HashParser.prototype.unescapeString(data.hashObjects[i].path)+
 												"</td><td class='videoRating'>"+data.hashObjects[i].rating+"</td></tr>");
 						}
+						self.index +=data.hashObjects.length;
 						
 						$("tr").click(function(){							
 							if ($(this).children("td.videoID").length>0){
@@ -86,14 +88,26 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 											var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
 											path.hashID = selectedVid;
 											
-											$("#videoList").hide();
+											//Attach functions to the replay and edit buttons now that the specific video is known					
+											$(self.options.outroOptions.outroButtons[1]).click(function () {
+												window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html#"+selectedVid;
+											})
+											
+											$(self.options.outroOptions.outroButtons[2]).click(function () {
+												$('#screen').html('');
+												$('#subtitles').text('');
+												$('#screenWrap').show();
+												var play = new PresentationController(path, self.options);
+												play.playMovie();
+											})				
+											
+											$(".listWrap").hide();
 											$('#screen').html('');
 											$('#subtitles').text('');
 											$('#screenWrap').show();
 
 											var controller = new PresentationController(path, self.options);
-											var view = new PiecesUI(controller);
-											view.initControls();
+											controller.playMovie();
 										}
 									},
 									error: function(error){
@@ -102,12 +116,15 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 									}
 								});
 							}
-							else
-								console.log("header");
 						});
 					},
 					error: function(error){
-						$("#messageBox").html("No videos for "+startLabel+" found. Why don't you <a href='/LODStories/html/lodstories_demo.html'>create one</a>?");
+						if (self.index==0)
+							$("#messageBox").html("No videos for "+startLabel+" found. Why don't you <a href='/LODStories/html/lodstories_demo.html'>create one</a>?");
+						else
+							$("#messageBox").html("No more videos for "+startLabel+" found.");
+							
+						$("#secondarySearch").hide();
 					}
 				});
 			});
