@@ -60,6 +60,7 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 						$("#videoList").show();
 						for (var i=0; i<data.hashObjects.length; i++){
 							$('#videoList').append("<tr><td class='videoID'>"+data.hashObjects[i].hashID+
+												"</td><td class='videoThumbnailImage'>"+data.hashObjects[i].thumbnail+
 												"</td><td class='videoTitle'>"+data.hashObjects[i].title+
 												"</td><td class='videoAuthor'>"+data.hashObjects[i].author+
 												"</td><td class='videoPath'>"+data.hashObjects[i].path+

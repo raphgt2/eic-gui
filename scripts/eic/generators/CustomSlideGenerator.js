@@ -196,6 +196,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 			
 		},
 		reset: function() {
+			console.log("reset");
 			this.durationLeft = this.hash_object.audio_time;
 			for (var i=0; i < this.generators.length; i++){
 				this.generators[i].reset();
