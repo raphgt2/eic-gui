@@ -125,7 +125,11 @@ define(['lib/jquery', 'eic/Logger', 'eic/TTSService',
 				return;
 			}
 			
+			//Reset the ready variable and the audioURLs
 			this.ready=false;
+			this.audioURL = '';
+			this.hash_object.audioURL = '';
+			
 			var self = this,
 				tts = new TTSService();
 			tts.once('speechReady', function (event, data) {

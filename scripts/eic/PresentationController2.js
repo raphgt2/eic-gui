@@ -16,7 +16,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 
     function PresentationController(path, options) {	  
       this.path = path;
-      this.slides = {};
       this.generator;
       EventEmitter.call(this);
 	  
@@ -55,8 +54,7 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 			this.generator.addGenerator(new OutroductionSlideGenerator(this.path.hashID, this.endTopic, this.outroOptions));
 			
 
-		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   
-		
+		//To prevent any slide-skipping, don't go into editor mode until all slides are at least done (waiting on topic slide audio)   		
 		if (this.topicToTopic.ready){
 			logger.log("New hash: ", self.path);
 			self.emit('slide_generation_finished')
@@ -71,28 +69,5 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector',
 
       }
     };
-
-    /* Properties */
-
-    // The startTopic property also initializes the introduction,
-    // so the movie can be buffered earlier and thus start faster.
-/*    Object.defineProperty(PresentationController.prototype, "startTopic", {
-      get: function () { return this._startTopic; },
-      set: function (startTopic) {
-        logger.log("Start topic set to", startTopic.label);
-        this._startTopic = startTopic;
-        delete this.intro;
-
-        // If the topic is an error, show the error slide
-        if (startTopic instanceof Error)
-          this.intro = new ErrorSlideGenerator(startTopic);
-        // Otherwise, create an actual introduction slide
-        else
-          this.intro = new IntroductionSlideGenerator(startTopic, this.profile);
-        // Initialize the intro right away, avoiding delay when starting the movie
-        this.intro.init();
-      }
-    });
-*/
     return PresentationController;
   });

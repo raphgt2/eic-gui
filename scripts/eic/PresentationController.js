@@ -22,8 +22,6 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
 	  this.generatorOptions = options.generatorOptions || {};
 	  this.outroOptions = options.outroOptions || {};
 	  this.topicToTopic;
-	  
-	  console.log(options);
     }
 
     /* Member functions */
@@ -33,40 +31,54 @@ define(['lib/jquery', 'eic/Logger', 'eic/FacebookConnector','eic/generators/Load
         logger.log("Initializing");
       },
 
-      // Starts the movie about the connection between the user and the topic.
-      playMovie: function () {
-
-        // Create the slides panel
+      // Starts the movie about the connection between the user and the topic. Calls createMovie if the generators don't exist yet
+	  playMovie: function(){
+	  var self = this;
+		
+		// Create the slides panel
         var $slides = $('<div>').addClass('slides'),
-            $wrapper = $('<div>').addClass('slides-wrapper')
+			$wrapper = $('<div>').addClass('slides-wrapper')
                                  .append($slides);
-
-        // Hide the main panel and show the slides panel
+		
+		// Hide the main panel and show the slides panel
 		$('#screen').show();
         $('#screen').append($wrapper);
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
-
+		
+		if (!this.generator){
+			this.createMovie();
+			
+			//Give a second for the movie generation to start and the slides and generator variables to be instantiated...
+			window.setTimeout(function(){
+				//Go straight to "playing" so that the loading slide shows
+				new SlidePresenter($slides, self.generator).start();
+			},1000);
+		}
+		else{
+			
+			//Go straight to "playing" so that the loading slide shows
+			new SlidePresenter($slides, self.generator).start();
+		}
+	  
+	  },
+      createMovie: function () {
         // Add introduction, body, and outroduction generators
-        var generator = new CompositeSlideGenerator();
+        this.generator = new CompositeSlideGenerator();
         
 		this.startTopic=this.path.source;
 		this.endTopic=this.path.destination;
 		
 		var loader = new LoadingSlideGenerator()
-		generator.addGenerator(loader);
+		this.generator.addGenerator(loader);
 		
 		if (this.intro)
-			generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
+			this.generator.addGenerator(new IntroductionSlideGenerator(this.startTopic, this.profile));
 		
 		this.topicToTopic = new TopicToTopicSlideGenerator(this.path, loader, this.generatorOptions)
-		generator.addGenerator(this.topicToTopic);
-		logger.log(this.topicToTopic);
+		this.generator.addGenerator(this.topicToTopic);
 		
 		if (this.outro)
-			generator.addGenerator(new OutroductionSlideGenerator(this.path.hashID, this.endTopic, this.outroOptions));
-
-		//Go straight to "playing" so that the loading slide shows
-		new SlidePresenter($slides, generator).start();
+			this.generator.addGenerator(new OutroductionSlideGenerator(this.path.hashID, this.endTopic, this.outroOptions));
 
     }};
 

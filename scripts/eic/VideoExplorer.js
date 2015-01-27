@@ -88,6 +88,8 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 											var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
 											path.hashID = selectedVid;
 											
+											location.hash= selectedVid;
+											
 											//Attach functions to the replay and edit buttons now that the specific video is known					
 											$(self.options.outroOptions.outroButtons[1]).click(function () {
 												window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html#"+selectedVid;
