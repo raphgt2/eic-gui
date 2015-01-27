@@ -204,7 +204,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
 				
 				for (var i=0; i<sentences.length; i++){
 					word = sentences[i].split(" ");
-					if (word[word.length-1].length<3)
+					if (word[word.length-1].length<4)
 						  maxSentences += 1;
 					else
 						break;
