@@ -310,7 +310,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
     	EnableUIAnimation: function(){
     		var self = this;
-    		console.log("UI Animation");
 			
     		$('#lastStep').click(function(){
 				location.hash='';
@@ -533,14 +532,13 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 				//Dereference the audio info since the URL's most likely is a binary blob and we'll get the time again anyway
 				delete hash.path[i].audioURL;
 				delete hash.path[i].audio_time;	
-				
 				//Dereference temporary slide descriptions
 				if (hash.path[i].temp){
 					delete hash.path[i].slide_description;
 					delete hash.path[i].temp;
 				}
 				//else save the description if it has one, but unreference all youtube player-related objects and populate the image array
-				else if (hash.path[i].slide_description){
+				else if (hash.path[i].slide_description && hash.path[i].slide_description.length>0){
 					for (var j=0; j<hash.path[i].slide_description.length; j++){
 						if (hash.path[i].slide_description[j].type == "YouTubeSlide"){
 							imgCollection.push("http://img.youtube.com/vi/" + hash.path[i].slide_description[j].data.videoID + "/default.jpg");
@@ -553,7 +551,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 					}
 				}
 			}
-			
 			//If there were no real slide descriptions, then grab some images the same way the editor does?
 			if (imgCollection.length<1){
 				for (var i=1; i<self.topics.length; i++){
@@ -566,17 +563,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 								imgCollection.push(s[j].slide_info.data.url);
 						}
 						if(val == 'vid'){
-							s = slides['img'];
+							s = slides['vid'];
 							for(var j = 0; j < s.length; j++)
 								imgCollection.push('http://img.youtube.com/vi/' + s[j].slide_info.data.videoID + '/default.jpg>');		
 						}
 					}
 				}						
 			}
-			
 			//Randomly choose a url from the image array to act as the thumbnail
 			thumbnail = imgCollection[Math.floor(Math.random()*imgCollection.length)];
-			
 			path = HashParser.prototype.escapeString(path.trim());
 			path = path.substr(0,path.length-1);
 			

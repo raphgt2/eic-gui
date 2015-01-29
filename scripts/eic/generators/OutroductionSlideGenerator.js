@@ -108,27 +108,28 @@ function ($, BaseSlideGenerator, TTSService, urls, EventEmitter) {
 	var button =  $('<span>')
 			.addClass('button')
 			.click(function (){
-				$rate.hide();
+				$rate.html("Thanks for rating!");
 				$.ajax({
 					url: urls.hashRate,	
 					type: 'POST',
 					data: {hashID: self.hashID, vote: true},
 				});
 			})
-			.text('Upvote');
+			.html('<img src="images/ThumbsUp.png">');
 	button.appendTo($rate);
 	
 	var button =  $('<span>')
 			.addClass('button')
 			.click(function (){
-				$rate.hide();
+				$rate.html("Thanks for rating!");
+				
 				$.ajax({
 					url: urls.hashRate,	
 					type: 'POST',
 					data: {hashID: self.hashID, vote: false},
 				});
 			})
-			.text('Downvote');
+			.html('<img src="images/ThumbsDown.png">');
 	button.appendTo($rate);
 	
 	$container.append($('<h2>').text('Rate:'), $rate);

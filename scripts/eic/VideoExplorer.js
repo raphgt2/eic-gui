@@ -58,14 +58,15 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 					success: function (data) {
 						console.log(data);
 						$("#searchWindow").css("display", "none");
-						$(".listWrap").show();
+						$(".listWrap").show();			
 						for (var i=0; i<data.hashObjects.length; i++){
+/**TODO make that calculation a number?**/						var rating = data.hashObjects[i].likes-data.hashObjects[i].dislikes;
 							$('#videoList').append("<tr><td class='videoID'>"+data.hashObjects[i].hashID+
 												"</td><td class='videoThumbnail'> <img src='"+data.hashObjects[i].thumbnail+"' class='videoThumbnailImage'>"+
 												"</td><td class='videoTitle'>"+HashParser.prototype.unescapeString(data.hashObjects[i].title)+
 												"</td><td class='videoAuthor'>"+HashParser.prototype.unescapeString(data.hashObjects[i].author)+
 												"</td><td class='videoPath'>"+HashParser.prototype.unescapeString(data.hashObjects[i].path)+
-												"</td><td class='videoRating'>"+data.hashObjects[i].rating+"</td></tr>");
+/**TODO split likes/dislikes**/					"</td><td class='videoRating'>"+rating+"</td></tr>");
 						}
 						self.index +=data.hashObjects.length;
 						
