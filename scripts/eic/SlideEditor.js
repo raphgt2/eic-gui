@@ -423,6 +423,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       drop: function(ev, curIndex, topics) {
           ev.preventDefault();
           var data = ev.originalEvent.dataTransfer.getData("text/html");
+          console.log(data);
           ev.target.appendChild(document.getElementById(data));
           $('#' + data + '').removeClass("nodeElementBarContentWrap").addClass("movieNavElementWrap");
           $('#movie-nav-bar').css("padding", "3px");

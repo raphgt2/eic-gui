@@ -140,7 +140,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
   			dataType: 'jsonp',
 			data: {uri: nodeURI, num: 7},
 			success: function(json){
-				console.log("Json: ", json);
+				//console.log("Json: ", json);
 				if (json){				
 					if (self.round == 1){ // The Starting Node 
 						self.history = json;
@@ -150,6 +150,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.appendMap[name].parent = null;
 
 						for (var i = 0; i < json.children.length; i++){
+                            console.log("CHILDREN" + json.children[i]);
 							json.children[i].search = 0;
 							json.children[i].children = null;
 							json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);

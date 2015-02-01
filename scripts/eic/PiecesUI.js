@@ -125,16 +125,16 @@ define(['lib/jquery','lib/prefixfree.jquery'],
                        $('#img-element-list-wrap').css('display', 'inline-block');
                        $('#vids').css('display', 'none');
                        $('#vid-element-list-wrap').css('display', 'none');
-                       $('#edit-imgs').addClass('btn-primary');
-                       $('#edit-vids').removeClass('btn-primary');
+                       $('#edit-imgs').removeClass('btn-primary');
+                       $('#edit-vids').addClass('btn-primary');
                });
                $('#edit-vids').click(function(){
                        $('#imgs').css('display', 'none');
                        $('#img-element-list-wrap').css('display', 'none');
                        $('#vids').css('display', 'inline-block');
                        $('#vid-element-list-wrap').css('display', 'inline');
-                       $('#edit-imgs').removeClass('btn-primary');
-                       $('#edit-vids').addClass('btn-primary');
+                       $('#edit-imgs').addClass('btn-primary');
+                       $('#edit-vids').removeClass('btn-primary');
                });
       },
 
