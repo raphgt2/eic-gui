@@ -565,7 +565,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 						if(val == 'vid'){
 							s = slides['vid'];
 							for(var j = 0; j < s.length; j++)
-								imgCollection.push('http://img.youtube.com/vi/' + s[j].slide_info.data.videoID + '/default.jpg>');		
+								imgCollection.push('http://img.youtube.com/vi/' + s[j].slide_info.data.videoID + '/default.jpg');		
 						}
 					}
 				}						
