@@ -55,6 +55,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	});
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
+			console.log(searchField);
+			if (searchField != "")
+				$('#liveSearch').show();
+			else
+				$('#liveSearch').hide();
+				
 			var myExp = new RegExp(searchField, "i");
 			
 			

@@ -29,6 +29,11 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 
 			$('#search').keyup(function() {
 				var searchField = $('#search').val();
+				if (searchField != "")
+					$('#liveSearch').show();
+				else
+					$('#liveSearch').hide();
+					
 				var myExp = new RegExp(searchField, "i");
 				var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
 				$.each(url_ref, function(key, val) {
