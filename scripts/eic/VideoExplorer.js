@@ -65,65 +65,65 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 						$("#searchWindow").css("display", "none");
 						$(".listWrap").show();			
 						for (var i=0; i<data.hashObjects.length; i++){
-/**TODO make that calculation a number?**/						var rating = data.hashObjects[i].likes-data.hashObjects[i].dislikes;
-							$('#videoList').append("<tr><td class='videoID'>"+data.hashObjects[i].hashID+
-												"</td><td class='videoThumbnail'> <img src='"+data.hashObjects[i].thumbnail+"' class='videoThumbnailImage'>"+
-												"</td><td class='videoTitle'>"+HashParser.prototype.unescapeString(data.hashObjects[i].title)+
-												"</td><td class='videoAuthor'>"+HashParser.prototype.unescapeString(data.hashObjects[i].author)+
-												"</td><td class='videoPath'>"+HashParser.prototype.unescapeString(data.hashObjects[i].path)+
-/**TODO split likes/dislikes**/					"</td><td class='videoRating'>"+rating+"</td></tr>");
+							var row = document.createElement('tr'); 
+							row.videoID = data.hashObjects[i].hashID;
+							$(row).append("<td class='videoThumbnail'><img src='"+data.hashObjects[i].thumbnail+"' class='videoThumbnailImage'></td>"+
+									"<td class='videoInfo'><div><h3>"+HashParser.prototype.unescapeString(data.hashObjects[i].title)+"</h3>"+
+									"<div>by "+HashParser.prototype.unescapeString(data.hashObjects[i].author)+"</div>"+
+									"<ul class='ratingInfo'>"+
+									"<li>Likes: "+data.hashObjects[i].likes+"</li>"+
+									"<li>Dislikes: "+data.hashObjects[i].dislikes+"</li></ul>"+
+									"<div>"+HashParser.prototype.unescapeString(data.hashObjects[i].path)+"</div></div></td>");
+							$('#videoList').append(row);
 						}
 						self.index +=data.hashObjects.length;
 						
-						$("tr").click(function(){							
-							if ($(this).children("td.videoID").length>0){
-								var selectedVid = $(this).children("td.videoID")[0];
-								selectedVid = $(selectedVid).text();
-								console.log(selectedVid);
-								
-								$.ajax({
-									url: urls.hashRetrieve,
-									type: 'GET',
-									dataType: 'json',
-									data: {hashID: selectedVid},
-									success: function (data) {
-										if (!data.hash){
-											alert("Error loading video");
-										}
-										else{
-											var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
-											path.hashID = selectedVid;
-											
-											location.hash= selectedVid;
-											
-											//Attach functions to the replay and edit buttons now that the specific video is known					
-											$(self.options.outroOptions.outroButtons[1]).click(function () {
-												window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html#"+selectedVid;
-											})
-											
-											$(self.options.outroOptions.outroButtons[2]).click(function () {
-												$('#screen').html('');
-												$('#subtitles').text('');
-												$('#screenWrap').show();
-												var play = new PresentationController(path, self.options);
-												play.playMovie();
-											})				
-											
-											$(".listWrap").hide();
+						$("tr").click(function(){
+							var selectedVid = $(this)[0].videoID;
+							console.log(selectedVid);
+							
+							$.ajax({
+								url: urls.hashRetrieve,
+								type: 'GET',
+								dataType: 'json',
+								data: {hashID: selectedVid},
+								success: function (data) {
+									if (!data.hash){
+										alert("Error loading video");
+									}
+									else{
+										var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
+										path.hashID = selectedVid;
+										
+										location.hash= selectedVid;
+										
+										//Attach functions to the replay and edit buttons now that the specific video is known					
+										$(self.options.outroOptions.outroButtons[1]).click(function () {
+											window.location = window.location.pathname.slice(0,window.location.pathname.slice(1).indexOf('/')+1)+"/html/lodstories_demo.html#"+selectedVid;
+										})
+										
+										$(self.options.outroOptions.outroButtons[2]).click(function () {
 											$('#screen').html('');
 											$('#subtitles').text('');
 											$('#screenWrap').show();
+											var play = new PresentationController(path, self.options);
+											play.playMovie();
+										})				
+										
+										$(".listWrap").hide();
+										$('#screen').html('');
+										$('#subtitles').text('');
+										$('#screenWrap').show();
 
-											var controller = new PresentationController(path, self.options);
-											controller.playMovie();
-										}
-									},
-									error: function(error){
-										console.log(error);
-										alert("Error loading video");
+										var controller = new PresentationController(path, self.options);
+										controller.playMovie();
 									}
-								});
-							}
+								},
+								error: function(error){
+									console.log(error);
+									alert("Error loading video");
+								}
+							});
 						});
 					},
 					error: function(error){
