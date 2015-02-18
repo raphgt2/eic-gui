@@ -102,6 +102,7 @@
 					})
 					
 					$(exitButtons[2]).click(function () {
+						$('.navigation').detach();
 						$('#screen').html('');
 						$('#subtitles').text('');
 						$('#screenWrap').show();
