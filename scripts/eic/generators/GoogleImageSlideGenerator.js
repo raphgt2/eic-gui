@@ -27,7 +27,7 @@ define(['lib/jquery', 'eic/generators/BaseSlideGenerator'],
         };
 
       this.topic = topic;
-      this.maxResults = maxResults || 8;
+      this.maxResults = maxResults === undefined ? 8 : maxResults;
       this.slides = [];
 	  this.slidesCopy = [];
       this.cnt = 0;

@@ -44,15 +44,21 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
     PathFinder.prototype = {
       // Starts the movie about the connection between the user and the topic.
       initLinkedDataEdu: function () {
-      	console.log("[===================Initialize Linked Data Edu App===================]");
+		console.log("[===================Initialize Linked Data Edu App===================]");
 		$("#liveSearchResult").html('');
+		
       	var self=this;
       	$.getJSON('../data_json/uri_matching.json', function(data) {
       		self.url_ref = data;
       	});
-      	console.log("data_Test", self.url_ref);
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
+			console.log(searchField);
+			if (searchField != "")
+				$('#liveSearch').show();
+			else
+				$('#liveSearch').hide();
+				
 			var myExp = new RegExp(searchField, "i");
 			
 			

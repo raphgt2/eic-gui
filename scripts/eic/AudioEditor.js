@@ -1,4 +1,4 @@
-define(['lib/jquery','eic/Logger','eic/SlidePresenter','eic/pluginsniff'],
+define(['lib/jquery','eic/Logger','eic/SlidePresenter','lib/pluginsniff'],
 function($,Logger,SlidePresenter){
 	var logger = new Logger("AudioEditor");
 	var plugintype;

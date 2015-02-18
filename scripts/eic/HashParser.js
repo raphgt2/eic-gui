@@ -6,7 +6,7 @@ define([], function () {
 	
 	HashParser.prototype = {
 		escapeString: function(str){
-			str = encodeURI(str);
+			//str = encodeURI(str);
 			str = str.replace(/\\/g,"\\\\");
 			str = str.replace(/\0/g, "\\0");
 			str = str.replace(/\n/g, "\\n");
@@ -25,7 +25,7 @@ define([], function () {
             str = str.replace(/\\'/g, "'");
             str = str.replace(/\\"/g, '"');
             str = str.replace(/\\Z/g, "\x1a");
-			str = decodeURI(str);
+			//str = decodeURI(str);
 
             return str;
         },

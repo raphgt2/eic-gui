@@ -1,4 +1,4 @@
-define(['lib/jvent', 'eic/Logger','eic/pluginsniff'],function(EventEmitter, Logger) {    
+define(['lib/jvent', 'eic/Logger','lib/pluginsniff'],function(EventEmitter, Logger) {    
     var plugintype;
     var logger = new Logger("WAVPlayer");
       
