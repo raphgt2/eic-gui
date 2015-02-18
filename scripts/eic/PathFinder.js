@@ -38,8 +38,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		this.initLinkedDataEdu();
 		
 		this.movieOptions = options || {};
-    	
-		
     }
 
     /* Member functions */
@@ -142,7 +140,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			success: function(json){
 				//console.log("Json: ", json);
 				if (json){				
-					if (self.round == 1){ // The Starting Node 
+					if (self.round == 1){ // The Starting Node
 						self.history = json;
 						self.appendMap[name] = json;
 						self.appendMap[name].name = name;
@@ -160,6 +158,41 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.updateCanvas(self.root);
 					}
 					else {
+                        // first grab the selected relationship and send it back to database
+                        // TODO: ADD LAST NODE
+                        if (document.location.hostname != "localhost") {
+                            var rels = data_prev.parent.children;
+                            var info = {};
+                            info["subject"] = data_prev.parent.name;
+                            for (i = 0; i < children.length; i++) {
+                                info["object"] = children[i].name;
+                                info["predicate"] = children[i].relation;
+                                if (children[i].name == data_prev.name)
+                                {
+                                    info["interesting"] = 1;
+                                    info["not interesting"] = 0;
+                                } else
+                                {
+                                    info["interesting"] = 0;
+                                    info["not interesting"] = 1;
+                                }
+
+                                $.ajax({
+                                    url:"/LODStories/LiveDemoPageServlet",
+                                    type: "POST",
+                                    data:info,
+                                    dataType: "json",
+                                    complete: function(xhr, textStatus) {
+                                        console.log(xhr.responseText);
+                                    },
+                                    error: function(xhr, textStatus) {
+                                        console.log(xhr.responseText);
+                                    }
+                                });
+                            }
+                        } else
+                            console.log("WE ON LOCALHOST YO");
+
 						self.userPath = [];
 						self.trackPathParent(data_prev);
 						var children = [];
@@ -369,7 +402,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		  });
 	 },//updateCanvas
      click: function(d) {
-     	var self = this;     	
+     	var self = this;
 		if (d.search == 1){		
 			if (d.children) {
 			  d._children = d.children;
