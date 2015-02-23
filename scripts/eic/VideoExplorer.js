@@ -70,10 +70,10 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 							$(row).append("<td class='videoThumbnail'><img src='"+data.hashObjects[i].thumbnail+"' class='videoThumbnailImage'></td>"+
 									"<td class='videoInfo'><div><h3>"+HashParser.prototype.unescapeString(data.hashObjects[i].title)+"</h3>"+
 									"<div>by "+HashParser.prototype.unescapeString(data.hashObjects[i].author)+"</div>"+
+									"<div>Path: "+HashParser.prototype.unescapeString(data.hashObjects[i].path)+"</div>"+
 									"<ul class='ratingInfo'>"+
 									"<li>Likes: "+data.hashObjects[i].likes+"</li>"+
-									"<li>Dislikes: "+data.hashObjects[i].dislikes+"</li></ul>"+
-									"<div>"+HashParser.prototype.unescapeString(data.hashObjects[i].path)+"</div></div></td>");
+									"<li>Dislikes: "+data.hashObjects[i].dislikes+"</li></ul></div></td>");
 							$('#videoList').append(row);
 						}
 						self.index +=data.hashObjects.length;
