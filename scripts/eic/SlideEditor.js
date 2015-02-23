@@ -43,6 +43,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
        $('#movie-nav-bar').on('drop', function (ev) { self.drop(ev, self._curIndex, self.topics); });
        $('#movie-nav-bar').on('dragover', function (ev) { self.allowDrop(ev); });
 
+        $('#imgs').on('drop', function (ev) { self.undrop(ev, self._curIndex, self.topics); });
+        $('#imgs').on('dragover', function (ev) { self.allowDrop(ev); });
+
+        $('#vids').on('drop', function (ev) { self.undrop(ev, self._curIndex, self.topics); });
+        $('#vids').on('dragover', function (ev) { self.allowDrop(ev); });
+
        self.startEdit();
     }
 
@@ -61,7 +67,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
         this.$slides = $slides;
 
         // Hide the main panel and show the slides panel
-        $('#moviePreview').append($wrapper);
+        $('#moviePreview').append($slides);// wrapperr
         $wrapper.hide().fadeIn($.proxy($slides.hide(), 'fadeIn', 1000));
         
 			var self = this;
@@ -422,7 +428,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
       drop: function(ev, curIndex, topics) {
           ev.preventDefault();
           var data = ev.originalEvent.dataTransfer.getData("text/html");
-          console.log(data);
           ev.target.appendChild(document.getElementById(data));
           $('#' + data + '').removeClass("nodeElementBarContentWrap").addClass("movieNavElementWrap");
           $('#movie-nav-bar').css("padding", "3px");
@@ -446,6 +451,30 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
           topics[curIndex].slide_order = navlist;
       },
+
+      undrop: function(ev) {
+            ev.preventDefault();
+            var data = ev.originalEvent.dataTransfer.getData("text/html");
+            ev.target.appendChild(document.getElementById(data));
+            $('#' + data + '').removeClass("movieNavElementWrap").addClass("nodeElementBarContentWrap");
+
+          var movieNav = $("#movie-nav-bar .nodeElementBarContent");
+          var navlist = [movieNav.length];
+          for (var i = 0; i<movieNav.length; i++){
+              navlist[i] = movieNav[i].src;
+          }
+
+          if (movieNav[0] == undefined){;
+              $("#movie-nav-bar").css("padding", "50px");
+          }
+
+          for (var i = 0; i < navlist.length; i++){
+              if (navlist[i].indexOf("youtube") != -1){
+                  var vidID = navlist[i].substring(26,37);
+                  navlist[i] = vidID;
+              }
+          }
+       },
 
 		//Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
 		//Create a pseudo-slide_description for default vids so that we don't waste time trying to load new ones
