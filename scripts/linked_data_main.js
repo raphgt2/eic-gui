@@ -127,23 +127,26 @@
 					type: 'POST',
 					data: {startIndex: 0},
 					success: function(data){
+						var limit = Math.max(data.hashObjects.length, 5);
+						$("#recommendedVideos").width((limit*100)+300+"px");
 						for (var i=0; i<data.hashObjects.length; i++){
 							var item = document.createElement('span'); 
-							$(item).addClass('thumbnailWrapper');
+							$(item).addClass('thumbnailCell');
 							item.videoID = data.hashObjects[i].hashID;
-							$(item).append("<img src='"+data.hashObjects[i].thumbnail+"' class='vidThumbnail'>");
+							$(item).append("<img src='"+data.hashObjects[i].thumbnail+"'>");
 							$("#recommendedVideos").append(item);
 						}
 					},
 					complete: function(){
-					console.log(urls.videos);
-						$(".thumbnailWrapper").click(function(){
+						$(".thumbnailCell").click(function(){
 							var selectedVid = $(this)[0].videoID;
 							console.log(selectedVid);
-							window.location = urls.videos+"#"+selectedVid;
-							window.reload();
+							if (selectedVid){
+								window.location = urls.videos+"#"+selectedVid;
+								window.reload();
+							}
 						});
-						$("#recommendedVideos").append("<span><a href='"+urls.videos+"'>See more</a></span>")
+						$("#recommendedVideos").append("<span class='thumbnailCell'><a href='"+urls.videos+"'>See more</a></span>")
 					}
 				});				
 
