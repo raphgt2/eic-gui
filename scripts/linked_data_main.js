@@ -120,6 +120,32 @@
             error: function(error){
                 location.hash = "";
                 $("#searchWindow").css("display", "inline");
+				
+				//Display the top 5 vids?
+				$.ajax({
+					url: urls.hashFilter,
+					type: 'POST',
+					data: {startIndex: 0},
+					success: function(data){
+						for (var i=0; i<data.hashObjects.length; i++){
+							var item = document.createElement('span'); 
+							$(item).addClass('thumbnailWrapper');
+							item.videoID = data.hashObjects[i].hashID;
+							$(item).append("<img src='"+data.hashObjects[i].thumbnail+"' class='vidThumbnail'>");
+							$("#recommendedVideos").append(item);
+						}
+					},
+					complete: function(){
+					console.log(urls.videos);
+						$(".thumbnailWrapper").click(function(){
+							var selectedVid = $(this)[0].videoID;
+							console.log(selectedVid);
+							window.location = urls.videos+"#"+selectedVid;
+							window.reload();
+						});
+						$("#recommendedVideos").append("<span><a href='"+urls.videos+"'>See more</a></span>")
+					}
+				});				
 
                 var path_finder = new PathFinder(options);
             }
