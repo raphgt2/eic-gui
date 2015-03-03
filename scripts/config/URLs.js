@@ -11,6 +11,12 @@ define(function () {
 	hashStore:  dirName + "/saveHash?",
 	hashFilter: dirName + "/filterHash?",
 	hashRate: dirName + "/rateHash?",
-    jplayerSWF: "/scripts/swf"
+    jplayerSWF: "/scripts/swf",
+	
+	//main html pages
+	main: dirName+"/html/linkeddataeduapp.html",
+	demo: dirName+"/html/lodstories_demo.html",
+	videos: dirName+"/html/lodstories_videos.html",
+	single: dirName+"/html/SingleRelationshpDemo.html"
   };
 });
