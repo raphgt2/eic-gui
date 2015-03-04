@@ -317,7 +317,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
                 $('#lastStep').click(function () {
                     location.hash = '';
-                    console.log("Hash Object Test: ", self._hash);
                 });
 
                 $('#play-button').click(function () {
@@ -332,7 +331,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
                     if (self.evaluated) {
                         logger.log("Evaluated hash", self._hash);
-                        $('#editor').css('display', 'none');
+                        $('#editor').hide();
                         $('#screen').html('');
                         $('#subtitles').text('');
                         $('#screenWrap').show();
