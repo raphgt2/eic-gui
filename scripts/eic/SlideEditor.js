@@ -434,13 +434,22 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                     $('#' + data + '').attr("draggable", "true");
                     $('#movie-nav-bar').css("padding", "3px");
                 } else if (which == 1) {
-                    data = ev.originalEvent.dataTransfer.mozSourceNode;
-                    $('#' + data.id).removeClass("movieNavElementWrap").addClass("nodeElementBarContentWrap");
-                    $('#' + data.id).removeAttr("draggable");
-                    if (data.id.search("imgs") != -1) {
-                        document.getElementById("img" + data.id.match(/\d+/)[0]).appendChild(data);
+                    var id;
+                    if(ev.originalEvent.dataTransfer.mozSourceNode) {
+                        data = ev.originalEvent.dataTransfer.mozSourceNode;
+                        id = data.id;
+                    }
+                    else
+                    {
+                        data = ev.srcElement;
+                        id = "imgs" + data.id.match(/\d+/)[0];
+                    }
+                    $('#' + id).removeClass("movieNavElementWrap").addClass("nodeElementBarContentWrap");
+                    $('#' + id).removeAttr("draggable");
+                    if (id.search("imgs") != -1) {
+                        document.getElementById("img" + id.match(/\d+/)[0]).appendChild(document.getElementById(id));
                     } else {
-                        document.getElementById("vids" + data.id.match(/\d+/)[0]).appendChild(data);
+                        document.getElementById("vids" + id.match(/\d+/)[0]).appendChild(document.getElementById(id));
                     }
                 }
 
