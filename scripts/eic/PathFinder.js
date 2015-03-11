@@ -75,10 +75,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			output += '</ul>';
 			$('#liveSearch').html(output);
 			$(".searchItem").click(function(){
-				//var uriMatch = new RegExp($(this).html());
 				var uriMatch = $(this).html();
 				$.each(self.url_ref, function(key, val) {
-					//console.log(key, val.name, uriMatch);
 					if (val.name == uriMatch) {
 						$("#liveSearchResult").html(val.uri);
 					}
@@ -89,7 +87,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			});
 		});
       	$("#searchButton").click(function(){
-		console.log($("#liveSearchResult").html());
+            var uriMatch = $('#search').val();
+            $.each(self.url_ref, function(key, val) {
+                if (val.name.toUpperCase() == uriMatch.toUpperCase()) {
+                    $("#liveSearchResult").html(val.uri);
+                }
+            });
+            self.keyWord = $('#search').val();
+            $('#liveSearch').empty();
 			if ($("#liveSearchResult").html()==='')		//Do not enter the path explorer page unless we actually have a uri
 				return;
 				

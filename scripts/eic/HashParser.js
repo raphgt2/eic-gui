@@ -1,4 +1,4 @@
-define(['eic/Logger'], function () {
+define(['eic/Logger'], function ($) {
 	//Dummy class whose sole purpose is to escape and unescape hash objects for mysql-appropriate strings...doesn't need to be instantiated to work
 	//Also threw the uri->label function here for lack of anywhere else to put it
 	function HashParser() {
