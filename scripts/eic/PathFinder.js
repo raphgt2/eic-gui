@@ -149,7 +149,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
   			dataType: 'jsonp',
 			data: {uri: nodeURI, num: 7},
 			success: function(json){
-				//console.log("Json: ", json);
+				console.log("Json: ", json);
 				if (json){				
 					if (self.round == 1){ // The Starting Node
 						self.history = json;
@@ -177,7 +177,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
                             info["subject"] = data_prev.parent.name;
                             for (i = 0; i < children.length; i++) {
                                 info["object"] = children[i].name;
-                                info["predicate"] = children[i].relation;
+                                info["predicate"] = children[i].relationship;
                                 if (children[i].name == data_prev.name)
                                 {
                                     info["interesting"] = 1;
@@ -281,10 +281,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    })
 		    .on("click", function(d){
 		    	self.click(d);
-		    })
-		    .on("mouseover", function(d){
-		   		var output = self.nodeMouseOver(d.name, d.relation);
-		    });	
+		    });
 
 	// Enter any new nodes at the parent's previous position.
 		nodeEnter.append("svg:circle")
@@ -395,7 +392,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		      
 		//$("path").on("mouseover", function(){
 		$("path").mouseover(function(){	
-			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"), $(this).attr("relation"), $(this).attr("inverse"));
+			var selected = self.linkMouseOver($(this).attr("relation"), $(this).attr("inverse"), $(this).attr("source"), $(this).attr("target"));
 			$(this).mousemove(function(e){
 				var mouse = self.getMousePosition(e.pageX, e.pageY);
 			})
@@ -462,20 +459,15 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			            .css("left", x - 100 + "")
 					  	.css("display", "block");
 	    },
-	    nodeMouseOver: function(name, catalog) {
-			// $("#name").empty();
-			// $("#catalog").empty();
-			// var nameContent = "Name: " + name;
-			// var catalogContent = "Catalog: " + catalog;
-			// $("#name").append(nameContent);
-			// $("#catalog").append(catalogContent);
-		},
-		linkMouseOver: function(source, target, relation, inverse) {
+		linkMouseOver: function(relation, inverse, subject, object) {
 			var self=this;
 			$("#relation").empty();
 			var relationContent = '<div id="relationContent" class="close" >';
-			console.log(relation);
-			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
+            if(inverse == 1)
+                relationContent += object + relation + subject;
+            else
+                relationContent += subject + relation + object;
+			//relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
 			relationContent += '</div>';
 			$("#relation").append(relationContent);
 			$(".close").click(function(){

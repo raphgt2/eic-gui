@@ -32,15 +32,6 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
       function formatResult(result, vertices) {			
         for (var i = 1; i < result.topics.length; i++) {
           var glue = '';
-          /*var sentence = result.links[i - 1][Math.round(Math.random())];
-          switch (sentence.type) {
-          case 'direct':
-            glue = result.topics[i - 1].topic.label + sentence.value + result.topics[i].topic.label + '. ';
-            break;
-          case 'indirect':
-            glue = result.topics[i].topic.label + sentence.value + result.topics[i - 1].topic.label + '. ';
-            break;
-          }*/
           glue = self.generateRelationshipSentence(result.topics[i - 1].topic.label, result.topics[i].topic.label, result.links[i - 1].value, result.links[i - 1].inverse) + '. ';
           
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
@@ -67,24 +58,6 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
         function retrieveTranscription(index, edge) {
           var  property = edge.uri.substr(edge.uri.lastIndexOf('/') + 1);
           logger.log('Extracting sentence for', edge.uri);
-          //logger.log('edge test', edge);
-          //Split the string with caps
-          /*var parts = property.match(/([A-Z]?[^A-Z]*)/g).slice(0, -1);
-
-          if (parts[0] === 'has' || parts[0] === 'is') {
-            parts.shift();
-          }
-
-          var sentence = [
-            {
-              type: 'indirect',
-              value: edge.inverse ? '\'s ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' is ' : '\'s the ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' of '
-            },
-            {
-              type: 'direct',
-              value: edge.inverse ? '\'s the ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' of ' : '\'s ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' is '
-            }
-          ];*/
 
           self.result.links[index] = 
           {

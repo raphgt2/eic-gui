@@ -470,6 +470,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                 }
 
                 topics[curIndex].slide_order = navlist;
+                print(topics);
             },
 
             //Used at the end to run through the hash object and update the durations of chosen image/vid slides, as well as saving players for selected videos
