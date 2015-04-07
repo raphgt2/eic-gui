@@ -88,6 +88,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		});
       	$("#searchButton").click(function(){
             var uriMatch = $('#search').val();
+            $("#stepNavigator").css("display", "inline");
             $.each(self.url_ref, function(key, val) {
                 if (val.name.toUpperCase() == uriMatch.toUpperCase()) {
                     $("#liveSearchResult").html(val.uri);
@@ -463,9 +464,9 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var self=this;
 			$("#relation").empty();
 			var relationContent = '<div id="relationContent" class="close" >';
-            if(inverse == 1)
-                relationContent += object + relation + subject;
-            else
+            //if(inverse == 1)
+              //  relationContent += object + relation + subject;
+            //else
                 relationContent += subject + relation + object;
 			relationContent += '</div>';
 			$("#relation").append(relationContent);

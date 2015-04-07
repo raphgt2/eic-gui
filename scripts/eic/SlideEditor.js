@@ -317,6 +317,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
                 $('#lastStep').click(function () {
                     location.hash = '';
+                    $("#stepNavigator").css("display", "none");
                 });
 
                 $('#play-button').click(function () {
