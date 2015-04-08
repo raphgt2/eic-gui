@@ -53,7 +53,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	});
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
-			console.log(searchField);
 			if (searchField != "")
 				$('#liveSearch').show();
 			else
@@ -64,7 +63,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			
 			var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
 			$.each(self.url_ref, function(key, val) {
-				//console.log(key, val.name.search(myExp));
 				if ((val.name.search(myExp) != -1)) {
 					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
 					output += val.name;
@@ -118,13 +116,11 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				$("#canvasWindow").css("display", "none");
 				$("#editor").css("display", "inline");
 				$("#body").css("display", "block");
-				console.log("userPath", self.userPath);
 				
 				/*Prepare Video Editor*/
             	var controller = new PresentationController2(self.userHash, self.movieOptions);
 	            var view = new PiecesUI(controller);
 	            view.initControls();
-				console.log("Hash Object Output", self.userHash);
 		        controller.once("slide_generation_finished", function(){
 		        	$(".canvas-alert").remove();
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
@@ -150,7 +146,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
   			dataType: 'jsonp',
 			data: {uri: nodeURI, num: 7},
 			success: function(json){
-				console.log("Json: ", json);
 				if (json){				
 					if (self.round == 1){ // The Starting Node
 						self.history = json;
@@ -160,7 +155,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.appendMap[name].parent = null;
 
 						for (var i = 0; i < json.children.length; i++){
-                            console.log("CHILDREN" + json.children[i]);
 							json.children[i].search = 0;
 							json.children[i].children = null;
 							json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
@@ -238,7 +232,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.updateCanvas(self.root);
 						
 						if (json.children.length == 0 || newNodes==0){
-							//console.log("HERE 1");
 							var alert_msg = '<div class="alert alert-warning canvas-alert">There are no new links for ' + name +'.</div>';
 							$("#canvasStepNavigator").append(alert_msg);
 							$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
@@ -390,14 +383,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		        return self.diagonal({source: o, target: o});
 		      })
 		      .remove();
-		      
-		//$("path").on("mouseover", function(){
-		$("path").mouseover(function(){	
+
+		$("path").on('mouseover', function(){
 			var selected = self.linkMouseOver($(this).attr("relation"), $(this).attr("inverse"), $(this).attr("source"), $(this).attr("target"));
 			$(this).mousemove(function(e){
 				var mouse = self.getMousePosition(e.pageX, e.pageY);
 			})
 		});
+
+         $("path").on('mouseout', function(){
+             $("#relation").remove();
+         });
 		
 		
 	//highlight nodes and links
@@ -460,19 +456,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			            .css("left", x - 100 + "")
 					  	.css("display", "block");
 	    },
+
 		linkMouseOver: function(relation, inverse, subject, object) {
-			var self=this;
-			$("#relation").empty();
-			var relationContent = '<div id="relationContent" class="close" >';
-            //if(inverse == 1)
-              //  relationContent += object + relation + subject;
-            //else
+            var id = "path[id='" + subject + object + "']";
+            var d = $(id).attr("d");
+			var relationContent = '<div id="relation" class="close" style="position: absolute; left:' + d + 'px; top:' + d + 'px;">';
+            if(inverse == 1)
+                relationContent += object + relation + subject;
+            else
                 relationContent += subject + relation + object;
 			relationContent += '</div>';
-			$("#relation").append(relationContent);
-			$(".close").click(function(){
-				$("#relation").empty();
-			});
+			$('body').append(relationContent);
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;
