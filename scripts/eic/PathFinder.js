@@ -167,7 +167,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
                         // first grab the selected relationship and send it back to database
                         // TODO: ADD LAST NODE
                         if (document.location.hostname != "localhost") {
-                            var rels = data_prev.parent.children;
+                            var children = data_prev.parent.children;
                             var info = {};
                             info["subject"] = data_prev.parent.name;
                             for (i = 0; i < children.length; i++) {
