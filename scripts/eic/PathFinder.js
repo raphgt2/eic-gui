@@ -166,7 +166,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					else {
                         // first grab the selected relationship and send it back to database
                         // TODO: ADD LAST NODE
-                        if (document.location.hostname != "localhost") {
+                        /*if (document.location.hostname != "localhost") {
                             var children = data_prev.parent.children;
                             var info = {};
                             info["subject"] = data_prev.parent.name;
@@ -197,7 +197,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
                                 });
                             }
                         } else
-                            console.log("WE ON LOCALHOST YO");
+                            console.log("WE ON LOCALHOST YO");*/
 
 						self.userPath = [];
 						self.trackPathParent(data_prev);
