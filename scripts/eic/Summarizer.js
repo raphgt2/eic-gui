@@ -31,7 +31,11 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
        */
       function formatResult(result, vertices) {			
         for (var i = 1; i < result.topics.length; i++) {
-          var glue = result.links[i - 1].value + '. ';
+          var glue = "";
+          if(result.links[i - 1].inverse == 1)
+            glue = result.topics[i].topic.label + " " + result.links[i - 1].value + " " + result.topics[i - 1].topic.label + ". ";
+          else
+            glue = result.topics[i - 1].topic.label + " " + result.links[i - 1].value + " " + result.topics[i].topic.label + ". ";
           
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
           result.topics[i].hash_object.defaultText = glue + result.topics[i].hash_object.defaultText;
