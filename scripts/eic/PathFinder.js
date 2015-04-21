@@ -110,6 +110,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			
 			$("#finish").click(function(){
 				var progress = '<div class="progress progress-striped active canvas-alert"><div class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="100" aria-valuemin="1" aria-valuemax="100" style="width: 100%"><span class="sr-only">Generating Stories...</span></div></div>';
+                $("#relation").remove();
 				$("#stepNavigator").append(progress);
 				/*Shift Screen*/
 				self.generateHashObject();
