@@ -150,20 +150,39 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			data: {uri: nodeURI, num: 7},
 			success: function(json){
 				//console.log("Json: ", json);
-				if (json){				
+				if (json){
+				
+					var info = {
+						chosen: false
+					};				
+					
 					if (self.round == 1){ // The Starting Node
 						self.history = json;
 						self.appendMap[name] = json;
 						self.appendMap[name].name = name;
 						self.appendMap[name].search = 1;
 						self.appendMap[name].parent = null;
-
+						
+						info.subject = HashParser.prototype.escapeString(name);
+						
 						for (var i = 0; i < json.children.length; i++){
-                            console.log("CHILDREN" + json.children[i]);
+                            console.log(json.children[i]);
 							json.children[i].search = 0;
 							json.children[i].children = null;
 							json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
 							self.appendMap[json.children[i].name] = json.children[i];
+							
+							info.object = HashParser.prototype.escapeString(json.children[i].name);
+							info.predicate = HashParser.prototype.escapeString(json.children[i].relationship);
+							$.ajax({
+								url:"/LODStories/LiveDemoPageServlet",
+								type: "POST",
+								data:info,
+								dataType: "json",
+								error: function(xhr, textStatus) {
+									console.log(xhr.responseText);
+								}
+							});
 						}
 						self.root = self.history;
 						self.updateCanvas(self.root);
@@ -171,38 +190,20 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					else {
                         // first grab the selected relationship and send it back to database
                         // TODO: ADD LAST NODE
-                        if (document.location.hostname != "localhost") {
+                        //if (document.location.hostname != "localhost") {
+							/*var children = json.children;
                             var rels = data_prev.parent.children;
-                            var info = {};
-                            info["subject"] = data_prev.parent.name;
+                            
+                            info["subject"] = data_prev.name;
                             for (i = 0; i < children.length; i++) {
                                 info["object"] = children[i].name;
                                 info["predicate"] = children[i].relation;
-                                if (children[i].name == data_prev.name)
-                                {
-                                    info["interesting"] = 1;
-                                    info["not interesting"] = 0;
-                                } else
-                                {
-                                    info["interesting"] = 0;
-                                    info["not interesting"] = 1;
-                                }
-
-                                $.ajax({
-                                    url:"/LODStories/LiveDemoPageServlet",
-                                    type: "POST",
-                                    data:info,
-                                    dataType: "json",
-                                    complete: function(xhr, textStatus) {
-                                        console.log(xhr.responseText);
-                                    },
-                                    error: function(xhr, textStatus) {
-                                        console.log(xhr.responseText);
-                                    }
-                                });
-                            }
-                        } else
-                            console.log("WE ON LOCALHOST YO");
+								info["chosen"] = false;
+                            }*/
+                        //} else
+                            //console.log("WE ON LOCALHOST YO");
+						
+						info.subject = HashParser.prototype.escapeString(data_prev.name);
 
 						self.userPath = [];
 						self.trackPathParent(data_prev);
@@ -224,10 +225,25 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 										break;
 									}
 								}
-
+								
+								//The child is unique. We can display it
 								if (flag != 1){
 									children.push(json.children[i]);
 									newNodes++;
+									
+									//send to the data collector
+									info.object = HashParser.prototype.escapeString(json.children[i].name);
+									info.predicate = HashParser.prototype.escapeString(json.children[i].relationship);
+									$.ajax({
+										url:"/LODStories/LiveDemoPageServlet",
+										type: "POST",
+										data:info,
+										dataType: "json",
+										error: function(xhr, textStatus) {
+											console.log(xhr.responseText);
+										}
+									});
+									
 								}
 						}
 						
@@ -245,7 +261,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 								$(".canvas-alert").remove();
 							},4000);
 						}						
-					}		
+					}	
 				}
 				else {
 					var alert_msg = '<div class="alert alert-danger canvas-alert">Oooops, no available data for ' + name +'.</div>';
@@ -474,7 +490,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var self=this;
 			$("#relation").empty();
 			var relationContent = '<div id="relationContent" class="close" >';
-			console.log(relation);
+			//console.log(relation);
 			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
 			relationContent += '</div>';
 			$("#relation").append(relationContent);

@@ -547,6 +547,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                     title = "Untitled";
                 if (!author)
                     author = "Anonymous";
+				
+				//Save the author as a list of previous authors
+				if (this.hash_object.author){
+					author = this.hash_object.author + ";" + author;
+				}
+				
                 title = HashParser.prototype.escapeString(title);
                 author = HashParser.prototype.escapeString(author);
 
