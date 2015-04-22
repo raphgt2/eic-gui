@@ -31,17 +31,11 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
        */
       function formatResult(result, vertices) {			
         for (var i = 1; i < result.topics.length; i++) {
-          var glue = '';
-          /*var sentence = result.links[i - 1][Math.round(Math.random())];
-          switch (sentence.type) {
-          case 'direct':
-            glue = result.topics[i - 1].topic.label + sentence.value + result.topics[i].topic.label + '. ';
-            break;
-          case 'indirect':
-            glue = result.topics[i].topic.label + sentence.value + result.topics[i - 1].topic.label + '. ';
-            break;
-          }*/
-          glue = self.generateRelationshipSentence(result.topics[i - 1].topic.label, result.topics[i].topic.label, result.links[i - 1].value, result.links[i - 1].inverse) + '. ';
+          var glue = "";
+          if(result.links[i - 1].inverse == 1)
+            glue = result.topics[i].topic.label + " " + result.links[i - 1].value + " " + result.topics[i - 1].topic.label + ". ";
+          else
+            glue = result.topics[i - 1].topic.label + " " + result.links[i - 1].value + " " + result.topics[i].topic.label + ". ";
           
           result.topics[i].topic.previous =  result.topics[i - 1].topic.label;
           result.topics[i].hash_object.defaultText = glue + result.topics[i].hash_object.defaultText;
@@ -67,24 +61,6 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
         function retrieveTranscription(index, edge) {
           var  property = edge.uri.substr(edge.uri.lastIndexOf('/') + 1);
           logger.log('Extracting sentence for', edge.uri);
-          //logger.log('edge test', edge);
-          //Split the string with caps
-          /*var parts = property.match(/([A-Z]?[^A-Z]*)/g).slice(0, -1);
-
-          if (parts[0] === 'has' || parts[0] === 'is') {
-            parts.shift();
-          }
-
-          var sentence = [
-            {
-              type: 'indirect',
-              value: edge.inverse ? '\'s ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' is ' : '\'s the ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' of '
-            },
-            {
-              type: 'direct',
-              value: edge.inverse ? '\'s the ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' of ' : '\'s ' + decodeURIComponent(parts.join(' ').toLowerCase()) + ' is '
-            }
-          ];*/
 
           self.result.links[index] = 
           {
@@ -95,9 +71,6 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
           if ((self.result.topics.length + self.result.links.length) === path.length) {
             $(self).trigger('generated', formatResult(self.result));
           }
-
-          //logger.log('Property', property);
-          //logger.log('Generated sentence', index, ':', self.result.links[index][0].value);
         }
 
         $(edges).each(retrieveTranscription);
@@ -244,91 +217,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
 
       retrieveTranscriptions(path.filter(function (o) { return o.type === 'link'; }));
       retrieveAbstracts(path.filter(function (o) { return o.type === 'node';  }));
-    },
-    
-    generateRelationshipSentence: function(source, target, relation, inverse){
-			var subject, object, sentence;
-			if(inverse == 1){
-				subject = target;
-				object = source;
-				//sentence = subject + " is the " + relation + " of " + object;
-			}else {
-				subject = source;
-				object = target;
-				//sentence = subject + "'s " + relation + " is " + object;
-			}
-			var flag1 = 0, relation_lower=" ";
-			for (var i = 0; i < relation.length; i++){
-				
-				if (/^[A-Z]/.test(relation[i])){
-					relation_lower += " ";
-					relation_lower += relation[i].toLowerCase();
-				}else{
-					relation_lower += relation[i];
-				}
-			}
-			//console.log(relation_lower);
-			switch(relation){
-				case ("city"):
-					sentence = subject + " locates in the city of " + object;
-					break;
-				case ("influenced"):
-					sentence = subject + " influenced " + object;
-					break;
-				case ("location" || "locatedInArea"):
-					sentence = subject + " locates in " + object;
-					break;
-				case ("knownFor"):
-					sentence = subject + " is known for " + object;
-					break;
-				case ("training"):
-					sentence = subject + " is trained by " + object;
-					break;
-				case ("influencedBy"):
-					sentence = subject + " is influenced by " + object;
-					break;
-				case ("museum"):
-					sentence = subject + " is exhibited in " + object;
-					break;
-				case ("country"||"startPoint"):
-					sentence = subject + " is a" + relation_lower + " of " + object;
-					break;
-				case ("leaderName"):
-					sentence = object + " is the leader of " + subject;
-					break;
-				case ("education"):
-					sentence = subject + "'s education is at/with" + object;
-					break;
-				case ("residence"):
-					sentence = subject + " lives in " + object;
-					break;
-				case ("foundedBy"):
-					sentence = subject + " is founded by " + object;
-					break;
-				case ("ground"):
-					sentence = subject + " is at " + object;
-					break;
-				case ("sportCountry"):
-					sentence = object + " is the country where " + subject + " plays sports";
-					break;
-				case ("subsidiary"):
-					sentence = subject + "'s subsidiary is at " + object;
-					break;
-				case ("distributingLabel"):
-					sentence = object + "'s distributing label is " + subject;
-					break;
-				case ("recordedIn"):
-					sentence = subject + " was recorded in " + object;
-					break;
-				case ("starring"):
-					sentence = object + " starred in " + subject;
-					break;
-				default: 
-					sentence = subject + "'s" + relation_lower + " is " + object;	  
-			}
-			return sentence;
-			
-		},
+    }
   };
   return Summarizer;
 });

@@ -317,6 +317,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
                 $('#lastStep').click(function () {
                     location.hash = '';
+                    $("#stepNavigator").css("display", "none");
                 });
 
                 $('#play-button').click(function () {
@@ -427,6 +428,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                 var data;
                 if (which == 0) {
                     data = ev.originalEvent.dataTransfer.getData("text/html");
+                    data = data.substring(data.indexOf(">") + 1);
                     document.getElementById("movie-nav-bar").appendChild(document.getElementById(data));
                     $('#' + data + '').removeClass("nodeElementBarContentWrap");
                     $('#' + data + '').addClass("movieNavElementWrap");

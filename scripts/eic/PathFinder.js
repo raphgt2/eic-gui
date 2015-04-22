@@ -53,7 +53,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
       	});
       	$('#search').keyup(function() {
 			var searchField = $('#search').val();
-			console.log(searchField);
 			if (searchField != "")
 				$('#liveSearch').show();
 			else
@@ -64,7 +63,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			
 			var output = '<ul class="dropdown-menu" id="searchUpdate" role="menu" aria-labelledby="dropdownMenu1">';
 			$.each(self.url_ref, function(key, val) {
-				//console.log(key, val.name.search(myExp));
 				if ((val.name.search(myExp) != -1)) {
 					output += '<li role="presentation"><a class="searchItem" role="menuitem" tabindex="-1" href="#">';
 					output += val.name;
@@ -88,6 +86,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		});
       	$("#searchButton").click(function(){
             var uriMatch = $('#search').val();
+            $("#stepNavigator").css("display", "inline");
             $.each(self.url_ref, function(key, val) {
                 if (val.name.toUpperCase() == uriMatch.toUpperCase()) {
                     $("#liveSearchResult").html(val.uri);
@@ -111,19 +110,18 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			
 			$("#finish").click(function(){
 				var progress = '<div class="progress progress-striped active canvas-alert"><div class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="100" aria-valuemin="1" aria-valuemax="100" style="width: 100%"><span class="sr-only">Generating Stories...</span></div></div>';
+                $("#relation").remove();
 				$("#stepNavigator").append(progress);
 				/*Shift Screen*/
 				self.generateHashObject();
 				$("#canvasWindow").css("display", "none");
 				$("#editor").css("display", "inline");
 				$("#body").css("display", "block");
-				console.log("userPath", self.userPath);
 				
 				/*Prepare Video Editor*/
             	var controller = new PresentationController2(self.userHash, self.movieOptions);
 	            var view = new PiecesUI(controller);
 	            view.initControls();
-				console.log("Hash Object Output", self.userHash);
 		        controller.once("slide_generation_finished", function(){
 		        	$(".canvas-alert").remove();
 					var editor = new SlideEditor(controller.generator, controller.path, controller, self.userHash);
@@ -155,7 +153,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					var info = {
 						chosen: false
 					};				
-					
+
 					if (self.round == 1){ // The Starting Node
 						self.history = json;
 						self.appendMap[name] = json;
@@ -166,7 +164,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						info.subject = HashParser.prototype.escapeString(name);
 						
 						for (var i = 0; i < json.children.length; i++){
-                            console.log(json.children[i]);
+
 							json.children[i].search = 0;
 							json.children[i].children = null;
 							json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
@@ -204,6 +202,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
                             //console.log("WE ON LOCALHOST YO");
 						
 						info.subject = HashParser.prototype.escapeString(data_prev.name);
+
 
 						self.userPath = [];
 						self.trackPathParent(data_prev);
@@ -253,7 +252,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.updateCanvas(self.root);
 						
 						if (json.children.length == 0 || newNodes==0){
-							//console.log("HERE 1");
 							var alert_msg = '<div class="alert alert-warning canvas-alert">There are no new links for ' + name +'.</div>';
 							$("#canvasStepNavigator").append(alert_msg);
 							$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
@@ -297,10 +295,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    })
 		    .on("click", function(d){
 		    	self.click(d);
-		    })
-		    .on("mouseover", function(d){
-		   		var output = self.nodeMouseOver(d.name, d.relation);
-		    });	
+		    });
 
 	// Enter any new nodes at the parent's previous position.
 		nodeEnter.append("svg:circle")
@@ -408,14 +403,17 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		        return self.diagonal({source: o, target: o});
 		      })
 		      .remove();
-		      
-		//$("path").on("mouseover", function(){
-		$("path").mouseover(function(){	
-			var selected = self.linkMouseOver($(this).attr("source"), $(this).attr("target"), $(this).attr("relation"), $(this).attr("inverse"));
+
+		$("path").on('mouseover', function(){
+			var selected = self.linkMouseOver($(this).attr("relation"), $(this).attr("inverse"), $(this).attr("source"), $(this).attr("target"));
 			$(this).mousemove(function(e){
 				var mouse = self.getMousePosition(e.pageX, e.pageY);
 			})
 		});
+
+         $("path").on('mouseout', function(){
+             $("#relation").remove();
+         });
 		
 		
 	//highlight nodes and links
@@ -478,6 +476,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			            .css("left", x - 100 + "")
 					  	.css("display", "block");
 	    },
+<<<<<<< HEAD
 	    nodeMouseOver: function(name, catalog) {
 			// $("#name").empty();
 			// $("#catalog").empty();
@@ -492,11 +491,19 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			var relationContent = '<div id="relationContent" class="close" >';
 			//console.log(relation);
 			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
+=======
+
+		linkMouseOver: function(relation, inverse, subject, object) {
+            var id = "path[id='" + subject + object + "']";
+            var d = $(id).attr("d");
+			var relationContent = '<div id="relation" class="close" style="position: absolute; left:' + d + 'px; top:' + d + 'px;">';
+            if(inverse == 1)
+                relationContent += object + relation + subject;
+            else
+                relationContent += subject + relation + object;
+>>>>>>> 48e6e294cdfd21c547159ccff9474b3b7fe70681
 			relationContent += '</div>';
-			$("#relation").append(relationContent);
-			$(".close").click(function(){
-				$("#relation").empty();
-			});
+			$('body').append(relationContent);
 		},
 		getTreeWidth: function(treeRoot){
 			var self = this;
