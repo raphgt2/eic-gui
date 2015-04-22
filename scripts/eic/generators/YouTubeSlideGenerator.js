@@ -133,7 +133,15 @@ function ($, BaseSlideGenerator, Logger) {
 		}
       
 	  
-		function preload(){			
+		function preload(){	
+			//If we don't care about preloading then just log it as done
+			if (preload){
+				self.ready = true;
+				logger.log("finished waiting on youtube for " + self.topic.label);
+				self.emit("prepared");
+				return;
+			}
+		
 			// if we did not start preparations yet, and the player object is ready
 			if (player && player.playVideo) {
 				//Putting this status check within, b/c we don't actually wanna call preload() again (it'd lead to an endless recursive call) if the status was something other than "unstarted"
@@ -147,7 +155,7 @@ function ($, BaseSlideGenerator, Logger) {
 			}
 		}
 	  
-		function checkIfBuffered(){
+		function checkIfBuffered(){		
 			if (waiting && player.getVideoLoadedFraction() < player.end/player.getDuration()){
 				window.setTimeout(function(){checkIfBuffered()}, 1000);
 			}

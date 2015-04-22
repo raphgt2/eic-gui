@@ -336,7 +336,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         $('#screen').html('');
                         $('#subtitles').text('');
                         $('#screenWrap').show();
-                        var play = new PresentationController(self._hash, {intro: false, outro: true, generatorOptions: self.controller.generatorOptions, outroOptions: self.controller.outroOptions});
+                        var play = new PresentationController(self._hash, {intro: false, outro: true, generatorOptions: {videoOptions: {maxVideoCount: 0}}, outroOptions: self.controller.outroOptions});
                         console.log("PresentationController: ", play, play.path.path);
                         play.playMovie();
                     }
@@ -346,7 +346,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                             $('#screen').html('');
                             $('#subtitles').text('');
                             $('#screenWrap').show();
-                            var play = new PresentationController(self._hash, {intro: false, outro: true, generatorOptions: self.controller.generatorOptions, outroOptions: self.controller.outroOptions});
+                            var play = new PresentationController(self._hash, {intro: false, outro: true, generatorOptions: {videoOptions: {maxVideoCount: 0}}, outroOptions: self.controller.outroOptions});
                             console.log("PresentationController: ", play, play.path.path);
                             play.playMovie();
                         });

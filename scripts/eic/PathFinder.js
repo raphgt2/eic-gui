@@ -476,23 +476,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			            .css("left", x - 100 + "")
 					  	.css("display", "block");
 	    },
-<<<<<<< HEAD
-	    nodeMouseOver: function(name, catalog) {
-			// $("#name").empty();
-			// $("#catalog").empty();
-			// var nameContent = "Name: " + name;
-			// var catalogContent = "Catalog: " + catalog;
-			// $("#name").append(nameContent);
-			// $("#catalog").append(catalogContent);
-		},
-		linkMouseOver: function(source, target, relation, inverse) {
-			var self=this;
-			$("#relation").empty();
-			var relationContent = '<div id="relationContent" class="close" >';
-			//console.log(relation);
-			relationContent += Summarizer.prototype.generateRelationshipSentence(source, target, relation, inverse);
-=======
-
 		linkMouseOver: function(relation, inverse, subject, object) {
             var id = "path[id='" + subject + object + "']";
             var d = $(id).attr("d");
@@ -501,7 +484,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
                 relationContent += object + relation + subject;
             else
                 relationContent += subject + relation + object;
->>>>>>> 48e6e294cdfd21c547159ccff9474b3b7fe70681
+
 			relationContent += '</div>';
 			$('body').append(relationContent);
 		},
@@ -590,6 +573,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		generateHashObject: function(){
 			var self = this;
 			
+			console.log(self.userPath);
+			
 			self.userHash.source = new Object();
 			self.userHash.source.name = self.userPath[0].name;
 			self.userHash.source.uri = self.userPath[0].uri;
@@ -606,7 +591,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					}else {
 						linktype.inverse = false;
 					}
-					linktype.uri = self.userPath[i].relation;
+					linktype.name = self.userPath[i].relationship;
+					linktype.relationString = self.userPath[i].relation;
 					self.userHash.path.push(linktype);
 				}
 				var nodetype = new Object;
@@ -615,6 +601,29 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				nodetype.uri = self.userPath[i].uri;
 				self.userHash.path.push(nodetype);
 			}
+			
+			//Focus is through the objects, hence why we start at i=2 (0=subject, 1=predicate, 2=object)
+			for (var i=2; i<self.userHash.path.length; i=i+2){
+				var info = {
+					chosen: true
+				}
+				
+				info.subject = self.userHash.path[i-2].name;
+				info.predicate = self.userHash.path[i-1].name;
+				info.object = self.userHash.path[i].name;
+				
+				$.ajax({
+					url:"/LODStories/LiveDemoPageServlet",
+					type: "POST",
+					data:info,
+					dataType: "json",
+					error: function(xhr, textStatus) {
+						console.log(xhr.responseText);
+					}
+				});
+			}
+			
+			console.log(self.userHash);
 		}
     };
 

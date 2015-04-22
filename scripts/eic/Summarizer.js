@@ -59,8 +59,9 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
       function retrieveTranscriptions(edges) {
 
         function retrieveTranscription(index, edge) {
-          var  property = edge.uri.substr(edge.uri.lastIndexOf('/') + 1);
-          logger.log('Extracting sentence for', edge.uri);
+          //var  property = edge.uri.substr(edge.uri.lastIndexOf('/') + 1);
+		  var property = edge.relationString;
+          logger.log('Extracting sentence for', edge.relationString);
 
           self.result.links[index] = 
           {

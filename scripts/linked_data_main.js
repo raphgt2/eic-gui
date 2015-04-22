@@ -80,7 +80,8 @@
 		var options = {
 			generatorOptions: {
 				videoOptions: {
-					maxVideoCount: 2
+					maxVideoCount: 2,
+					preload: false
 				}
 			},
 			outroOptions:{
