@@ -13,7 +13,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
         function SlideEditor(generator, path, controller, hashObj) {
             EventEmitter.call(this);
-
+       
             this.controller = controller;
             this.curTopic = null;
             this.tempSlides = {};
@@ -29,7 +29,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
             //this._curNode = this._path[0];
             this._curIndex = 1;
             this._hash = hashObj;
-
+       
             var self = this;
 
             this.players = [];
@@ -133,7 +133,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
                         this.curTopic = this.topics[i];
 
-
                         var slide = this.topics[i].next();
                         // start the transition of other children
                         var children = this.$slides.children();
@@ -145,18 +144,46 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         //add appropriate slides to edit box
                         var slides = self.topics[i].getSlides();
 
-                        var imgcnt = 0;
-                        var vidcnt = 0;
+                        var imgcnt = 1;
+                        var vidcnt = 1;
 
                         $("#img-load").css('display', 'none');
                         $("#vid-load").css('display', 'none');
 
+                        for(var j = 0; j < this._hash.path.length; j++) {
+                            if(this._hash.path[j].uri == this.curTopic.hash_object.uri && this._hash.path[j].image != undefined){
+                                $('#imgs').children().remove();
+                                var imgs = this._hash.path[j].image;
+       /*var isEdited = false;
+        var imgs = this._hash.path[i].image; //get just the image link
+        if (editedSlides !== undefined && editedSlides.length > 0) {
+        for (var j = 0; j < editedSlides.length; j++) {
+        if (editedSlides[j].type == "GoogleImageSlide" && editedSlides[j].data.url == imgs) {
+        isEdited = true;
+        break;
+        }
+        }
+        }*/
+       //if (!isEdited) {
+                                $('#imgs').append('<li id="img0"></li>');
+                                $('#img0').addClass('nodeElementBarContentWrap');
+                                $('#img0').attr('draggable', 'true').on('dragstart', function (ev) {
+                                               self.drag(ev);
+                                               });
+                                $('#img0').append('<img id="imgs0" src=' + imgs + '>');
+                                $('#imgs0').click(function () {
+                                                  var id = "imgs0";
+                                                  self.setContent(id, 0, 'img');
+                                });
+                            //}
+                            }
+                        }
+       
                         for (var val in slides) {
                             if (val == 'img' || val == 'map') {
                                 imgcnt++;
                                 var s = slides['img'];
                                 this.tempSlides['img'] = s;
-                                $('#imgs').children().remove();
                                 for (var i = 0; i < s.length; i++) {
                                     var isEdited = false;
                                     var imgs = s[i].slide_info.data.url; //get just the image link
@@ -169,14 +196,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                                         }
                                     }
                                     if (!isEdited) {
-                                        $('#imgs').append('<li id=img' + i + '></li>');
-                                        $('#img' + i + '').addClass('nodeElementBarContentWrap');
-                                        $('#img' + i + '').attr('draggable', 'true').on('dragstart', function (ev) {
+                                        $('#imgs').append('<li id=img' + (i+1) + '></li>');
+                                        $('#img' + (i+1) + '').addClass('nodeElementBarContentWrap');
+                                        $('#img' + (i+1) + '').attr('draggable', 'true').on('dragstart', function (ev) {
                                             self.drag(ev);
                                         });
-                                        $('#img' + i + '').append('<img id=imgs' + i + ' src=' + imgs + '>');
-                                        $('#imgs' + i).click(function () {
-                                            var id = "imgs" + i;
+                                        $('#img' + (i+1) + '').append('<img id=imgs' + (i+1) + ' src=' + imgs + '>');
+                                        $('#imgs' + (i+1)).click(function () {
+                                            var id = "imgs" + (i+1);
                                             self.setContent(id, i, 'img');
                                         });
                                     }
