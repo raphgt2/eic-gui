@@ -80,7 +80,8 @@
 		var options = {
 			generatorOptions: {
 				videoOptions: {
-					maxVideoCount: 2
+					maxVideoCount: 2,
+					preload: false
 				}
 			},
 			outroOptions:{
@@ -104,6 +105,7 @@
 				else{
 					var path = JSON.parse(HashParser.prototype.unescapeString(data.hash));
 					path.hashID = hashId;
+					path.author = data.author;
 
 					$("#editor").css("display", "inline");
 					$("#body").css("display", "block");

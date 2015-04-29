@@ -31,7 +31,7 @@ define(['eic/Logger'], function ($) {
         },
 		generateLabelFromUri: function(uri){
 			var label = uri.substr(uri.lastIndexOf('/') + 1);
-			label = decodeURI(label);
+			label = decodeURIComponent(label);
 			label = label.replace(/_/g,' ');
 			
 			return label;
