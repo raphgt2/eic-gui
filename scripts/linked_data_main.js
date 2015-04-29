@@ -2,6 +2,7 @@
     "use strict";
 
     requirejs.config({
+		waitSeconds: 0,
         shim: {
             'lib/jquery': {
                 exports: 'jQuery'

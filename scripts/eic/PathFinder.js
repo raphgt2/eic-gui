@@ -38,6 +38,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		this.initLinkedDataEdu();
 		
 		this.movieOptions = options || {};
+		
+		console.log(this);
     }
 
     /* Member functions */
@@ -82,6 +84,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				$('#search').val($(this).html());
 				self.keyWord = $(this).html(); 
 				$('#liveSearch').empty();
+				$('#liveSearch').hide();
 			});
 		});
       	$("#searchButton").click(function(){
@@ -135,8 +138,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			});
       	});
       	
-      },
-      addNode: function(nodeURI, name, data_prev){
+    },
+    addNode: function(nodeURI, name, data_prev){
       	//console.log("[===================Add New Node===================]");
       	var self = this;
 		var progress = '<div class="progress progress-striped active canvas-alert"><div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="1" aria-valuemax="100" style="width: 100%"><span class="sr-only">Loading...</span></div></div>';
@@ -185,22 +188,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.root = self.history;
 						self.updateCanvas(self.root);
 					}
-					else {
-                        // first grab the selected relationship and send it back to database
-                        // TODO: ADD LAST NODE
-                        //if (document.location.hostname != "localhost") {
-							/*var children = json.children;
-                            var rels = data_prev.parent.children;
-                            
-                            info["subject"] = data_prev.name;
-                            for (i = 0; i < children.length; i++) {
-                                info["object"] = children[i].name;
-                                info["predicate"] = children[i].relation;
-								info["chosen"] = false;
-                            }*/
-                        //} else
-                            //console.log("WE ON LOCALHOST YO");
-						
+					else {						
 						info.subject = HashParser.prototype.escapeString(data_prev.name);
 
 
@@ -272,8 +260,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			}
   		})
 		
-	 },//addNode
-	 updateCanvas: function(source){
+	},//addNode
+	updateCanvas: function(source){
 	 	$(".canvas-alert").remove();
 	 	var self = this;
 	 	
@@ -425,11 +413,26 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		    d.x0 = d.x;
 		    d.y0 = d.y;
 		  });
+		  
+		  //"Refresh all nodes by hiding and showing them...seems to actualy fix whatever's wrong with the tree when it doesn't display
+		  //For now, set to only refresh right after drawing the root, since that's the only time the chart actually fails to draw everything (timing issues?)
+		  //Could set this to refresh on any updateCanvas, but the blinking is honestly rather ugly
+		  self.getTreeWidth(self.root);
+		if (self.mainDepth<2){
+			window.setTimeout(function(){
+				$("g").hide();
+					window.setTimeout(function(){
+						$("g").show();
+				},100);
+			},self.duration+500);
+		}
+		  
 	 },//updateCanvas
-     click: function(d) {
+     click: function(d) {	 
      	var self = this;
-		if (d.search == 1){		
-			if (d.children) {
+		//d.search is a boolean that determines whether or not the node has already been expanded
+		if (d.search == 1){
+			if (d.children) { //Collapses the node to hide its children
 			  d._children = d.children;
 			  d.children = null;
 			  
@@ -439,9 +442,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  self.tree.size([self.h, self.w - 270 + ""]);
 			  self.userPath = [];
 			  self.trackPathParent(d);
-//			  this.update(d);
 			} 
-			else {
+			else { //Expands the node to show its children
 			  d.children = d._children;
 			  d._children = null;
 			  
@@ -452,7 +454,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 			  self.tree.size([self.h, self.w - 270 + ""]);
 			  self.userPath = [];
 			  self.trackPathParent(d);
-			  //this.update(d);
 			}
 			this.updateCanvas(d);
 			
@@ -467,165 +468,166 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 					$("svg").attr("width", self.w);
 					self.tree.size([self.h, self.w - 270 + ""]);
 				}
+				console.log(d.parent);
 				self.checkRepetitive(d.parent, d.name, d);
 		}		
 			
-	  },
-	    getMousePosition: function(x, y){
-		  $("#relation").css("top", y - 90 + "")
-			            .css("left", x - 100 + "")
-					  	.css("display", "block");
-	    },
-		linkMouseOver: function(relation, inverse, subject, object) {
-            var id = "path[id='" + subject + object + "']";
-            var d = $(id).attr("d");
-			var relationContent = '<div id="relation" class="close" style="position: absolute; left:' + d + 'px; top:' + d + 'px;">';
-            if(inverse == 1)
-                relationContent += object + relation + subject;
-            else
-                relationContent += subject + relation + object;
+	},
+	getMousePosition: function(x, y){
+	  $("#relation").css("top", y - 90 + "")
+					.css("left", x - 100 + "")
+					.css("display", "block");
+	},
+	linkMouseOver: function(relation, inverse, subject, object) {
+		var id = "path[id='" + subject + object + "']";
+		var d = $(id).attr("d");
+		var relationContent = '<div id="relation" class="close" style="position: absolute; left:' + d + 'px; top:' + d + 'px;">';
+		if(inverse == 1)
+			relationContent += object + relation + subject;
+		else
+			relationContent += subject + relation + object;
 
-			relationContent += '</div>';
-			$('body').append(relationContent);
-		},
-		getTreeWidth: function(treeRoot){
-			var self = this;
-			if (treeRoot.children == null){
-				if (treeRoot.depth > self.mainDepth){
-					self.mainDepth = treeRoot.depth;
-				}
+		relationContent += '</div>';
+		$('body').append(relationContent);
+	},
+	getTreeWidth: function(treeRoot){
+		var self = this;
+		if (treeRoot.children == null){
+			if (treeRoot.depth > self.mainDepth){
+				self.mainDepth = treeRoot.depth;
 			}
-			else {
-				for (var i = 0; i < treeRoot.children.length; i++){
-					self.getTreeWidth(treeRoot.children[i]);
-				}
-			}
-		},
-		highlightPath: function(){
-			var self = this;
-			
-			var allNodes = self.vis.selectAll("g.node");
-			var allLinks = self.vis.selectAll("path.link");
-			for (var i = 0; i < allNodes[0].length; i++){
-				if (allNodes[0][i].__data__.children != null){
-					allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
-					allNodes[0][i].childNodes[1].style.fill = "33ADFF";
-				}
-			}
-			for (var i = 0; i < allLinks[0].length; i++){
-				if (allLinks[0][i].__data__.target.children != null & allLinks[0][i].__data__.source.children != null){
-					allLinks[0][i].style.stroke = "#4747d1";
-					allLinks[0][i].style.strokeWidth = "4.5px";
-				}
-				else {
-					allLinks[0][i].style.stroke = "#ccc";
-					allLinks[0][i].style.strokeWidth = "3px";
-				}
-			}
-			
-		},
-		emphasizeRecent: function(){
-			var self=this;
-			var allLinks = self.vis.selectAll("path.link");
-			for (var i = 0; i < self.userPath.length-1; i++){
-				var linkSearch = self.userPath[i].name + self.userPath[i+1].name;
-				for (var j = 0; j < allLinks[0].length; j++){
-					if (allLinks[0][j].id == linkSearch) {
-						allLinks[0][j].style.stroke = "#ff6600";
-					}
-				}
-			}
-		},
-		trackPathParent: function(data) {
-			var self = this;
-			self.userPath.unshift(data);
-			
-			if (data.parent != null){
-				self.trackPathParent(data.parent);
-			}
-		},
-		checkRepetitive: function(data, name, node) {
-			var self = this;
-			if (data.name == name){
-				var alert_msg = '<div class="alert alert-warning canvas-alert">This node has already been explored in this path, please try other nodes. <b>If you want to include the repeated node in your story, please click it again</b></div>';
-					$("#canvasStepNavigator").append(alert_msg);
-					$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
-					setTimeout(function(){
-						$(".canvas-alert").remove();
-					},4000);
-					self.userPath = [];
-			  		self.trackPathParent(data);
-			}
-			else {
-				if (data.parent != null){
-					self.checkRepetitive(data.parent, name, node);
-				}else{
-					self.addNode(node.uri, node.name,node);
-				}
-			}
-		},
-		trackPathChildren: function(data) {
-			var self = this;
-			// for(var i = 0; i < data.children.length; i++){
-				// if (data.children.)
-			// }
-		},
-		generateHashObject: function(){
-			var self = this;
-			
-			console.log(self.userPath);
-			
-			self.userHash.source = new Object();
-			self.userHash.source.name = self.userPath[0].name;
-			self.userHash.source.uri = self.userPath[0].uri;
-			self.userHash.destination = new Object();
-			self.userHash.destination.name = self.userPath[self.userPath.length - 1].name;
-			self.userHash.destination.uri = self.userPath[self.userPath.length - 1].uri;
-			self.userHash.path = [];
-			for (var i = 0; i < self.userPath.length; i++){
-				if (self.userPath[i].relation != "none"){
-					var linktype = new Object;
-					linktype.type = "link";
-					if (self.userPath[i].inverse == 1){
-						linktype.inverse = true;
-					}else {
-						linktype.inverse = false;
-					}
-					linktype.name = self.userPath[i].relationship;
-					linktype.relationString = self.userPath[i].relation;
-					self.userHash.path.push(linktype);
-				}
-				var nodetype = new Object;
-				nodetype.type = "node";
-				nodetype.name = self.userPath[i].name;
-				nodetype.uri = self.userPath[i].uri;
-				self.userHash.path.push(nodetype);
-			}
-			
-			//Focus is through the objects, hence why we start at i=2 (0=subject, 1=predicate, 2=object)
-			for (var i=2; i<self.userHash.path.length; i=i+2){
-				var info = {
-					chosen: true
-				}
-				
-				info.subject = self.userHash.path[i-2].name;
-				info.predicate = self.userHash.path[i-1].name;
-				info.object = self.userHash.path[i].name;
-				
-				$.ajax({
-					url:"/LODStories/LiveDemoPageServlet",
-					type: "POST",
-					data:info,
-					dataType: "json",
-					error: function(xhr, textStatus) {
-						console.log(xhr.responseText);
-					}
-				});
-			}
-			
-			console.log(self.userHash);
 		}
-    };
+		else {
+			for (var i = 0; i < treeRoot.children.length; i++){
+				self.getTreeWidth(treeRoot.children[i]);
+			}
+		}
+	},
+	highlightPath: function(){
+		var self = this;
+		
+		var allNodes = self.vis.selectAll("g.node");
+		var allLinks = self.vis.selectAll("path.link");
+		for (var i = 0; i < allNodes[0].length; i++){
+			if (allNodes[0][i].__data__.children != null){
+				allNodes[0][i].childNodes[0].style.fill = "lightsteelblue";
+				allNodes[0][i].childNodes[1].style.fill = "33ADFF";
+			}
+		}
+		for (var i = 0; i < allLinks[0].length; i++){
+			if (allLinks[0][i].__data__.target.children != null & allLinks[0][i].__data__.source.children != null){
+				allLinks[0][i].style.stroke = "#4747d1";
+				allLinks[0][i].style.strokeWidth = "4.5px";
+			}
+			else {
+				allLinks[0][i].style.stroke = "#ccc";
+				allLinks[0][i].style.strokeWidth = "3px";
+			}
+		}
+		
+	},
+	emphasizeRecent: function(){
+		var self=this;
+		var allLinks = self.vis.selectAll("path.link");
+		for (var i = 0; i < self.userPath.length-1; i++){
+			var linkSearch = self.userPath[i].name + self.userPath[i+1].name;
+			for (var j = 0; j < allLinks[0].length; j++){
+				if (allLinks[0][j].id == linkSearch) {
+					allLinks[0][j].style.stroke = "#ff6600";
+				}
+			}
+		}
+	},
+	trackPathParent: function(data) {
+		var self = this;
+		self.userPath.unshift(data);
+		
+		if (data.parent != null){
+			self.trackPathParent(data.parent);
+		}
+	},
+	checkRepetitive: function(data, name, node) {
+		var self = this;
+		if (data.name == name){
+			var alert_msg = '<div class="alert alert-warning canvas-alert">This node has already been explored in this path, please try other nodes. <b>If you want to include the repeated node in your story, please click it again</b></div>';
+				$("#canvasStepNavigator").append(alert_msg);
+				$(".canvas-alert").fadeIn(100).delay(2500).slideUp(300);
+				setTimeout(function(){
+					$(".canvas-alert").remove();
+				},4000);
+				self.userPath = [];
+				self.trackPathParent(data);
+		}
+		else {
+			if (data.parent != null){
+				self.checkRepetitive(data.parent, name, node);
+			}else{
+				self.addNode(node.uri, node.name,node);
+			}
+		}
+	},
+	trackPathChildren: function(data) {
+		var self = this;
+		// for(var i = 0; i < data.children.length; i++){
+			// if (data.children.)
+		// }
+	},
+	generateHashObject: function(){
+		var self = this;
+		
+		console.log(self.userPath);
+		
+		self.userHash.source = new Object();
+		self.userHash.source.name = self.userPath[0].name;
+		self.userHash.source.uri = self.userPath[0].uri;
+		self.userHash.destination = new Object();
+		self.userHash.destination.name = self.userPath[self.userPath.length - 1].name;
+		self.userHash.destination.uri = self.userPath[self.userPath.length - 1].uri;
+		self.userHash.path = [];
+		for (var i = 0; i < self.userPath.length; i++){
+			if (self.userPath[i].relation != "none"){
+				var linktype = new Object;
+				linktype.type = "link";
+				if (self.userPath[i].inverse == 1){
+					linktype.inverse = true;
+				}else {
+					linktype.inverse = false;
+				}
+				linktype.name = self.userPath[i].relationship;
+				linktype.relationString = self.userPath[i].relation;
+				self.userHash.path.push(linktype);
+			}
+			var nodetype = new Object;
+			nodetype.type = "node";
+			nodetype.name = self.userPath[i].name;
+			nodetype.uri = self.userPath[i].uri;
+			self.userHash.path.push(nodetype);
+		}
+		
+		//Focus is through the objects, hence why we start at i=2 (0=subject, 1=predicate, 2=object)
+		for (var i=2; i<self.userHash.path.length; i=i+2){
+			var info = {
+				chosen: true
+			}
+			
+			info.subject = self.userHash.path[i-2].name;
+			info.predicate = self.userHash.path[i-1].name;
+			info.object = self.userHash.path[i].name;
+			
+			$.ajax({
+				url:"/LODStories/LiveDemoPageServlet",
+				type: "POST",
+				data:info,
+				dataType: "json",
+				error: function(xhr, textStatus) {
+					console.log(xhr.responseText);
+				}
+			});
+		}
+		
+		console.log(self.userHash);
+	}
+};
 
     return PathFinder;
 });

@@ -49,6 +49,7 @@ function ($, Logger, d3,PresentationController, PiecesUI, SlideEditor, HashParse
 				$(".searchItem").click(function(){
 					startLabel = $(this).html();
 					$('#search').val(startLabel);
+					$('#liveSearch').hide();
 					$('#liveSearch').empty();
 				});
 			});
