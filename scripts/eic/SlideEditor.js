@@ -125,7 +125,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                     for (var i = 0; i < this.topics[curIndex].slide_order.length; i++) {
                         editedSlides.push(this._Slide_Element_Collection[this.topics[curIndex].slide_order[i]]);
                     }
-                    //this._path[2*(curIndex-1)].slide_description = editedSlides;
                 }
 
                 for (var i = 1; i < this.topics.length; i++) {
@@ -149,33 +148,20 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
 
                         $("#img-load").css('display', 'none');
                         $("#vid-load").css('display', 'none');
-
+       
                         for(var j = 0; j < this._hash.path.length; j++) {
                             if(this._hash.path[j].uri == this.curTopic.hash_object.uri && this._hash.path[j].image != undefined){
-                                $('#imgs').children().remove();
-                                var imgs = this._hash.path[j].image;
-       /*var isEdited = false;
-        var imgs = this._hash.path[i].image; //get just the image link
-        if (editedSlides !== undefined && editedSlides.length > 0) {
-        for (var j = 0; j < editedSlides.length; j++) {
-        if (editedSlides[j].type == "GoogleImageSlide" && editedSlides[j].data.url == imgs) {
-        isEdited = true;
-        break;
-        }
-        }
-        }*/
-       //if (!isEdited) {
-                                $('#imgs').append('<li id="img0"></li>');
-                                $('#img0').addClass('nodeElementBarContentWrap');
-                                $('#img0').attr('draggable', 'true').on('dragstart', function (ev) {
-                                               self.drag(ev);
-                                               });
-                                $('#img0').append('<img id="imgs0" src=' + imgs + '>');
-                                $('#imgs0').click(function () {
-                                                  var id = "imgs0";
-                                                  self.setContent(id, 0, 'img');
-                                });
-                            //}
+                                var imgs = this._hash.path[j].image.split(",");
+                                for(var k = 0; k < imgs.length; k++){
+                                    var url = imgs[k];
+                                    var newslide = {};
+                                    newslide["slide_info"] = {};
+                                    //var newslide = $.extend(jQuery.Event, slides['img'][0]);
+                                    newslide.slide_info["type"] == "GoogleImageSlide";
+                                    newslide.slide_info["data"] = {};
+                                    newslide.slide_info.data["url"] = url;
+                                    slides['img'].push(newslide);
+                                }
                             }
                         }
        
@@ -184,6 +170,8 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                                 imgcnt++;
                                 var s = slides['img'];
                                 this.tempSlides['img'] = s;
+                                $('#imgs').children().remove();
+       
                                 for (var i = 0; i < s.length; i++) {
                                     var isEdited = false;
                                     var imgs = s[i].slide_info.data.url; //get just the image link
@@ -196,14 +184,14 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                                         }
                                     }
                                     if (!isEdited) {
-                                        $('#imgs').append('<li id=img' + (i+1) + '></li>');
-                                        $('#img' + (i+1) + '').addClass('nodeElementBarContentWrap');
-                                        $('#img' + (i+1) + '').attr('draggable', 'true').on('dragstart', function (ev) {
+                                        $('#imgs').append('<li id=img' + i + '></li>');
+                                        $('#img' + i + '').addClass('nodeElementBarContentWrap');
+                                        $('#img' + i + '').attr('draggable', 'true').on('dragstart', function (ev) {
                                             self.drag(ev);
                                         });
-                                        $('#img' + (i+1) + '').append('<img id=imgs' + (i+1) + ' src=' + imgs + '>');
-                                        $('#imgs' + (i+1)).click(function () {
-                                            var id = "imgs" + (i+1);
+                                        $('#img' + i + '').append('<img id=imgs' + i + ' src=' + imgs + '>');
+                                        $('#imgs' + i).click(function () {
+                                            var id = "imgs" + i;
                                             self.setContent(id, i, 'img');
                                         });
                                     }
@@ -322,11 +310,10 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
             },
             initElementCollection: function () {
                 var self = this;
-                console.log("Data_Source", this.topics);
                 for (var i = 1; i < this.topics.length; i++) {
                     this.topics[i].slide_order = [];
                     var slides = this.topics[i].slides;
-                    ;
+       
                     var img = slides.img;
                     var vid = slides.vid;
                     for (var j = 0; j < img.length; j++) {
@@ -334,6 +321,20 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                     }
                     for (var k = 0; k < vid.length; k++) {
                         this._Slide_Element_Collection[vid[k].slide_info.data.videoID] = vid[k].slide_info;
+                    }
+       
+                    for(var j = 0; j < this._hash.path.length; j++) {
+                        if(this._hash.path[j].uri == this.topics[i].hash_object.uri && this._hash.path[j].image != undefined){
+                            var imgs = this._hash.path[j].image.split(",");
+                            for(var k = 0; k < imgs.length; k++){
+                                var url = imgs[k];
+                                var slide_info = {};
+                                slide_info["type"] == "GoogleImageSlide";
+                                slide_info["data"] = {};
+                                slide_info.data["url"] = url;
+                                this._Slide_Element_Collection[url] = slide_info;
+                            }
+                        }
                     }
                 }
 
@@ -497,7 +498,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         navlist[i] = vidID;
                     }
                 }
-
+       
                 topics[curIndex].slide_order = navlist;
             },
 
@@ -524,27 +525,28 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         if (!topics[i].hash_object.slide_description) {
                             topics[i].updateHash();
                         }
+       
                         //Only do proper time updates if the slide_description was real
                         else if (!topics[i].hash_object.temp) {
                             var parts = 0;
-                            for (j = 0; j < topics[i].hash_object.slide_description.length; j++) {
-                                if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide")
-                                    parts += 3
+                                for (j = 0; j < topics[i].hash_object.slide_description.length; j++) {
+                                    if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide")
+                                        parts += 3
                                 else
                                     parts += 1;
                             }
                             for (j = 0; j < topics[i].hash_object.slide_description.length; j++) {
-                                if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide") {
-                                    topics[i].hash_object.slide_description[j].data.duration = Math.floor((topics[i].hash_object.audio_time * 3) / parts);
-                                    if (topics[i].hash_object.slide_description[j].player)
-                                        this.players.push(topics[i].hash_object.slide_description[j].player.playerId);
-                                }
-                                else
+                                    if (topics[i].hash_object.slide_description[j].type == "YouTubeSlide") {
+                                        topics[i].hash_object.slide_description[j].data.duration = Math.floor((topics[i].hash_object.audio_time * 3) / parts);
+                                        if (topics[i].hash_object.slide_description[j].player)
+                                            this.players.push(topics[i].hash_object.slide_description[j].player.playerId);
+                                    }
+                                else{
                                     topics[i].hash_object.slide_description[j].data.duration = Math.floor(topics[i].hash_object.audio_time / parts);
+                                }
                             }
                         }
                     }
-                    console.log(topics[1].hash_object.slide_description);
                 }
                 //Make sure NOT to start cleaning the ytholder or starting the presentation controller until the entire hash has been looped through
                 this.evaluated = true;
