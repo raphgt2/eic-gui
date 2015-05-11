@@ -135,7 +135,7 @@ function ($, BaseSlideGenerator, Logger) {
 	  
 		function preload(){	
 			//If we don't care about preloading then just log it as done
-			if (preload){
+			if (!preload){
 				self.ready = true;
 				logger.log("finished waiting on youtube for " + self.topic.label);
 				self.emit("prepared");
