@@ -170,7 +170,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 
 							json.children[i].search = 0;
 							json.children[i].children = null;
-							json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
 							self.appendMap[json.children[i].name] = json.children[i];
 							
 							info.object = HashParser.prototype.escapeString(json.children[i].name);
@@ -201,7 +200,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 							//if (self.appendMap[json.children[i].name] == undefined){
 								json.children[i].search = 0;
 								json.children[i].children = null;
-								json.children[i].name = HashParser.prototype.generateLabelFromUri(json.children[i].uri);
 								self.appendMap[json.children[i].name] = json.children[i];
 								var flag = 0;
 								
