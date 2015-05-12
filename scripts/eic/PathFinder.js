@@ -14,6 +14,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
     	/* Define HTML Elements*/
 				
 		/* Define Constants and Data */
+        this.images = [];
 		this.URLRef = new Object;
 		this.w = 180;
     	this.h = 580;
@@ -196,8 +197,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						var children = [];
 						var newNodes=0;
 						for (var i = 0; i < json.children.length; i++){
-							//console.log("[*************Append Map Test****************]", self.appendMap[json.children[i].name]);
-							//if (self.appendMap[json.children[i].name] == undefined){
 								json.children[i].search = 0;
 								json.children[i].children = null;
 								self.appendMap[json.children[i].name] = json.children[i];
@@ -595,10 +594,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				linktype.relationString = self.userPath[i].relation;
 				self.userHash.path.push(linktype);
 			}
+
 			var nodetype = new Object;
 			nodetype.type = "node";
 			nodetype.name = self.userPath[i].name;
 			nodetype.uri = self.userPath[i].uri;
+            nodetype.image = self.userPath[i].image;
 			self.userHash.path.push(nodetype);
 		}
 		
