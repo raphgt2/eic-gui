@@ -157,7 +157,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                                     var newslide = {};
                                     newslide["slide_info"] = {};
                                     //var newslide = $.extend(jQuery.Event, slides['img'][0]);
-                                    newslide.slide_info["type"] == "GoogleImageSlide";
+                                    newslide.slide_info["type"] = "GoogleImageSlide";
                                     newslide.slide_info["data"] = {};
                                     newslide.slide_info.data["url"] = url;
                                     slides['img'].push(newslide);
@@ -329,7 +329,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                             for(var k = 0; k < imgs.length; k++){
                                 var url = imgs[k];
                                 var slide_info = {};
-                                slide_info["type"] == "GoogleImageSlide";
+                                slide_info["type"] = "GoogleImageSlide";
                                 slide_info["data"] = {};
                                 slide_info.data["url"] = url;
                                 this._Slide_Element_Collection[url] = slide_info;
