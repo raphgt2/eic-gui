@@ -95,7 +95,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
               var uri = vertice.uri || '';
               var tregex = /\n|([^\r\n.!?]+([.!?]+|$))/gim;
 
-              function getLabel(item) {
+              /*function getLabel(item) {
                 if (item.label)
                   return item.label;
 				
@@ -103,7 +103,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
 				item.label = label;
 				
 				return label;
-              }
+              }*/
 
               function getDescription(item) {
 			    var maxSentences = 1;
@@ -131,7 +131,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
               self.result.topics[index] = {
                 topic : {
                   type: item.type || '',
-                  label: getLabel(item)
+                  label: vertice.name
                 },
                 hash_object: vertice
                 //defaultText : desc,
@@ -195,7 +195,7 @@ define(['lib/jquery', 'eic/Logger', 'config/URLs', 'eic/TTSService', 'eic/HashPa
               self.result.topics[index] = {
                 topic : {
                   type: item.type || '',
-                  label: getLabel(item)
+                  label: vertice.name
                 },
                 hash_object: vertice
                 //defaultText : desc,
