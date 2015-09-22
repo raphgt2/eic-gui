@@ -197,37 +197,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                                     }
                                 }
                             }
-                            if (val == 'vid') {
-                                vidcnt++;
-                                var s = slides['vid'];
-                                this.tempSlides['vid'] = s;
-                                $('#vids').children().remove();
-
-                                for (var i = 0; i < s.length; i++) {
-                                    var isEdited = false;
-                                    var vids = s[i].slide_info.data.videoID;
-                                    if (editedSlides !== undefined && editedSlides.length > 0) {
-                                        for (var j = 0; j < editedSlides.length; j++) {
-                                            if (editedSlides[j].type == "YouTubeSlide" && editedSlides[j].data.videoID == vids) {
-                                                isEdited = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (!isEdited) {
-                                        $('#vids').append('<li id=vid' + i + '></li>');
-                                        $('#vid' + i + '').addClass('nodeElementBarContentWrap');
-                                        $('#vid' + i + '').attr('draggable', 'true').on('dragstart', function (ev) {
-                                            self.drag(ev);
-                                        });
-                                        $('#vid' + i + '').append('<img id=vids' + i + ' src=http://img.youtube.com/vi/' + vids + '/default.jpg>');
-                                        $('#vids' + i).click(function () {
-                                            var id = "vids" + i;
-                                            self.setContent(id, i, 'vid');
-                                        });
-                                    }
-                                }
-                            }
                         }
 
                         if (imgcnt == 0) {
@@ -237,12 +206,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/jvent', 'config/URLs', 'eic/AudioEditor
                         }
                         else $("#img-none").css('display', 'none');
 
-                        if (vidcnt == 0) {
+                        /*if (vidcnt == 0) {
                             $("#vid-none").css('display', 'inline');
                             $('#vid-none').addClass('alert alert-danger');
                             $('#vid-none').text('No videos found');
                         }
-                        else $("#vid-none").css('display', 'none');
+                        else $("#vid-none").css('display', 'none');*/
 
                         if (editedSlides !== undefined && editedSlides.length > 0) {
                             for (var i = 0; i < editedSlides.length; i++) {
