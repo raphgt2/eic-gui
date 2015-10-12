@@ -165,32 +165,29 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 						self.appendMap[name].search = 1;
 						self.appendMap[name].parent = null;
 						
-						info.subject = HashParser.prototype.escapeString(name);
-						
-						for (var i = 0; i < json.children.length; i++){
-
-							json.children[i].search = 0;
-							json.children[i].children = null;
-							self.appendMap[json.children[i].name] = json.children[i];
-							
-							info.object = HashParser.prototype.escapeString(json.children[i].name);
-							info.predicate = HashParser.prototype.escapeString(json.children[i].relationship);
-							$.ajax({
-								url:"/LODStories/LiveDemoPageServlet",
-								type: "POST",
-								data:info,
-								dataType: "json",
-								error: function(xhr, textStatus) {
-									console.log(xhr.responseText);
-								}
-							});
-						}
 						self.root = self.history;
 						self.updateCanvas(self.root);
 					}
-					else {						
-						info.subject = HashParser.prototype.escapeString(data_prev.name);
-
+					else {
+               //console.log("DATA PREV");
+               //console.log(data_prev);
+						info.subject = HashParser.prototype.escapeString(data_prev.parent.uri);
+                        for(var i = 0; i < data_prev.parent.children.length; i++){
+                            //send to the data collector
+                            info.object = HashParser.prototype.escapeString(data_prev.parent.children[i].uri);
+                            info.predicate = HashParser.prototype.escapeString(data_prev.parent.children[i].relationship);
+                            if(data_prev.parent.children[i].uri == data_prev.uri) info.chosen = true;
+                            else info.chosen = false;
+                            $.ajax({
+                               url:"/LODStories-1.0.0-SNAPSHOT/liveDemo",
+                               type: "POST",
+                               data:info,
+                               dataType: "json",
+                               error: function(xhr, textStatus) {
+                               console.log(xhr.responseText);
+                               }
+                            });
+                        }
 
 						self.userPath = [];
 						self.trackPathParent(data_prev);
@@ -214,20 +211,6 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 								if (flag != 1){
 									children.push(json.children[i]);
 									newNodes++;
-									
-									//send to the data collector
-									info.object = HashParser.prototype.escapeString(json.children[i].name);
-									info.predicate = HashParser.prototype.escapeString(json.children[i].relationship);
-									$.ajax({
-										url:"/LODStories/LiveDemoPageServlet",
-										type: "POST",
-										data:info,
-										dataType: "json",
-										error: function(xhr, textStatus) {
-											console.log(xhr.responseText);
-										}
-									});
-									
 								}
 						}
 						
@@ -609,12 +592,12 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 				chosen: true
 			}
 			
-			info.subject = self.userHash.path[i-2].name;
+			info.subject = self.userHash.path[i-2].uri;
 			info.predicate = self.userHash.path[i-1].name;
-			info.object = self.userHash.path[i].name;
+			info.object = self.userHash.path[i].uri;
 			
 			$.ajax({
-				url:"/LODStories/LiveDemoPageServlet",
+				url:"/LODStories-1.0.0-SNAPSHOT/liveDemo",
 				type: "POST",
 				data:info,
 				dataType: "json",
