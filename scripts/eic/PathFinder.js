@@ -463,7 +463,7 @@ define(['lib/jquery', 'eic/Logger', 'lib/d3','eic/PresentationController2','eic/
 		var d = $(id).attr("d");
 		var relationContent = '<div id="relation" class="close" style="position: absolute; left:' + d + 'px; top:' + d + 'px;">';
 		if(inverse == 1)
-			relationContent += object + relation + subject;
+			relationContent += subject + relation + object;
 		else
 			relationContent += subject + relation + object;
 
